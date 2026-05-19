@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ระบบอบรมความปลอดภัยผู้รับเหมา — PTT TSO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ptt-navy: #003B7A;
+    --ptt-navy-dark: #002347;
+    --ptt-blue: #0066CC;
+    --ptt-red: #E60028;
+    --ptt-gold: #C9A961;
+    --bg: #F5F7FA;
+    --surface: #FFFFFF;
+    --ink: #0B1A2C;
+    --ink-soft: #5C6B7A;
+    --line: #E1E6EC;
+    --success: #1B8754;
+    --warning: #D97706;
+    --danger: #DC2626;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans Thai', 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ===== Top Bar ===== */
+  .topbar {
+    background: var(--ptt-navy);
+    color: #fff;
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--ptt-gold);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand-mark {
+    width: 36px;
+    height: 36px;
+    background: #fff;
+    color: var(--ptt-navy);
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+  }
+  .brand-text {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+  .brand-text small {
+    display: block;
+    font-size: 11px;
+    opacity: 0.75;
+    font-weight: 300;
+  }
+  .division-tag {
+    font-size: 12px;
+    padding: 4px 10px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ===== Hero ===== */
+  .hero {
+    background: linear-gradient(135deg, var(--ptt-navy) 0%, var(--ptt-navy-dark) 100%);
+    color: #fff;
+    padding: 48px 24px 100px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 50%, rgba(201,169,97,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 80% 30%, rgba(0,102,204,0.15) 0%, transparent 40%);
+    pointer-events: none;
+  }
+  .hero h1 {
+    font-size: clamp(24px, 4vw, 34px);
+    font-weight: 600;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .hero p {
+    font-size: 15px;
+    opacity: 0.85;
+    font-weight: 300;
+    position: relative;
+  }
+
+  /* ===== Card ===== */
+  .container {
+    max-width: 520px;
+    margin: -60px auto 48px;
+    padding: 0 20px;
+    position: relative;
+  }
+  .card {
+    background: var(--surface);
+    border-radius: 12px;
+    box-shadow: 0 12px 40px rgba(0,59,122,0.12), 0 2px 8px rgba(0,0,0,0.04);
+    overflow: hidden;
+    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .card-header {
+    padding: 28px 28px 0;
+  }
+  .step-indicator {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    color: var(--ptt-blue);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .card-header h2 {
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .card-header p {
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  .card-body { padding: 24px 28px 28px; }
+
+  /* ===== Form ===== */
+  .field { margin-bottom: 18px; }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: var(--ink);
+  }
+  .field label .required { color: var(--ptt-red); }
+  .field input {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: inherit;
+    background: var(--surface);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    letter-spacing: 0.5px;
+  }
+  .field input:focus {
+    outline: none;
+    border-color: var(--ptt-blue);
+    box-shadow: 0 0 0 3px rgba(0,102,204,0.12);
+  }
+  .field .hint {
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 5px;
+  }
+
+  /* ===== Buttons ===== */
+  .btn {
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-primary {
+    background: var(--ptt-navy);
+    color: #fff;
+  }
+  .btn-primary:hover {
+    background: var(--ptt-navy-dark);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0,59,122,0.25);
+  }
+  .btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  .btn-secondary {
+    background: #fff;
+    color: var(--ptt-navy);
+    border: 1.5px solid var(--line);
+    margin-top: 10px;
+  }
+  .btn-secondary:hover {
+    border-color: var(--ptt-navy);
+    background: #F8FAFC;
+  }
+  .btn-danger {
+    background: var(--ptt-red);
+    color: #fff;
+  }
+  .btn-danger:hover {
+    background: #B8001F;
+    transform: translateY(-1px);
+  }
+
+  /* ===== Loading ===== */
+  .spinner {
+    width: 18px;
+    height: 18px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ===== Results ===== */
+  .result {
+    display: none;
+    animation: fadeIn 0.4s ease-out;
+  }
+  .result.show { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-banner {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-bottom: 1px solid var(--line);
+  }
+  .result-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    font-size: 24px;
+  }
+  .result-success .result-icon { background: rgba(27,135,84,0.12); color: var(--success); }
+  .result-warning .result-icon { background: rgba(217,119,6,0.12); color: var(--warning); }
+  .result-danger  .result-icon { background: rgba(220,38,38,0.12);  color: var(--danger); }
+
+  .result-title { font-size: 17px; font-weight: 600; margin-bottom: 2px; }
+  .result-subtitle { font-size: 13px; color: var(--ink-soft); }
+
+  .result-detail {
+    padding: 20px 28px;
+  }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px dashed var(--line);
+    font-size: 14px;
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-label { color: var(--ink-soft); }
+  .detail-value { font-weight: 500; }
+  .detail-value.expired { color: var(--danger); }
+
+  .result-actions { padding: 0 28px 28px; }
+
+  /* ===== Footer ===== */
+  .footer {
+    text-align: center;
+    padding: 24px;
+    color: var(--ink-soft);
+    font-size: 12px;
+    border-top: 1px solid var(--line);
+    background: #fff;
+  }
+  .footer strong { color: var(--ink); }
+
+  /* ===== Error Message ===== */
+  .error-msg {
+    display: none;
+    background: rgba(220,38,38,0.08);
+    color: var(--danger);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    margin-top: 10px;
+    border-left: 3px solid var(--danger);
+  }
+  .error-msg.show { display: block; }
+
+  @media (max-width: 480px) {
+    .hero { padding: 36px 20px 80px; }
+    .card-header, .card-body { padding-left: 20px; padding-right: 20px; }
+    .result-banner, .result-detail, .result-actions { padding-left: 20px; padding-right: 20px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">PTT</div>
+      <div class="brand-text">
+        ระบบอบรมความปลอดภัยผู้รับเหมา
+        <small>PTT TSO — Safety Training System</small>
+      </div>
+    </div>
+    <div class="division-tag">ส่วนปฏิบัติการระบบท่อเขต 7</div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>ตรวจสอบสถานะการอบรม</h1>
+    <p>กรอกเลขบัตรประชาชนของท่านเพื่อเริ่มใช้งานระบบ</p>
+  </div>
+
+  <!-- Main Card -->
+  <div class="container">
+    <div class="card">
+
+      <!-- STATE 1: Input Form -->
+      <div id="state-input">
+        <div class="card-header">
+          <span class="step-indicator">ขั้นตอนที่ 1 — ตรวจสอบ</span>
+          <h2>เลขบัตรประชาชน</h2>
+          <p>ระบบจะตรวจสอบว่าท่านเคยผ่านการอบรมหรือไม่</p>
+        </div>
+        <div class="card-body">
+          <div class="field">
+            <label>หมายเลขบัตรประชาชน <span class="required">*</span></label>
+            <input
+              type="text"
+              id="nationalId"
+              maxlength="13"
+              inputmode="numeric"
+              placeholder="1234567890123"
+              autocomplete="off">
+            <div class="hint">กรอกตัวเลข 13 หลัก ไม่ต้องเว้นวรรค</div>
+            <div class="error-msg" id="errorMsg"></div>
+          </div>
+          <button class="btn btn-primary" id="btnCheck" onclick="checkStatus()">
+            <span id="btnCheckText">ตรวจสอบสถานะ</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- STATE 2: Found + Valid (เคยผ่าน + ยังไม่หมดอายุ) -->
+      <div id="state-valid" class="result">
+        <div class="result-banner result-success">
+          <div class="result-icon">✓</div>
+          <div>
+            <div class="result-title">ท่านผ่านการอบรมแล้ว</div>
+            <div class="result-subtitle">ใบวุฒิบัตรยังมีอายุการใช้งาน</div>
+          </div>
+        </div>
+        <div class="result-detail">
+          <div class="detail-row">
+            <span class="detail-label">ชื่อ-นามสกุล</span>
+            <span class="detail-value" id="validName">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">บริษัท</span>
+            <span class="detail-value" id="validCompany">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">วันที่อบรม</span>
+            <span class="detail-value" id="validExamDate">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">หมดอายุ</span>
+            <span class="detail-value" id="validExpiry">—</span>
+          </div>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-primary" id="btnDownload" onclick="downloadCert()">
+            ดาวน์โหลดใบวุฒิบัตร (PDF)
+          </button>
+          <button class="btn btn-secondary" onclick="resetForm()">ตรวจสอบเลขบัตรอื่น</button>
+        </div>
+      </div>
+
+      <!-- STATE 3: Found + Expired (เคยผ่านแต่หมดอายุ) -->
+      <div id="state-expired" class="result">
+        <div class="result-banner result-warning">
+          <div class="result-icon">!</div>
+          <div>
+            <div class="result-title">ใบวุฒิบัตรหมดอายุแล้ว</div>
+            <div class="result-subtitle">กรุณาทำการอบรมใหม่</div>
+          </div>
+        </div>
+        <div class="result-detail">
+          <div class="detail-row">
+            <span class="detail-label">ชื่อ-นามสกุล</span>
+            <span class="detail-value" id="expName">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">วันที่อบรมครั้งก่อน</span>
+            <span class="detail-value" id="expExamDate">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">หมดอายุเมื่อ</span>
+            <span class="detail-value expired" id="expExpiry">—</span>
+          </div>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-primary" onclick="goToExam()">เริ่มทำข้อสอบใหม่</button>
+          <button class="btn btn-secondary" onclick="resetForm()">ย้อนกลับ</button>
+        </div>
+      </div>
+
+      <!-- STATE 4: Not Found (ยังไม่เคยอบรม) -->
+      <div id="state-new" class="result">
+        <div class="result-banner result-success">
+          <div class="result-icon">+</div>
+          <div>
+            <div class="result-title">ผู้รับเหมาใหม่</div>
+            <div class="result-subtitle">ท่านยังไม่เคยเข้ารับการอบรม</div>
+          </div>
+        </div>
+        <div class="result-detail">
+          <p style="font-size: 14px; color: var(--ink-soft); line-height: 1.7;">
+            กรุณากดปุ่มด้านล่างเพื่อเริ่มทำแบบทดสอบความปลอดภัย
+            <br>เกณฑ์ผ่านการอบรม: <strong style="color: var(--ink);">8 คะแนน จาก 10 ข้อ</strong>
+          </p>
+        </div>
+        <div class="result-actions">
+          <button class="btn btn-primary" onclick="goToExam()">เริ่มทำข้อสอบ</button>
+          <button class="btn btn-secondary" onclick="resetForm()">ย้อนกลับ</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      © PTT Public Company Limited<br>
+      <strong>สายงานระบบท่อส่งก๊าซธรรมชาติ — ส่วนปฏิบัติการระบบท่อเขต 7</strong>
+    </div>
+  </div>
+
+<script>
+  // ========================================================
+  // CONFIG
+  // ========================================================
+  const FLOW_URL = 'https://defaultf2fda5e72ea1450d9fc12af5f86300.95.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3e39b39e312e458087586fb0752dccf4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uewTLw5vaCzlY3HVcX-ABR_qLTGz1ZGWyYHwWNcCXiM';
+  const API_KEY  = 'PTT-PO7-2026-SECRET';
+  const EXAM_URL = 'exam.html'; // หน้าข้อสอบ (อยู่โฟลเดอร์เดียวกัน)
+  // ========================================================
+
+  const $ = id => document.getElementById(id);
+  let currentNationalId = '';
+  let currentPdfLink    = '';
+
+  // จำกัดให้กรอกได้เฉพาะตัวเลข 13 หลัก
+  $('nationalId').addEventListener('input', e => {
+    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 13);
+    $('errorMsg').classList.remove('show');
+  });
+  $('nationalId').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkStatus();
+  });
+
+  function showError(msg) {
+    const el = $('errorMsg');
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+
+  function setLoading(loading) {
+    const btn = $('btnCheck');
+    const txt = $('btnCheckText');
+    btn.disabled = loading;
+    txt.innerHTML = loading
+      ? '<span class="spinner"></span> กำลังตรวจสอบ...'
+      : 'ตรวจสอบสถานะ';
+  }
+
+  function hideAllStates() {
+    $('state-input').style.display = 'none';
+    $('state-valid').classList.remove('show');
+    $('state-expired').classList.remove('show');
+    $('state-new').classList.remove('show');
+  }
+
+  function resetForm() {
+    hideAllStates();
+    $('state-input').style.display = 'block';
+    $('nationalId').value = '';
+    $('errorMsg').classList.remove('show');
+    $('nationalId').focus();
+  }
+
+  async function checkStatus() {
+    const id = $('nationalId').value.trim();
+
+    if (id.length !== 13) {
+      showError('กรุณากรอกเลขบัตรประชาชน 13 หลักให้ครบ');
+      return;
+    }
+
+    currentNationalId = id;
+    setLoading(true);
+
+    try {
+      const res = await fetch(FLOW_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nationalId: id, apiKey: API_KEY })
+      });
+      if (!res.ok) throw new Error('Server error: ' + res.status);
+      const data = await res.json();
+      handleResponse(data);
+    } catch (err) {
+      showError('เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function handleResponse(response) {
+    // Response จาก Flow: { status, message, data: { FullName, Company, ExamDate, ExpiryDate, CertLink, ... } }
+    hideAllStates();
+    const d = response.data || {};
+
+    if (response.status === 'valid') {
+      $('validName').textContent     = d.FullName || '—';
+      $('validCompany').textContent  = d.Company  || '—';
+      $('validExamDate').textContent = formatDate(d.ExamDate);
+      $('validExpiry').textContent   = formatDate(d.ExpiryDate);
+      currentPdfLink = d.CertLink || '';
+      $('state-valid').classList.add('show');
+    }
+    else if (response.status === 'expired') {
+      $('expName').textContent     = d.FullName || '—';
+      $('expExamDate').textContent = formatDate(d.ExamDate);
+      $('expExpiry').textContent   = formatDate(d.ExpiryDate);
+      $('state-expired').classList.add('show');
+    }
+    else {
+      // not_found
+      $('state-new').classList.add('show');
+    }
+  }
+
+  // แปลง Excel Serial Number → JS Date
+  // Excel epoch = 1899-12-30, แต่ JS เริ่มที่ 1970-01-01 (ห่างกัน 25569 วัน)
+  function excelSerialToDate(serial) {
+    const days = parseInt(serial, 10);
+    if (isNaN(days)) return null;
+    const ms = (days - 25569) * 86400 * 1000;
+    return new Date(ms);
+  }
+
+  // รับได้ทั้ง Excel Serial (เช่น "46402") และ ISO date (เช่น "2027-01-15")
+  function formatDate(val) {
+    if (!val) return '—';
+    let date;
+    // ถ้าเป็นตัวเลขล้วน → ถือเป็น Excel Serial
+    if (/^\d+$/.test(String(val).trim())) {
+      date = excelSerialToDate(val);
+    } else {
+      date = new Date(val);
+    }
+    if (!date || isNaN(date.getTime())) return String(val);
+    return date.toLocaleDateString('th-TH', {
+      year: 'numeric', month: 'long', day: 'numeric'
+    });
+  }
+
+  function downloadCert() {
+    if (currentPdfLink) {
+      window.open(currentPdfLink, '_blank');
+    } else {
+      alert('ไม่พบลิงก์ไฟล์ใบวุฒิบัตร');
+    }
+  }
+
+  function goToExam() {
+    sessionStorage.setItem('ptt_nationalId', currentNationalId);
+    window.location.href = EXAM_URL;
+  }
+</script>
+</body>
+</html>

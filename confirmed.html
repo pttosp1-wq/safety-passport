@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ยืนยันวันอบรม — PTT TSO</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ptt-navy: #003B7A;
+    --ptt-navy-dark: #002347;
+    --ptt-blue: #0066CC;
+    --ptt-gold: #C9A961;
+    --bg: #F5F7FA;
+    --surface: #FFFFFF;
+    --ink: #0B1A2C;
+    --ink-soft: #5C6B7A;
+    --border: #E5E7EB;
+    --green: #2A7548;
+    --green-light: #D1FAE5;
+    --red: #DC2626;
+    --red-light: #FEE2E2;
+    --gold-light: #FFF8E1;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .container {
+    max-width: 480px;
+    width: 100%;
+  }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+  }
+
+  /* Header */
+  .header {
+    background: var(--ptt-navy);
+    color: white;
+    padding: 20px 24px;
+    border-bottom: 4px solid var(--ptt-gold);
+    text-align: center;
+  }
+  .header .brand {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--ptt-gold);
+    margin-bottom: 4px;
+  }
+  .header .title {
+    font-size: 14px;
+    font-weight: 500;
+    opacity: 0.92;
+  }
+
+  /* Body */
+  .body {
+    padding: 32px 24px;
+    text-align: center;
+  }
+
+  /* ========== Loading State ========== */
+  .loading-icon {
+    width: 64px;
+    height: 64px;
+    margin: 8px auto 16px;
+    border: 4px solid var(--border);
+    border-top-color: var(--ptt-navy);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ========== Success State ========== */
+  .success-icon {
+    width: 72px;
+    height: 72px;
+    background: var(--green-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    animation: pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .success-icon svg {
+    width: 40px;
+    height: 40px;
+    color: var(--green);
+    stroke-width: 3;
+  }
+  @keyframes pop {
+    0% { transform: scale(0); }
+    100% { transform: scale(1); }
+  }
+
+  /* ========== Error State ========== */
+  .error-icon {
+    width: 72px;
+    height: 72px;
+    background: var(--red-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+  }
+  .error-icon svg {
+    width: 40px;
+    height: 40px;
+    color: var(--red);
+    stroke-width: 3;
+  }
+
+  /* Common Text */
+  h1 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    font-size: 13.5px;
+    color: var(--ink-soft);
+    margin-bottom: 24px;
+    line-height: 1.6;
+  }
+
+  /* Detail Card */
+  .detail-card {
+    background: var(--gold-light);
+    border-radius: 8px;
+    padding: 16px 18px;
+    text-align: left;
+    margin-bottom: 16px;
+  }
+  .detail-card .label {
+    font-size: 11px;
+    color: #6B4F00;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+  .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 4px 0;
+    font-size: 13.5px;
+  }
+  .detail-row .key { color: #6B4F00; }
+  .detail-row .value { color: var(--ink); font-weight: 600; }
+
+  /* Info Card */
+  .info-card {
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 14px 16px;
+    text-align: left;
+    font-size: 12px;
+    line-height: 1.7;
+  }
+  .info-card .info-row {
+    display: flex;
+    gap: 8px;
+  }
+  .info-card .info-key {
+    color: var(--ink-soft);
+    min-width: 90px;
+  }
+  .info-card .info-value {
+    color: var(--ink);
+    font-weight: 500;
+    flex: 1;
+    word-break: break-word;
+  }
+  .info-card .req-id {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+  }
+
+  /* Footer text */
+  .footer-text {
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    margin-top: 20px;
+    line-height: 1.5;
+  }
+
+  /* Buttons (for error retry) */
+  .btn {
+    background: var(--ptt-navy);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 8px;
+  }
+  .btn:hover { background: var(--ptt-navy-dark); }
+  .btn.secondary {
+    background: white;
+    color: var(--ink);
+    border: 1px solid var(--border);
+  }
+  .btn.secondary:hover { background: var(--bg); }
+
+  /* Error Detail (dev) */
+  .error-detail {
+    background: var(--red-light);
+    color: var(--red);
+    padding: 12px 14px;
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-family: 'JetBrains Mono', monospace;
+    word-break: break-all;
+    margin-top: 12px;
+    text-align: left;
+    max-height: 120px;
+    overflow-y: auto;
+  }
+
+  /* Footer Brand */
+  .brand-footer {
+    background: var(--bg);
+    padding: 14px 24px;
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-soft);
+    border-top: 1px solid var(--border);
+    line-height: 1.5;
+  }
+
+  /* States visibility */
+  .state { display: none; }
+  .state.active { display: block; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="card">
+
+    <div class="header">
+      <div class="brand">PTT TSO SAFETY</div>
+      <div class="title">ระบบยืนยันวันอบรม</div>
+    </div>
+
+    <div class="body">
+
+      <!-- ========== LOADING STATE ========== -->
+      <div class="state active" id="state-loading">
+        <div class="loading-icon"></div>
+        <h1>กำลังบันทึก...</h1>
+        <p class="subtitle">โปรดรอสักครู่<br>ระบบกำลังยืนยันวันอบรมและส่ง Email หาผู้รับเหมา</p>
+      </div>
+
+      <!-- ========== SUCCESS STATE ========== -->
+      <div class="state" id="state-success">
+        <div class="success-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <h1>ยืนยันเรียบร้อย</h1>
+        <p class="subtitle">ระบบบันทึกและส่ง email หาผู้รับเหมาแล้ว</p>
+
+        <div class="detail-card">
+          <div class="label">📅 รายละเอียดการอบรม</div>
+          <div class="detail-row">
+            <span class="key">วันที่</span>
+            <span class="value" id="success-date">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="key">เวลา</span>
+            <span class="value" id="success-time">—</span>
+          </div>
+          <div class="detail-row">
+            <span class="key">Request ID</span>
+            <span class="value req-id" id="success-reqid" style="font-family: 'JetBrains Mono', monospace; font-size: 12px;">—</span>
+          </div>
+        </div>
+
+        <p class="footer-text">
+          🎉 ผู้รับเหมาจะได้รับ Email ยืนยันวันอบรมพร้อมรายละเอียดทั้งหมดทันที<br><br>
+          <strong>หน้านี้ปิดได้เลย</strong> — ระบบทำงานเสร็จแล้ว
+        </p>
+      </div>
+
+      <!-- ========== ERROR STATE ========== -->
+      <div class="state" id="state-error">
+        <div class="error-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </div>
+        <h1>เกิดข้อผิดพลาด</h1>
+        <p class="subtitle">ไม่สามารถบันทึกการยืนยันได้<br>กรุณาลองอีกครั้ง หรือติดต่อ Admin</p>
+
+        <div class="info-card">
+          <div class="info-row">
+            <span class="info-key">Request ID:</span>
+            <span class="info-value req-id" id="error-reqid">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-key">วันที่:</span>
+            <span class="info-value" id="error-date">—</span>
+          </div>
+          <div class="info-row">
+            <span class="info-key">เวลา:</span>
+            <span class="info-value" id="error-time">—</span>
+          </div>
+        </div>
+
+        <div class="error-detail" id="error-detail"></div>
+
+        <button class="btn" onclick="retry()">🔄 ลองอีกครั้ง</button>
+        <button class="btn secondary" onclick="window.close()">ปิดหน้านี้</button>
+      </div>
+
+    </div>
+
+    <div class="brand-footer">
+      ระบบอบรมความปลอดภัยผู้รับเหมา PTT TSO<br>
+      ฝ่ายปฏิบัติการระบบท่อ ภาค 2 (ปกต.2)
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // ========================================================
+  // CONFIG
+  // ========================================================
+  const FLOW_URL = 'https://defaultf2fda5e72ea1450d9fc12af5f86300.95.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/b3e62e8e8cb64f3fa98209f828a25a06/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AylRyg_cTCZvEENOOR4evJhA60cCJu2rDL-9A1L3RXQ';
+
+  // ========================================================
+  // Helpers
+  // ========================================================
+  function showState(name) {
+    document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+    document.getElementById('state-' + name).classList.add('active');
+  }
+
+  function formatThaiDate(isoDate) {
+    if (!isoDate) return '—';
+    const months = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+                    'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+    try {
+      const d = new Date(isoDate);
+      const day = d.getDate();
+      const month = months[d.getMonth()];
+      const year = d.getFullYear() + 543; // ปี พ.ศ.
+      return `${day} ${month} ${year}`;
+    } catch (e) {
+      return isoDate;
+    }
+  }
+
+  // ========================================================
+  // Main: Read URL params + POST to Flow 4
+  // ========================================================
+  const params = new URLSearchParams(window.location.search);
+  const requestId = params.get('req') || '';
+  const scheduledDate = params.get('date') || '';
+  const scheduledTime = params.get('time') || '';
+
+  // Validate params
+  if (!requestId || !scheduledDate || !scheduledTime) {
+    showState('error');
+    document.getElementById('error-reqid').textContent = requestId || '(ไม่มี)';
+    document.getElementById('error-date').textContent = scheduledDate || '(ไม่มี)';
+    document.getElementById('error-time').textContent = scheduledTime || '(ไม่มี)';
+    document.getElementById('error-detail').textContent = 'URL parameters ไม่ครบ — ต้องมี ?req=...&date=...&time=...';
+  } else {
+    // Auto-call Flow 4
+    submitConfirmation();
+  }
+
+  async function submitConfirmation() {
+    showState('loading');
+
+    try {
+      const res = await fetch(FLOW_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          requestId: requestId,
+          scheduledDate: scheduledDate,
+          scheduledTime: scheduledTime
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status} ${res.statusText}`);
+      }
+
+      // Success!
+      document.getElementById('success-date').textContent = formatThaiDate(scheduledDate);
+      document.getElementById('success-time').textContent = scheduledTime + ' น.';
+      document.getElementById('success-reqid').textContent = requestId;
+      showState('success');
+
+    } catch (e) {
+      // Error
+      document.getElementById('error-reqid').textContent = requestId;
+      document.getElementById('error-date').textContent = formatThaiDate(scheduledDate);
+      document.getElementById('error-time').textContent = scheduledTime + ' น.';
+      document.getElementById('error-detail').textContent = e.message;
+      showState('error');
+    }
+  }
+
+  function retry() {
+    submitConfirmation();
+  }
+</script>
+
+</body>
+</html>

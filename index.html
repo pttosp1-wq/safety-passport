@@ -326,6 +326,12 @@
     .hero { padding: 36px 20px 80px; }
     .card-header, .card-body { padding-left: 20px; padding-right: 20px; }
     .result-banner, .result-detail, .result-actions { padding-left: 20px; padding-right: 20px; }
+
+    /* Topbar: ให้ brand-text มีพื้นที่พอ + ซ่อน division-tag (มีใน footer แล้ว) */
+    .topbar { padding: 12px 16px; }
+    .brand-text { font-size: 13px; line-height: 1.3; }
+    .brand-text small { font-size: 10px; }
+    .division-tag { display: none; }
   }
 </style>
 </head>
@@ -340,7 +346,7 @@
         <small>PTT TSO — Safety Training System</small>
       </div>
     </div>
-    <div class="division-tag">ส่วนปฏิบัติการระบบท่อเขต 7</div>
+    <div class="division-tag" id="divisionTag">ส่วนปฏิบัติการระบบท่อเขต 7</div>
   </div>
 
   <!-- Hero -->
@@ -469,7 +475,9 @@
     <!-- Footer -->
     <div class="footer">
       © PTT Public Company Limited<br>
-      <strong>สายงานระบบท่อส่งก๊าซธรรมชาติ — ส่วนปฏิบัติการระบบท่อเขต 7</strong>
+      สายงานระบบท่อส่งก๊าซธรรมชาติ<br>
+      <strong>ฝ่ายปฏิบัติการระบบท่อส่งก๊าซธรรมชาติ ภาค 2 (ปกต.2)</strong><br>
+      <span id="footerDept">ส่วนปฏิบัติการระบบท่อเขต 7 (ปท.7)</span>
     </div>
   </div>
 
@@ -480,6 +488,22 @@
   const FLOW_URL = 'https://defaultf2fda5e72ea1450d9fc12af5f86300.95.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3e39b39e312e458087586fb0752dccf4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uewTLw5vaCzlY3HVcX-ABR_qLTGz1ZGWyYHwWNcCXiM';
   const API_KEY  = 'PTT-PO7-2026-SECRET';
   const EXAM_URL = 'exam.html'; // หน้าข้อสอบ (อยู่โฟลเดอร์เดียวกัน)
+
+  // ========== Multi-Division Support ==========
+  const DIVISIONS = {
+    PO5: 'ส่วนปฏิบัติการระบบท่อเขต 5',
+    PO6: 'ส่วนปฏิบัติการระบบท่อเขต 6',
+    PO7: 'ส่วนปฏิบัติการระบบท่อเขต 7',
+    PO8: 'ส่วนปฏิบัติการระบบท่อเขต 8'
+  };
+  const params = new URLSearchParams(window.location.search);
+  const DIVISION = params.get('division') || 'PO7';
+  const DIVISION_FULL = DIVISIONS[DIVISION] || DIVISIONS.PO7;
+
+  // อัปเดต UI
+  document.getElementById('divisionTag').textContent = DIVISION_FULL;
+  document.getElementById('footerDept').textContent =
+    DIVISION_FULL + ' (' + DIVISION.replace('PO', 'ปท.') + ')';
   // ========================================================
 
   const $ = id => document.getElementById(id);
@@ -540,7 +564,7 @@
       const res = await fetch(FLOW_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nationalId: id, apiKey: API_KEY })
+        body: JSON.stringify({ nationalId: id, division: DIVISION, apiKey: API_KEY })
       });
       if (!res.ok) throw new Error('Server error: ' + res.status);
       const data = await res.json();
@@ -613,7 +637,7 @@
 
   function goToExam() {
     sessionStorage.setItem('ptt_nationalId', currentNationalId);
-    window.location.href = EXAM_URL;
+    window.location.href = EXAM_URL + '?division=' + DIVISION;
   }
 </script>
 </body>

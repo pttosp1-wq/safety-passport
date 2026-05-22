@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เลือกเขตปฏิบัติการ — PTT TSO Safety</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ptt-navy: #003B7A;
+    --ptt-navy-dark: #002347;
+    --ptt-blue: #0066CC;
+    --ptt-gold: #C9A961;
+    --bg: #F5F7FA;
+    --ink: #0B1A2C;
+    --ink-soft: #5C6B7A;
+    --border: #E5E7EB;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    background: linear-gradient(180deg, var(--ptt-navy) 0%, var(--ptt-navy-dark) 100%);
+    color: white;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(201,169,97,0.12) 0%, transparent 50%),
+      radial-gradient(circle at 85% 80%, rgba(0,102,204,0.15) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Top bar */
+  .topbar {
+    background: rgba(0,0,0,0.15);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 14px 24px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+  }
+  .brand-mark {
+    background: white;
+    color: var(--ptt-navy);
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .brand-text {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .brand-text small {
+    display: block;
+    font-size: 11px;
+    opacity: 0.75;
+    font-weight: 400;
+  }
+
+  /* Main */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 40px 24px 30px;
+    position: relative;
+    z-index: 1;
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .eyebrow {
+    color: var(--ptt-gold);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+  .header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.2;
+  }
+  .header p {
+    font-size: 14px;
+    opacity: 0.85;
+    line-height: 1.5;
+  }
+
+  /* List */
+  .division-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .division-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(255,255,255,0.15);
+    border-radius: 14px;
+    padding: 18px 20px;
+    color: white;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .division-card:hover {
+    background: rgba(255,255,255,0.14);
+    border-color: var(--ptt-gold);
+    transform: translateX(4px);
+  }
+  .division-card:active {
+    transform: translateX(2px) scale(0.98);
+  }
+  .division-card .code {
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--ptt-gold);
+    min-width: 60px;
+    letter-spacing: 0.5px;
+  }
+  .division-card .info {
+    flex: 1;
+  }
+  .division-card .label {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 2px;
+  }
+  .division-card .sub {
+    font-size: 11.5px;
+    opacity: 0.7;
+  }
+  .division-card .arrow {
+    font-size: 20px;
+    opacity: 0.5;
+    transition: all 0.2s;
+  }
+  .division-card:hover .arrow {
+    opacity: 1;
+    color: var(--ptt-gold);
+    transform: translateX(2px);
+  }
+
+  /* Footer */
+  .footer {
+    padding: 24px;
+    text-align: center;
+    font-size: 11.5px;
+    opacity: 0.7;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+  }
+  .footer strong {
+    display: block;
+    margin-top: 2px;
+    opacity: 1;
+  }
+
+  @media (max-width: 480px) {
+    .topbar { padding: 12px 16px; }
+    .brand-text { font-size: 13px; }
+    .brand-text small { font-size: 10px; }
+    .main { padding: 32px 16px 20px; }
+    .header h1 { font-size: 22px; }
+    .division-card { padding: 16px 16px; }
+    .division-card .code { font-size: 20px; min-width: 56px; }
+    .division-card .label { font-size: 13px; }
+    .division-card .sub { font-size: 11px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="brand-mark">PTT</div>
+    <div class="brand-text">
+      ระบบอบรมความปลอดภัยผู้รับเหมา
+      <small>PTT TSO — Safety Training System</small>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <div class="header">
+      <div class="eyebrow">STEP 01 · SELECT DIVISION</div>
+      <h1>เลือกเขตปฏิบัติการ</h1>
+      <p>เลือกพื้นที่ที่ท่านปฏิบัติงาน เพื่อเริ่มต้นการอบรม</p>
+    </div>
+
+    <div class="division-list">
+
+      <a href="start.html?division=PO5" class="division-card">
+        <div class="code">PO5</div>
+        <div class="info">
+          <div class="label">ส่วนปฏิบัติการระบบท่อเขต 5</div>
+          <div class="sub">Region V Pipeline Operations Division</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+      <a href="start.html?division=PO6" class="division-card">
+        <div class="code">PO6</div>
+        <div class="info">
+          <div class="label">ส่วนปฏิบัติการระบบท่อเขต 6</div>
+          <div class="sub">Region VI Pipeline Operations Division</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+      <a href="start.html?division=PO7" class="division-card">
+        <div class="code">PO7</div>
+        <div class="info">
+          <div class="label">ส่วนปฏิบัติการระบบท่อเขต 7</div>
+          <div class="sub">Region VII Pipeline Operations Division</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+      <a href="start.html?division=PO8" class="division-card">
+        <div class="code">PO8</div>
+        <div class="info">
+          <div class="label">ส่วนปฏิบัติการระบบท่อเขต 8</div>
+          <div class="sub">Region VIII Pipeline Operations Division</div>
+        </div>
+        <div class="arrow">›</div>
+      </a>
+
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    ฝ่ายปฏิบัติการระบบท่อส่งก๊าซธรรมชาติ ภาค 2 (ปกต.2)<br>
+    <strong>© PTT Public Company Limited</strong>
+  </div>
+
+</body>
+</html>

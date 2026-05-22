@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ขอเข้ารับการอบรม — PTT TSO Safety</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ptt-navy: #003B7A;
+    --ptt-navy-dark: #002347;
+    --ptt-blue: #0066CC;
+    --ptt-red: #E60028;
+    --ptt-gold: #C9A961;
+    --bg: #F5F7FA;
+    --surface: #FFFFFF;
+    --ink: #0B1A2C;
+    --ink-soft: #5C6B7A;
+    --border: #E5E7EB;
+    --danger: #DC2626;
+    --success: #2A7548;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* Top bar */
+  .topbar {
+    background: var(--ptt-navy);
+    color: white;
+    padding: 14px 30px;
+    border-bottom: 4px solid var(--ptt-gold);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .brand-mark {
+    background: white;
+    color: var(--ptt-navy);
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .brand-text {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .brand-text small {
+    display: block;
+    font-size: 11px;
+    opacity: 0.75;
+    font-weight: 400;
+  }
+  .division-tag {
+    background: rgba(255,255,255,0.12);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(180deg, var(--ptt-navy) 0%, var(--ptt-navy-dark) 100%);
+    color: white;
+    padding: 32px 24px 56px;
+    text-align: center;
+  }
+  .hero h1 { font-size: 24px; margin-bottom: 4px; }
+  .hero p { font-size: 13px; opacity: 0.85; }
+
+  /* Main */
+  .main {
+    max-width: 800px;
+    margin: -32px auto 40px;
+    padding: 0 16px;
+  }
+
+  /* Card */
+  .card {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    margin-bottom: 16px;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .card-num {
+    width: 32px;
+    height: 32px;
+    background: var(--ptt-navy);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .card-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .card-title .en {
+    font-size: 12px;
+    color: var(--ink-soft);
+    font-weight: 400;
+    margin-left: 6px;
+  }
+
+  /* Form fields */
+  .field {
+    margin-bottom: 14px;
+  }
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+  .field label .req {
+    color: var(--danger);
+    margin-left: 2px;
+  }
+  .field label .en {
+    color: var(--ink-soft);
+    font-weight: 400;
+    font-size: 11px;
+    margin-left: 4px;
+  }
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--ink);
+    background: white;
+    transition: border-color 0.15s;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    outline: none;
+    border-color: var(--ptt-blue);
+    box-shadow: 0 0 0 3px rgba(0,102,204,0.1);
+  }
+  .field textarea {
+    resize: vertical;
+    min-height: 60px;
+  }
+  .field .hint {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+
+  /* Trainee row */
+  .trainee-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .trainee-row {
+    background: #F8FAFC;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    position: relative;
+  }
+  .trainee-row .row-num {
+    position: absolute;
+    top: -8px;
+    left: 14px;
+    background: var(--ptt-gold);
+    color: var(--ptt-navy-dark);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 10px;
+    letter-spacing: 1px;
+  }
+  .trainee-row .delete-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--danger);
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .trainee-row .delete-btn:hover {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
+  }
+  .trainee-row .trainee-fields {
+    display: grid;
+    grid-template-columns: 100px 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .trainee-row .trainee-fields-2 {
+    display: grid;
+    grid-template-columns: 1fr 160px;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .trainee-row label {
+    font-size: 12px;
+  }
+  .trainee-row input,
+  .trainee-row select {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+  .add-btn {
+    background: white;
+    border: 1.5px dashed var(--ptt-blue);
+    color: var(--ptt-blue);
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    width: 100%;
+    margin-top: 12px;
+  }
+  .add-btn:hover {
+    background: rgba(0,102,204,0.05);
+  }
+
+  /* Submit */
+  .actions {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+  }
+  .summary {
+    background: rgba(0,59,122,0.05);
+    border-left: 3px solid var(--ptt-navy);
+    padding: 12px 14px;
+    border-radius: 6px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .summary strong { color: var(--ptt-navy); }
+  .btn-submit {
+    width: 100%;
+    padding: 14px;
+    background: var(--ptt-navy);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 16px rgba(0,59,122,0.25);
+  }
+  .btn-submit:hover { background: var(--ptt-navy-dark); }
+
+  /* Notice box */
+  .notice {
+    background: #FFF8E1;
+    border-left: 4px solid var(--ptt-gold);
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #5C4A2E;
+  }
+  .notice strong { color: #6B4F00; font-weight: 700; }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 24px 16px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  .footer strong { color: var(--ink); }
+
+  /* Mobile */
+  @media (max-width: 600px) {
+    .topbar { padding: 12px 16px; }
+    .division-tag { display: none; }
+    .hero { padding: 28px 20px 48px; }
+    .hero h1 { font-size: 20px; }
+    .main { padding: 0 12px; }
+    .card { padding: 18px 16px; }
+    .field-row { grid-template-columns: 1fr; gap: 0; margin-bottom: 0; }
+    .field-row .field { margin-bottom: 14px; }
+    .trainee-row .trainee-fields { grid-template-columns: 90px 1fr; }
+    .trainee-row .trainee-fields .name-col { grid-column: span 2; }
+    .trainee-row .trainee-fields-2 { grid-template-columns: 1fr; }
+  }
+
+  /* ==================== CUSTOM CALENDAR ==================== */
+  .cal-container {
+    background: white;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 12px;
+  }
+  .cal-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 0 4px;
+  }
+  .cal-nav button {
+    background: var(--bg);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    font-size: 18px;
+    color: var(--ptt-navy);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+  .cal-nav button:hover { background: #E0E7FF; }
+  .cal-nav button:active { transform: scale(0.92); }
+  .cal-nav .month { font-weight: 600; font-size: 14.5px; }
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 2px;
+  }
+  .day-head {
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-soft);
+    padding: 6px 0;
+    font-weight: 600;
+  }
+  .day-head.weekend { color: var(--danger); }
+  .day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13.5px;
+    border-radius: 8px;
+    cursor: pointer;
+    position: relative;
+    color: var(--ink);
+    transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border: 2px solid transparent;
+  }
+  .day:hover:not(.disabled):not(.selected) {
+    background: #E0E7FF;
+    transform: scale(1.06);
+  }
+  .day:active:not(.disabled) { transform: scale(0.92); }
+  .day.muted { color: #D1D5DB; }
+  .day.weekend {
+    color: var(--danger);
+    background: #FFF5F5;
+  }
+  .day.holiday {
+    color: var(--danger);
+    background: #FEE2E2;
+    font-weight: 600;
+  }
+  .day.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  .day.today {
+    border: 2px solid var(--ptt-navy);
+    font-weight: 700;
+  }
+  .day.selected {
+    background: var(--ptt-navy) !important;
+    color: white !important;
+    font-weight: 700;
+    border: 2px solid var(--ptt-navy);
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 59, 122, 0.3);
+  }
+  .cal-legend {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+    font-size: 11px;
+    color: var(--ink-soft);
+    padding: 0 4px;
+  }
+  .cal-legend-item { display: flex; align-items: center; gap: 4px; }
+  .cal-legend-dot { width: 10px; height: 10px; border-radius: 3px; }
+  .cal-selected-display {
+    background: #FFF8E1;
+    border-left: 3px solid var(--ptt-gold);
+    padding: 12px 14px;
+    margin-top: 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: all 0.3s ease;
+    display: none;
+  }
+  .cal-selected-display.visible {
+    opacity: 1;
+    transform: translateY(0);
+    display: block;
+  }
+  .cal-selected-display .label {
+    font-size: 11px;
+    color: #6B4F00;
+    margin-bottom: 4px;
+    letter-spacing: 1px;
+  }
+  .cal-selected-display .value { font-weight: 700; }
+  .cal-placeholder {
+    color: var(--ink-soft);
+    font-style: italic;
+    text-align: center;
+    padding: 12px;
+    background: var(--bg);
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    margin-top: 12px;
+    font-size: 13px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- Top bar -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-mark">PTT</div>
+      <div class="brand-text">
+        ฟอร์มขอเข้ารับการอบรม
+        <small>PTT TSO — Safety Orientation Request</small>
+      </div>
+    </div>
+    <div class="division-tag">ส่วนปฏิบัติการระบบท่อเขต 7</div>
+  </div>
+
+  <!-- Hero -->
+  <div class="hero">
+    <h1>กรอกข้อมูลขอเข้ารับการอบรม</h1>
+    <p>กรอกข้อมูลโครงการและรายชื่อผู้เข้าอบรม</p>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Notice -->
+    <div class="notice">
+      <strong>ข้อแนะนำ:</strong> ส่งล่วงหน้าก่อนวันอบรมไม่น้อยกว่า <strong>3 วันทำการ</strong> — ทีมงานจะส่ง Email ยืนยันวันเวลาภายใน 1-2 วันทำการ
+    </div>
+
+    <!-- Section 1: Project Info -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">1</div>
+        <div class="card-title">ข้อมูลโครงการ<span class="en">Project Information</span></div>
+      </div>
+
+      <div class="field">
+        <label>โครงการ/งาน<span class="req">*</span><span class="en">Project</span></label>
+        <input type="text" id="project" placeholder="เช่น งานเชื่อมท่อ Pipeline Section A">
+      </div>
+
+      <div class="field">
+        <label>รายละเอียดงาน<span class="req">*</span><span class="en">Work Detail</span></label>
+        <textarea id="workDetail" placeholder="อธิบายงานที่จะปฏิบัติโดยสังเขป"></textarea>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>วันเริ่มต้น<span class="req">*</span><span class="en">Start Date</span></label>
+          <input type="date" id="workStart">
+        </div>
+        <div class="field">
+          <label>วันสิ้นสุด<span class="req">*</span><span class="en">End Date</span></label>
+          <input type="date" id="workEnd">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>วันที่ต้องการอบรม<span class="req">*</span><span class="en">Preferred Training Date (เวลาอบรม 09:00 น.)</span></label>
+
+        <div class="cal-container">
+          <div class="cal-nav">
+            <button type="button" id="calPrev">‹</button>
+            <span class="month" id="calMonthLabel">พฤษภาคม 2569</span>
+            <button type="button" id="calNext">›</button>
+          </div>
+          <div class="cal-grid" id="calGrid"></div>
+          <div class="cal-legend">
+            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#FEE2E2;"></div><span>วันหยุดราชการ</span></div>
+            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#FFF5F5;"></div><span>เสาร์-อาทิตย์</span></div>
+            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#003B7A;"></div><span>วันเลือก</span></div>
+          </div>
+        </div>
+
+        <div id="calPlaceholder" class="cal-placeholder">
+          👆 แตะวันที่ในแคลเลนเดอร์เพื่อเลือกวันอบรม
+        </div>
+        <div id="calSelectedDisplay" class="cal-selected-display">
+          <div class="label">เลือกวันอบรม:</div>
+          <div class="value" id="calSelectedValue"></div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>เขตปฏิบัติการ<span class="req">*</span><span class="en">Division</span></label>
+        <select id="division">
+          <option value="">-- เลือกเขต --</option>
+          <option value="PO5">PO5 — ส่วนปฏิบัติการระบบท่อเขต 5</option>
+          <option value="PO6">PO6 — ส่วนปฏิบัติการระบบท่อเขต 6</option>
+          <option value="PO7" selected>PO7 — ส่วนปฏิบัติการระบบท่อเขต 7</option>
+          <option value="PO8">PO8 — ส่วนปฏิบัติการระบบท่อเขต 8</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>สถานที่ปฏิบัติงาน<span class="req">*</span><span class="en">Working Area</span></label>
+        <input type="text" id="workingArea" placeholder="เช่น CHANAMR">
+      </div>
+    </div>
+
+    <!-- Section 2: Contact -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">2</div>
+        <div class="card-title">ผู้รับผิดชอบ<span class="en">Responsible Persons</span></div>
+      </div>
+
+      <div style="font-size: 13px; font-weight: 600; color: var(--ptt-navy); margin-bottom: 10px;">
+        ผู้รับผิดชอบโครงการทีมผู้รับเหมา <span style="font-weight: 400; color: var(--ink-soft);">(Vendor Project Manager)</span>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label>ชื่อ-นามสกุล<span class="req">*</span></label>
+          <input type="text" id="vendorName" placeholder="สมชาย ใจดี">
+        </div>
+        <div class="field">
+          <label>เบอร์มือถือ<span class="req">*</span></label>
+          <input type="tel" id="vendorPhone" placeholder="081-234-5678">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Email ผู้ติดต่อ<span class="req">*</span><span class="en">สำหรับยืนยันวันอบรม</span></label>
+        <input type="email" id="vendorEmail" placeholder="contact@company.com">
+        <div class="hint">ระบบจะส่ง Email ยืนยันมาที่นี่</div>
+      </div>
+
+      <div style="font-size: 13px; font-weight: 600; color: var(--ptt-navy); margin: 16px 0 10px;">
+        ผู้รับผิดชอบโครงการ ปตท. <span style="font-weight: 400; color: var(--ink-soft);">(PTT Project Engineer)</span>
+      </div>
+
+      <div class="field">
+        <label>ชื่อ-นามสกุล<span class="req">*</span></label>
+        <select id="pttName">
+          <option value="">-- เลือกชื่อจาก list --</option>
+        </select>
+        <div class="hint">รายชื่อจะแสดงตามเขตปฏิบัติการที่เลือก</div>
+      </div>
+    </div>
+
+    <!-- Section 3: Trainee List -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">3</div>
+        <div class="card-title">รายชื่อผู้เข้าอบรม<span class="en">Trainees</span></div>
+      </div>
+
+      <div style="font-size: 12px; color: var(--ink-soft); margin-bottom: 12px;">
+        เพิ่มได้หลายคน — กดปุ่ม "+ เพิ่มรายชื่อ" ด้านล่าง
+      </div>
+
+      <div class="trainee-list" id="traineeList">
+        <!-- จะถูก inject ด้วย JavaScript -->
+      </div>
+
+      <button type="button" class="add-btn" onclick="addTrainee()">+ เพิ่มรายชื่อ</button>
+    </div>
+
+    <!-- Submit -->
+    <div class="actions">
+      <div class="summary" id="summary">
+        <strong>📋 สรุป:</strong> ระบบจะส่ง Email ยืนยันการได้รับคำขอไปที่ผู้ติดต่อ และทีมงานจะนัดวันอบรมภายใน 1-2 วันทำการ
+      </div>
+      <button type="button" class="btn-submit" onclick="submitForm()">ส่งคำขอเข้าอบรม →</button>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    © PTT Public Company Limited<br>
+    <strong>ฝ่ายปฏิบัติการระบบท่อส่งก๊าซธรรมชาติ ภาค 2 (ปกต.2)</strong>
+  </div>
+
+<script>
+  // ========================================================
+  // ฐานข้อมูล ปตท. Engineers ตามเขต
+  // หมายเหตุ: PO7 ใช้ข้อมูลจริง · PO5/6/8 รอข้อมูล
+  // ========================================================
+  const PTT_ENGINEERS = {
+    PO5: [
+      // ผู้จัดการ
+      { name: 'สาณิฐ อัตถศาสตร์',      unit: 'ส่วนปฏิบัติการระบบท่อเขต 5 (ปท.5 ปกต.2)',          email: 'sanit.a@pttplc.com' },
+      { name: 'นเรศ แป้นจันทร์',       unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.5-1)',          email: 'naret.p@pttplc.com' },
+      { name: 'นภาวรรณ ขันทีท้าว',    unit: 'แผนกบริหารศูนย์ปฏิบัติการเขต 5 (ผ.ปท.5-3)',         email: 'napawan.k@pttplc.com' },
+      // หัวหน้าหน่วย / อาวุโส
+      { name: 'เกรียงไกร ยาโน',       unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.5-2)',            email: 'kriangkrai.y@pttplc.com' },
+      { name: 'สุคนธา จันทร์สวัสดิ์',     unit: 'ส่วนปฏิบัติการระบบท่อเขต 5 (ปท.5 ปกต.2)',          email: 'sukontha.j@pttplc.com' },
+      // วิศวกรอาวุโส
+      { name: 'ไชยกรณ์ จุนรัชฎ์',       unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.5-2)',            email: 'chaiyakorn.c@pttplc.com' },
+      { name: 'ศาสตรา เจริญพจน์',     unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.5-2)',            email: 'sarttra.c@pttplc.com' },
+      { name: 'ภูเบศ เหล่าอุดมกุล',      unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.5-1)',          email: 'phubase.l@pttplc.com' },
+      { name: 'สุพศิน สนคง',            unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.5-2)',            email: 'supasin.so@pttplc.com' },
+      // วิศวกร
+      { name: 'ธาม สุทธิ',              unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.5-2)',            email: 'tharm.s@pttplc.com' },
+      // หัวหน้าช่าง / หัวหน้าพนักงาน
+      { name: 'อณิรุจน์ ใจซื่อ',          unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.5-2)',            email: 'anirut.c@pttplc.com' },
+      { name: 'บูรณ์พิภพ โสดยวง',     unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.5-1)',          email: 'boonphiphop.s@pttplc.com' },
+      { name: 'จตุรวิทย์ คำเงิน',         unit: 'แผนกบริหารศูนย์ปฏิบัติการเขต 5 (ผ.ปท.5-3)',         email: 'jaturawit.k@pttplc.com' },
+      // พนักงานปฏิบัติการส่งก๊าซ
+      { name: 'ดำรงค์พล ยาวิชัย',      unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.5-2)',            email: 'damrongphon.y@pttplc.com' },
+      { name: 'สมยศ แผนคง',           unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.5-2)',            email: 'somyod.p@pttplc.com' },
+      { name: 'ลัญฉกร ตุ๊ไซ',            unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.5-2)',            email: 'runchakron.t@pttplc.com' },
+      // ช่างเทคนิค
+      { name: 'สรสิทธิ์ จันทมัน',         unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.5-1)',          email: 'sorasit.j@pttplc.com' },
+      { name: 'พรชัย แสงรัศมีมรกต',    unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.5-2)',            email: 'pornchai.s@pttplc.com' },
+      { name: 'นิทัศน์ ศรนารายณ์',     unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.5-2)',            email: 'nitat.s@pttplc.com' },
+      { name: 'สาคร แย้มอุ่ม',           unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.5-1)',          email: 'sakorn.y@pttplc.com' },
+      { name: 'บัณฑิต จันทรสนธิ',     unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.5-2)',            email: 'bundid.j@pttplc.com' },
+      { name: 'ศิริชัย บัวจันทร์',         unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.5-2)',            email: 'sirichai.b@pttplc.com' },
+      { name: 'แสงชัย ศรีพูนทรัพย์',    unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.5-2)',            email: 'saengchai.s@pttplc.com' },
+      { name: 'พิทักษ์ ธนาวรวดี',        unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.5-1)',          email: 'pitak.t@pttplc.com' },
+      { name: 'จารุวัฒน์ น้ำเพชรพงศา',  unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.5-1)',          email: 'jaruwat.n@pttplc.com' },
+      { name: 'ชุติพงศ์ แซ่หลาย',         unit: 'แผนกบริหารศูนย์ปฏิบัติการเขต 5 (ผ.ปท.5-3)',         email: 'chutipong.s@pttplc.com' }
+    ],
+    PO6: [
+      // ผู้จัดการ
+      { name: 'วีรพล ชาญเชาว์',           unit: 'ส่วนปฏิบัติการระบบท่อเขต 6 (ปท.6 ปกต.2)',          email: 'veerapon.ch@pttplc.com' },
+      { name: 'ชัชวาล ขนอม',             unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.6-1)',          email: 'chatchawan.k@pttplc.com' },
+      { name: 'วรรณทวี แก้วมณี',        unit: 'แผนกบริหารศูนย์ปฏิบัติการเขต 6 (ผ.ปท.6-3)',         email: 'wantawee.k@pttplc.com' },
+      // หัวหน้าหน่วย
+      { name: 'ศุภวัฒ เจียมลักษณไพศาล', unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.6-2)',            email: 'suppawat.j@pttplc.com' },
+      // วิศวกรอาวุโส
+      { name: 'ชนพ สมบูรณ์ทรัพย์',     unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.6-1)',          email: 'chanop.s@pttplc.com' },
+      { name: 'สรรพยา สนั่นมงคลชัย',   unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.6-2)',            email: 'sappaya.s@pttplc.com' },
+      { name: 'วีรวุฒิ ธีรประสาธน์',      unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.6-2)',            email: 'veravut.d@pttplc.com' },
+      { name: 'ภูริภัทร ชาดิษฐ์',          unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.6-2)',            email: 'puripat.c@pttplc.com' },
+      // วิศวกร
+      { name: 'ชัชชัย นาเจริญกุล',        unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.6-1)',          email: 'chatchai.n@pttplc.com' },
+      // หัวหน้าช่าง
+      { name: 'ภานุวัฒน์ งิ้วสุภา',         unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.6-2)',            email: 'panuwat.n@pttplc.com' },
+      { name: 'ดำเกิง อันทวาปี',          unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.6-1)',          email: 'damkoeng.a@pttplc.com' },
+      // พนักงานปฏิบัติการสถานีย่อย
+      { name: 'สุธิพันธ์ ชาญสมร',         unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.6-2)',            email: 'sutipan.c@pttplc.com' },
+      { name: 'ฉัตรณรงค์ กล้าหาญ',     unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.6-2)',            email: 'chatnarong.k@pttplc.com' },
+      { name: 'วีรศักดิ์ สุขนุ้ย',           unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.6-2)',            email: 'verasak.s@pttplc.com' },
+      // ช่างเทคนิค
+      { name: 'กัมพล เตชะทัต',           unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.6-2)',            email: 'kampol.t@pttplc.com' },
+      { name: 'พงศ์ปณต ศรีชมชื่น',     unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.6-1)',          email: 'phongpanod.s@pttplc.com' },
+      { name: 'พนมรัตน์ เพชรชัย',       unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.6-2)',            email: 'panomrat.p@pttplc.com' },
+      { name: 'กัมปนาท ป้องกงลาด',   unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.6-2)',            email: 'gumpanart.p@pttplc.com' },
+      { name: 'ธารา ภู่ระหงษ์',            unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.6-2)',            email: 'tara.p@pttplc.com' },
+      { name: 'ธีรพงศ์ เลิศวุฒิชัย',        unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.6-1)',          email: 'teerapong.le@pttplc.com' },
+      { name: 'กฤษตนัย ใจบุญ',         unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.6-2)',            email: 'kittanai.j@pttplc.com' },
+      { name: 'ธีรดนย์ เรืองฤทธิ์',         unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.6-2)',            email: 'teeradon.r@pttplc.com' },
+      { name: 'จิรวัฒน์ พาโพธิ์',            unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.6-2)',            email: 'jirawat.ph@pttplc.com' },
+      { name: 'วีรยุทธ ทองย้อย',         unit: 'แผนกบริหารศูนย์ปฏิบัติการเขต 6 (ผ.ปท.6-3)',         email: 'veerayut.t@pttplc.com' }
+    ],
+    PO7: [
+      { name: 'ปราโมทย์ รัตนพันธ์',  unit: 'ส่วนปฏิบัติการระบบท่อเขต 7 (ปท.7)',                  email: 'pramote.r@pttplc.com' },
+      { name: 'สมบัติ อาภาพงศ์ศักดิ์', unit: 'แผนกบริหารศูนย์ปฏิบัติการเขต 7 (ผ.ปท.7-2)',           email: 'sombat.ap@pttplc.com' },
+      { name: 'อิสระ คงด้วง',         unit: 'แผนกปฏิบัติการและบำรุงรักษาฯ (ผ.ปท.7-1)',          email: 'itsara.k@pttplc.com' },
+      { name: 'ธวัชชัย ศิริสกุล',      unit: 'แผนกบริหารศูนย์ปฏิบัติการเขต 7 (ผ.ปท.7-2)',           email: 'thawatchai.si@pttplc.com' },
+      { name: 'ชญาศักดิ์ รัตนโชติ',    unit: 'แผนกปฏิบัติการและบำรุงรักษาฯ (ผ.ปท.7-1)',          email: 'chayasak.r@pttplc.com' },
+      { name: 'จิรายุ สุลัยหมัด',       unit: 'แผนกปฏิบัติการและบำรุงรักษาฯ (ผ.ปท.7-1)',          email: 'jirayu.s@pttplc.com' },
+      { name: 'เจษฎา สุวรรณโชติ',    unit: 'แผนกปฏิบัติการและบำรุงรักษาฯ (ผ.ปท.7-1)',          email: 'jeassada.s@pttplc.com' },
+      { name: 'เจริญยศ มณีราย',       unit: 'แผนกปฏิบัติการและบำรุงรักษาฯ (ผ.ปท.7-1)',          email: 'charoenyot.m@pttplc.com' },
+      { name: 'พิริรัฐ สวัสดี',          unit: 'แผนกปฏิบัติการและบำรุงรักษาฯ (ผ.ปท.7-1)',          email: 'pirirath.s@pttplc.com' }
+    ],
+    PO8: [
+      // ผู้จัดการ
+      { name: 'เอกวิทย์ จิตรดา',           unit: 'ส่วนปฏิบัติการระบบท่อเขต 8 (ปท.8 ปกต.2)',          email: 'ekkawit.j@pttplc.com' },
+      { name: 'กิตติศักดิ์ ใจเพียร',          unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.8-1)',          email: 'kittisak.j@pttplc.com' },
+      { name: 'สุทธิพันธุ์ ปัทมกุลชัย',       unit: 'แผนกบริหารศูนย์ปฏิบัติการเขต 8 (ผ.ปท.8-3)',         email: 'sutthipan.p@pttplc.com' },
+      // หัวหน้าหน่วย / อาวุโส
+      { name: 'ภูพาน อัคราช',             unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'puparn.a@pttplc.com' },
+      { name: 'อัจฉราวรรณ สารีพันธ์',     unit: 'ส่วนปฏิบัติการระบบท่อเขต 8 (ปท.8 ปกต.2)',          email: 'ascharawan.s@pttplc.com' },
+      // วิศวกรอาวุโส
+      { name: 'เชาวลิต บูรณจตุพร',       unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'chaowalit.b@pttplc.com' },
+      { name: 'ศักดา ขันฟ้าเลื่อน',         unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'sakda.k@pttplc.com' },
+      { name: 'อภิวัฒน์ อ่อนสีชัย',          unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'apiwat.o@pttplc.com' },
+      { name: 'จักรพันธ์ จริยาจิรวัฒนา',     unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.8-1)',          email: 'jakkapan.j@pttplc.com' },
+      // วิศวกร
+      { name: 'สุริยา อัมโร',               unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'suriya.a@pttplc.com' },
+      // หัวหน้าช่าง / หัวหน้าพนักงาน
+      { name: 'พายัพ มั่งทัศน์',             unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'payap.m@pttplc.com' },
+      { name: 'สมยศ แก้วธัญกิจ',         unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'somyot.ka@pttplc.com' },
+      { name: 'สันติ วงศ์ชมภู',             unit: 'แผนกบริหารศูนย์ปฏิบัติการเขต 8 (ผ.ปท.8-3)',         email: 'santi.w@pttplc.com' },
+      // พนักงานปฏิบัติการส่งก๊าซ
+      { name: 'จตุพร เจริญศิริ',             unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'jatuporn.c@pttplc.com' },
+      { name: 'สองเมือง คชสิทธิ์',         unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'songmoung.k@pttplc.com' },
+      { name: 'ปริญญา สันติสกุล',        unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'parinya.s@pttplc.com' },
+      { name: 'อาณันย์วิชญ์ ครุฑฑานนท์', unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'ananwitch.k@pttplc.com' },
+      // ช่างเทคนิค
+      { name: 'สมพล นาคสุทธิ',          unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'sompol.n@pttplc.com' },
+      { name: 'พรหมพิริยะ ธรรมวิชยุตม์', unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.8-1)',          email: 'prompiriya.t@pttplc.com' },
+      { name: 'คมจิตร จำปาแดง',         unit: 'แผนกบำรุงรักษาท่อและอุปกรณ์ (ผ.ปท.8-1)',          email: 'komjit.j@pttplc.com' },
+      { name: 'วิชัย พัฒนพฤกษชาติ',    unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'wichai.pat@pttplc.com' },
+      { name: 'วัชรินทร์ วงศ์ก่อ',          unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'watcharin.w@pttplc.com' },
+      { name: 'วัชระ แก้วชิน',             unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'watchara.ke@pttplc.com' },
+      { name: 'อัษฎา จรรยพงษ์',         unit: 'หน่วยปฏิบัติการและบำรุงรักษาฯ (ปท.8-2)',            email: 'asada.j@pttplc.com' }
+    ]
+  };
+
+  // Populate dropdown ตามเขตที่เลือก
+  function populatePttDropdown() {
+    const division = document.getElementById('division').value;
+    const select = document.getElementById('pttName');
+    const list = PTT_ENGINEERS[division] || [];
+
+    // Reset dropdown
+    select.innerHTML = '<option value="">-- เลือกชื่อจาก list --</option>';
+    list.forEach((eng, idx) => {
+      const opt = document.createElement('option');
+      opt.value = idx;
+      opt.textContent = eng.name;
+      select.appendChild(opt);
+    });
+  }
+
+  // Init
+  document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('division').addEventListener('change', populatePttDropdown);
+    populatePttDropdown(); // เริ่มต้น
+  });
+
+  let traineeIdx = 0;
+
+  function addTrainee() {
+    traineeIdx++;
+    const list = document.getElementById('traineeList');
+    const row = document.createElement('div');
+    row.className = 'trainee-row';
+    row.dataset.idx = traineeIdx;
+    row.innerHTML = `
+      <div class="row-num">คนที่ ${list.children.length + 1}</div>
+      <button type="button" class="delete-btn" onclick="removeTrainee(this)" title="ลบ">×</button>
+      <div class="trainee-fields">
+        <div class="field">
+          <label>คำนำหน้า</label>
+          <select class="t-prefix">
+            <option value="นาย">นาย</option>
+            <option value="นาง">นาง</option>
+            <option value="นางสาว">นางสาว</option>
+            <option value="Mr.">Mr.</option>
+            <option value="Mrs.">Mrs.</option>
+            <option value="Ms.">Ms.</option>
+          </select>
+        </div>
+        <div class="field name-col" style="grid-column: span 2;">
+          <label>ชื่อ-นามสกุล <span class="req">*</span></label>
+          <input type="text" class="t-name" placeholder="ชื่อ นามสกุล">
+        </div>
+      </div>
+      <div class="trainee-fields-2">
+        <div class="field">
+          <label>เลขบัตรประชาชน / Passport <span class="req">*</span></label>
+          <input type="text" class="t-id" placeholder="เลขบัตร 13 หลัก หรือ Passport" maxlength="20">
+        </div>
+        <div class="field">
+          <label>ตำแหน่ง</label>
+          <input type="text" class="t-position" placeholder="เช่น ช่างเชื่อม">
+        </div>
+      </div>
+    `;
+    list.appendChild(row);
+    renumberRows();
+  }
+
+  function removeTrainee(btn) {
+    if (document.getElementById('traineeList').children.length <= 1) {
+      alert('ต้องมีอย่างน้อย 1 คน');
+      return;
+    }
+    btn.closest('.trainee-row').remove();
+    renumberRows();
+  }
+
+  function renumberRows() {
+    const rows = document.querySelectorAll('.trainee-row');
+    rows.forEach((row, i) => {
+      row.querySelector('.row-num').textContent = `คนที่ ${i + 1}`;
+    });
+    updateSummary();
+  }
+
+  function updateSummary() {
+    const count = document.getElementById('traineeList').children.length;
+    const summary = document.getElementById('summary');
+    summary.innerHTML = `<strong>📋 สรุป:</strong> รายชื่อผู้เข้าอบรม <strong>${count} คน</strong> — ระบบจะส่ง Email ยืนยันไปที่ผู้ติดต่อ`;
+  }
+
+  function submitForm() {
+    // Validation
+    const required = ['project', 'workDetail', 'workStart', 'workEnd', 'division', 'workingArea',
+                      'vendorName', 'vendorPhone', 'vendorEmail', 'pttName'];
+    for (const id of required) {
+      if (!document.getElementById(id).value.trim()) {
+        alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+        document.getElementById(id).focus();
+        return;
+      }
+    }
+
+    // Validate วันที่ต้องการอบรม
+    if (!calSelectedDate) {
+      alert('กรุณาเลือกวันที่ต้องการอบรมจากแคลเลนเดอร์');
+      document.getElementById('calGrid').scrollIntoView({behavior: 'smooth', block: 'center'});
+      return;
+    }
+
+    const trainees = [];
+    let traineeOk = true;
+    document.querySelectorAll('.trainee-row').forEach(row => {
+      const name = row.querySelector('.t-name').value.trim();
+      const id = row.querySelector('.t-id').value.trim();
+      // ID valid ถ้า: เลขล้วน 13 หลัก (Thai ID) หรือ alphanumeric 6+ ตัว (Passport)
+      const isThaiId = /^\d{13}$/.test(id);
+      const isPassport = /^[A-Za-z0-9]{6,}$/.test(id);
+      if (!name || !id || (!isThaiId && !isPassport)) {
+        traineeOk = false;
+      }
+      trainees.push({
+        prefix: row.querySelector('.t-prefix').value,
+        name: name,
+        nationalId: id,
+        idType: isThaiId ? 'ThaiID' : 'Passport',
+        position: row.querySelector('.t-position').value.trim()
+      });
+    });
+    if (!traineeOk) {
+      alert('กรุณากรอกข้อมูลให้ครบ\n• ชื่อ-นามสกุล\n• เลขบัตรประชาชน 13 หลัก หรือ Passport (6+ ตัวอักษร)');
+      return;
+    }
+
+    // ดึงข้อมูล ปตท. จาก lookup table (ผู้ใช้เห็นแค่ชื่อ — ระบบรู้ที่เหลือ)
+    const division = document.getElementById('division').value;
+    const pttIdx = document.getElementById('pttName').value;
+    const pttEng = (PTT_ENGINEERS[division] || [])[pttIdx] || {};
+
+    const payload = {
+      project: document.getElementById('project').value,
+      workDetail: document.getElementById('workDetail').value,
+      workStart: document.getElementById('workStart').value,
+      workEnd: document.getElementById('workEnd').value,
+      preferredTrainingDate: calSelectedDate,  // YYYY-MM-DD
+      preferredTrainingTime: '09:00',           // ล็อค 09:00
+      division: division,
+      workingArea: document.getElementById('workingArea').value,
+      vendor: {
+        name: document.getElementById('vendorName').value,
+        phone: document.getElementById('vendorPhone').value,
+        email: document.getElementById('vendorEmail').value
+      },
+      pttEngineer: {
+        name: pttEng.name || '',
+        unit: pttEng.unit || '',
+        email: pttEng.email || ''
+      },
+      trainees: trainees,
+      submittedAt: new Date().toISOString()
+    };
+
+    console.log('Payload:', payload);
+    alert('✅ ส่งคำขอเรียบร้อย!\n\n[Demo: นี่คือ mockup]\nระบบจริงจะส่ง Email ไปที่:\n• ' + payload.vendor.email + '\n• CC: ' + payload.pttEngineer.email);
+  }
+
+  // ==================== CUSTOM CALENDAR ====================
+  const HOLIDAYS = {
+    '2026-01-01': 'วันปีใหม่',
+    '2026-02-03': 'วันมาฆบูชา',
+    '2026-04-06': 'วันจักรี',
+    '2026-04-13': 'วันสงกรานต์',
+    '2026-04-14': 'วันสงกรานต์',
+    '2026-04-15': 'วันสงกรานต์',
+    '2026-05-01': 'วันแรงงาน',
+    '2026-05-05': 'วันฉัตรมงคล',
+    '2026-05-11': 'วันวิสาขบูชา',
+    '2026-06-03': 'วันสมเด็จพระราชินี',
+    '2026-07-09': 'วันอาสาฬหบูชา',
+    '2026-07-10': 'วันเข้าพรรษา',
+    '2026-07-28': 'วันรัชกาลที่ 10',
+    '2026-08-12': 'วันแม่',
+    '2026-10-13': 'วันรัชกาลที่ 9',
+    '2026-10-23': 'วันปิยมหาราช',
+    '2026-12-05': 'วันพ่อ',
+    '2026-12-10': 'วันรัฐธรรมนูญ',
+    '2026-12-31': 'สิ้นปี',
+    '2027-01-01': 'วันปีใหม่'
+  };
+  const THAI_MONTHS_LONG = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+                            'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+  const THAI_MONTHS_SHORT = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+                             'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+  const THAI_DAYS = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+
+  const now = new Date();
+  let calCurrentMonth = now.getMonth();
+  let calCurrentYear = now.getFullYear();
+  let calSelectedDate = null; // ISO string "YYYY-MM-DD"
+  const calToday = new Date();
+  calToday.setHours(0, 0, 0, 0);
+
+  function calIsoDate(d) {
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function renderCalendar() {
+    document.getElementById('calMonthLabel').textContent =
+      `${THAI_MONTHS_LONG[calCurrentMonth]} ${calCurrentYear + 543}`;
+    const grid = document.getElementById('calGrid');
+    grid.innerHTML = '';
+    const dayNames = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+    dayNames.forEach((dn, i) => {
+      const head = document.createElement('div');
+      head.className = 'day-head' + ((i === 0 || i === 6) ? ' weekend' : '');
+      head.textContent = dn;
+      grid.appendChild(head);
+    });
+    const firstDay = new Date(calCurrentYear, calCurrentMonth, 1);
+    const firstWeekday = firstDay.getDay();
+    const daysInMonth = new Date(calCurrentYear, calCurrentMonth + 1, 0).getDate();
+    const daysInPrevMonth = new Date(calCurrentYear, calCurrentMonth, 0).getDate();
+
+    // Padding before
+    for (let i = firstWeekday - 1; i >= 0; i--) {
+      const cell = document.createElement('div');
+      cell.className = 'day muted disabled';
+      cell.textContent = daysInPrevMonth - i;
+      grid.appendChild(cell);
+    }
+    // Days of month
+    for (let day = 1; day <= daysInMonth; day++) {
+      const date = new Date(calCurrentYear, calCurrentMonth, day);
+      date.setHours(0, 0, 0, 0);
+      const iso = calIsoDate(date);
+      const weekday = date.getDay();
+      const isWeekend = (weekday === 0 || weekday === 6);
+      const holidayName = HOLIDAYS[iso];
+      const isPast = date < calToday;
+      const isToday = date.getTime() === calToday.getTime();
+      const isSelected = (calSelectedDate === iso);
+      const disabled = isPast || isWeekend || !!holidayName;
+
+      const cell = document.createElement('div');
+      cell.className = 'day';
+      if (isToday) cell.classList.add('today');
+      if (isWeekend) cell.classList.add('weekend');
+      if (holidayName) {
+        cell.classList.add('holiday');
+        cell.title = holidayName;
+      }
+      if (disabled) cell.classList.add('disabled');
+      if (isSelected) cell.classList.add('selected');
+      cell.textContent = day;
+
+      if (!disabled) {
+        cell.addEventListener('click', () => {
+          calSelectedDate = iso;
+          renderCalendar();
+          showSelectedDate(date);
+        });
+      }
+      grid.appendChild(cell);
+    }
+    // Padding after — fill to complete the last week
+    const totalCellsBefore = firstWeekday + daysInMonth;
+    const remaining = (7 - (totalCellsBefore % 7)) % 7;
+    for (let i = 1; i <= remaining; i++) {
+      const cell = document.createElement('div');
+      cell.className = 'day muted disabled';
+      cell.textContent = i;
+      grid.appendChild(cell);
+    }
+  }
+
+  function showSelectedDate(date) {
+    const dayName = THAI_DAYS[date.getDay()];
+    const monthName = THAI_MONTHS_SHORT[date.getMonth()];
+    document.getElementById('calSelectedValue').textContent =
+      `วัน${dayName} ${date.getDate()} ${monthName} ${date.getFullYear() + 543} — 09:00 น.`;
+    document.getElementById('calPlaceholder').style.display = 'none';
+    document.getElementById('calSelectedDisplay').classList.add('visible');
+  }
+
+  document.getElementById('calPrev').addEventListener('click', () => {
+    if (calCurrentMonth === 0) {
+      calCurrentMonth = 11;
+      calCurrentYear--;
+    } else {
+      calCurrentMonth--;
+    }
+    renderCalendar();
+  });
+  document.getElementById('calNext').addEventListener('click', () => {
+    if (calCurrentMonth === 11) {
+      calCurrentMonth = 0;
+      calCurrentYear++;
+    } else {
+      calCurrentMonth++;
+    }
+    renderCalendar();
+  });
+
+  renderCalendar();
+
+  // Initial: add 1 trainee row
+  addTrainee();
+</script>
+</body>
+</html>

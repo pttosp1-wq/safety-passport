@@ -263,6 +263,10 @@
         <input type="text" id="project" placeholder="เช่น งานเชื่อมท่อ Pipeline Section A">
       </div>
       <div class="field">
+        <label>รายละเอียดงาน<span class="req">*</span></label>
+        <textarea id="workDetail" placeholder="อธิบายงานที่จะทำโดยย่อ"></textarea>
+      </div>
+      <div class="field">
         <label>สถานที่ปฏิบัติงาน<span class="req">*</span></label>
         <input type="text" id="workingArea" placeholder="เช่น CHANAMR Station">
       </div>
@@ -307,14 +311,14 @@
     </div>
 
     <div class="section">
-      <div class="section-title"><span class="section-num">4</span>ข้อมูลผู้รับเหมา</div>
+      <div class="section-title"><span class="section-num">4</span>ข้อมูลผู้ติดต่อ</div>
       <div class="field">
         <label>บริษัท<span class="req">*</span></label>
-        <input type="text" id="company" placeholder="ชื่อบริษัท">
+        <input type="text" id="company" placeholder="เช่น บริษัท ABC จำกัด">
       </div>
       <div class="field">
-        <label>ผู้ติดต่อ — ชื่อ-นามสกุล<span class="req">*</span></label>
-        <input type="text" id="contactName" placeholder="สมชาย ใจดี">
+        <label>ชื่อ-นามสกุลผู้ติดต่อ<span class="req">*</span></label>
+        <input type="text" id="contactName" placeholder="เช่น สมชาย ใจดี">
       </div>
       <div class="field-row">
         <div class="field">
@@ -600,6 +604,7 @@ addTrainee(); // เริ่มต้น 1 คน
 async function submitForm() {
   // Validate
   const project = document.getElementById('project').value.trim();
+  const workDetail = document.getElementById('workDetail').value.trim();
   const workingArea = document.getElementById('workingArea').value.trim();
   const workStart = document.getElementById('workStart').value;
   const workEnd = document.getElementById('workEnd').value;
@@ -608,7 +613,7 @@ async function submitForm() {
   const contactPhone = document.getElementById('contactPhone').value.trim();
   const contactEmail = document.getElementById('contactEmail').value.trim();
   
-  if (!project || !workingArea || !workStart || !workEnd || !company || !contactName || !contactPhone || !contactEmail) {
+  if (!project || !workDetail || !workingArea || !workStart || !workEnd || !company || !contactName || !contactPhone || !contactEmail) {
     alert('กรุณากรอกข้อมูลให้ครบทุกช่องที่มีเครื่องหมาย *');
     return;
   }
@@ -642,7 +647,7 @@ async function submitForm() {
     
     trainees.push({
       prefix: row.querySelector('.t-prefix').value,
-      name: fullName,                                   // ← เปลี่ยนจาก fullName เป็น name (ตาม Flow 3 schema)
+      name: fullName,
       nationalId: id,
       idType: isThaiId ? 'ThaiID' : 'Passport',
       position: position
@@ -656,22 +661,32 @@ async function submitForm() {
   const pttIdx = parseInt(document.getElementById('pttName').value);
   const pttEng = (PTT_ENGINEERS[DIVISION] || [])[pttIdx] || {};
   
+  // Payload structure ตรงกับ Flow 3 schema (nested vendor + pttEngineer)
   const payload = {
-    apiKey: API_KEY,
-    company: company,
-    contactName: contactName,
-    contactPhone: contactPhone,
-    contactEmail: contactEmail,
-    division: DIVISION,
     project: project,
-    workingArea: workingArea,
+    workDetail: workDetail,
     workStart: workStart,
     workEnd: workEnd,
-    pttEngName: pttEng.name || '',
-    pttEngEmail: pttEng.email || '',
     preferredTrainingDate: calSelected,
     preferredTrainingTime: '09:00',
-    trainees: trainees
+    division: DIVISION,
+    workingArea: workingArea,
+    vendor: {
+      // Flow 3 Excel mapping ใช้ vendor.name ทั้ง Company column และ ContactName column
+      // → combine เป็น "บริษัท - ชื่อคน" เพื่อเก็บข้อมูลครบ
+      name: `${company} - ${contactName}`,
+      company: company,     // extra field — เผื่อ Flow 3 อัพเดทในอนาคต ก็มีค่าครบ
+      contactName: contactName,
+      phone: contactPhone,
+      email: contactEmail
+    },
+    pttEngineer: {
+      name: pttEng.name || '',
+      unit: pttEng.unit || '',
+      email: pttEng.email || ''
+    },
+    trainees: trainees,
+    submittedAt: new Date().toISOString()
   };
   
   showModal('loading', 'กำลังส่งคำขอ...', 'กรุณารอสักครู่ ระบบกำลังลงทะเบียนและส่งอีเมล');

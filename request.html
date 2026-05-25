@@ -152,19 +152,42 @@
     background: var(--gray-50); border: 1.5px solid var(--gray-200);
     border-radius: 12px; padding: 14px; position: relative;
   }
+  .trainee-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 12px;
+  }
   .trainee-num {
     display: inline-block; background: var(--navy); color: white;
     font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 11px;
-    padding: 2px 9px; border-radius: 100px; margin-bottom: 10px;
+    padding: 4px 12px; border-radius: 100px; letter-spacing: 0.5px;
   }
   .trainee-del {
-    position: absolute; top: 10px; right: 10px;
-    width: 26px; height: 26px; border: none;
-    background: var(--red); color: white; border-radius: 7px;
-    cursor: pointer; font-size: 14px; line-height: 1;
+    background: transparent; border: none; color: var(--gray-400);
+    cursor: pointer; font-size: 13px; font-weight: 500;
+    padding: 4px 10px; border-radius: 8px;
+    display: inline-flex; align-items: center; gap: 4px;
+    transition: all 0.15s ease;
   }
-  .trainee-del:hover { background: #B91C1C; }
-  .trainee-grid { display: grid; grid-template-columns: 100px 1fr; gap: 8px; margin-bottom: 8px; }
+  .trainee-del:hover { background: #FEE2E2; color: var(--red); }
+  .trainee-row .t-prefix,
+  .trainee-row .t-name,
+  .trainee-row .t-id,
+  .trainee-row .t-position {
+    width: 100%; padding: 14px 16px;
+    border: 1.5px solid var(--gray-200); border-radius: 14px;
+    font-family: inherit; font-size: 15px; color: var(--gray-900);
+    background: white; transition: all 0.15s ease;
+    box-sizing: border-box;
+  }
+  .trainee-row .t-prefix:focus,
+  .trainee-row .t-name:focus,
+  .trainee-row .t-id:focus,
+  .trainee-row .t-position:focus {
+    outline: none; border-color: var(--sky);
+    box-shadow: 0 0 0 3px rgba(30,144,255,0.1);
+  }
+  .trainee-grid { display: grid; grid-template-columns: 110px 1fr; gap: 10px; margin-bottom: 10px; }
+  .trainee-row .t-id { margin-bottom: 10px !important; }
   .add-trainee {
     background: white; border: 2px dashed var(--gray-200);
     color: var(--gray-600); border-radius: 12px;
@@ -241,7 +264,7 @@
       </div>
       <div class="field">
         <label>สถานที่ปฏิบัติงาน<span class="req">*</span></label>
-        <input type="text" id="workingArea" placeholder="เช่น CHANAMR Station, จ.ระยอง">
+        <input type="text" id="workingArea" placeholder="เช่น CHANAMR Station">
       </div>
       <div class="field-row">
         <div class="field">
@@ -548,16 +571,18 @@ function addTrainee() {
   const row = document.createElement('div');
   row.className = 'trainee-row';
   row.innerHTML = `
-    <span class="trainee-num">คนที่ ${traineeCount}</span>
-    ${traineeCount > 1 ? '<button type="button" class="trainee-del" onclick="this.parentElement.remove(); renumberTrainees();">×</button>' : ''}
+    <div class="trainee-header">
+      <span class="trainee-num">คนที่ ${traineeCount}</span>
+      ${traineeCount > 1 ? '<button type="button" class="trainee-del" onclick="this.closest(\'.trainee-row\').remove(); renumberTrainees();">✕ ลบ</button>' : ''}
+    </div>
     <div class="trainee-grid">
       <select class="t-prefix">
         <option>นาย</option><option>นาง</option><option>นางสาว</option>
       </select>
       <input type="text" class="t-name" placeholder="ชื่อ-นามสกุล">
     </div>
-    <input type="text" class="t-id" placeholder="เลขบัตรประชาชน 13 หลัก หรือ Passport" maxlength="20" style="margin-bottom:8px;">
-    <input type="text" class="t-position" placeholder="ตำแหน่ง (ไม่บังคับ)">
+    <input type="text" class="t-id" placeholder="เลขบัตรประชาชน 13 หลัก หรือ Passport" maxlength="20">
+    <input type="text" class="t-position" placeholder="ตำแหน่ง เช่น ช่างเชื่อม, วิศวกร">
   `;
   document.getElementById('trainees').appendChild(row);
 }
@@ -599,22 +624,32 @@ async function submitForm() {
   
   const trainees = [];
   let traineeOk = true;
+  let traineeErr = '';
   document.querySelectorAll('.trainee-row').forEach(row => {
     const fullName = row.querySelector('.t-name').value.trim();
-    const id = row.querySelector('.t-id').value.trim();
+    let id = row.querySelector('.t-id').value.trim();
+    const position = row.querySelector('.t-position').value.trim();
+    
+    // Auto-uppercase Passport (ถ้ามีตัวอักษร)
+    if (/[A-Za-z]/.test(id)) id = id.toUpperCase();
+    
     const isThaiId = /^\d{13}$/.test(id);
     const isPassport = /^[A-Za-z0-9]{6,}$/.test(id);
-    if (!fullName || !id || (!isThaiId && !isPassport)) traineeOk = false;
+    
+    if (!fullName) { traineeOk = false; traineeErr = 'ชื่อ-นามสกุล'; }
+    else if (!id || (!isThaiId && !isPassport)) { traineeOk = false; traineeErr = 'เลขบัตรประชาชน 13 หลัก หรือ Passport (6+ ตัวอักษร)'; }
+    else if (!position) { traineeOk = false; traineeErr = 'ตำแหน่ง'; }
+    
     trainees.push({
       prefix: row.querySelector('.t-prefix').value,
-      fullName: fullName,
+      name: fullName,                                   // ← เปลี่ยนจาก fullName เป็น name (ตาม Flow 3 schema)
       nationalId: id,
       idType: isThaiId ? 'ThaiID' : 'Passport',
-      position: row.querySelector('.t-position').value.trim()
+      position: position
     });
   });
   if (!traineeOk) {
-    alert('กรุณากรอกข้อมูลผู้เข้าอบรมให้ครบ\n• ชื่อ-นามสกุล\n• เลขบัตรประชาชน 13 หลัก หรือ Passport (6+ ตัวอักษร)');
+    alert('กรุณากรอกข้อมูลผู้เข้าอบรมให้ครบ\nช่องที่ต้องกรอก: ' + traineeErr);
     return;
   }
   

@@ -4,803 +4,358 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>เลือกวันอบรม — PTT TSO</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ptt-navy: #003B7A;
-    --ptt-navy-dark: #002347;
-    --ptt-blue: #0066CC;
-    --ptt-gold: #C9A961;
-    --bg: #F5F7FA;
-    --surface: #FFFFFF;
-    --ink: #0B1A2C;
-    --ink-soft: #5C6B7A;
-    --border: #E5E7EB;
-    --danger: #DC2626;
-    --green: #2A7548;
-    --green-light: #D1FAE5;
-    --red-light: #FEE2E2;
-    --gold-light: #FFF8E1;
+    --navy: #003B7A; --navy-dark: #002752; --sky: #1E90FF;
+    --orange: #FF6B00; --green: #16A34A; --red: #DC2626; --amber: #D97706;
+    --gray-50: #F8FAFC; --gray-100: #F1F5F9; --gray-200: #E2E8F0;
+    --gray-400: #94A3B8; --gray-600: #475569; --gray-900: #0F172A;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; }
-  body {
-    font-family: 'IBM Plex Sans Thai', sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
-    padding: 16px;
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    font-family: 'IBM Plex Sans Thai', system-ui, sans-serif;
+    background: var(--gray-50); color: var(--gray-900);
+    min-height: 100vh; line-height: 1.5; -webkit-font-smoothing: antialiased;
   }
-
-  .container {
-    max-width: 480px;
-    margin: 0 auto;
+  .app {
+    max-width: 600px; margin: 0 auto; min-height: 100vh;
+    display: flex; flex-direction: column; background: white;
+    box-shadow: 0 0 60px rgba(0, 59, 122, 0.06);
   }
-
-  .card {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.06);
-  }
-
-  /* Header */
   .header {
-    background: var(--ptt-navy);
-    color: white;
-    padding: 20px 24px;
-    border-bottom: 4px solid var(--ptt-gold);
+    background: linear-gradient(135deg, var(--navy), var(--navy-dark));
+    color: white; padding: 24px 20px; position: relative; overflow: hidden;
   }
-  .header .brand {
-    font-size: 11px;
-    letter-spacing: 2px;
-    color: var(--ptt-gold);
-    margin-bottom: 4px;
-  }
-  .header .title {
-    font-size: 20px;
-    font-weight: 700;
-  }
-  .header .req-id {
-    margin-top: 8px;
-    font-size: 11.5px;
-    opacity: 0.85;
-    font-family: 'JetBrains Mono', monospace;
-  }
-
-  /* Body */
-  .body {
-    padding: 20px 18px;
-  }
-
-  /* Vendor request info */
-  .vendor-req {
-    background: var(--gold-light);
-    border-left: 3px solid var(--ptt-gold);
-    padding: 14px 16px;
-    border-radius: 6px;
-    font-size: 13px;
-    margin-bottom: 16px;
-    line-height: 1.6;
-  }
-  .vendor-req .label {
-    font-size: 11px;
-    color: #6B4F00;
-    margin-bottom: 4px;
-    letter-spacing: 1px;
-    font-weight: 600;
-  }
-  .vendor-req .value {
-    font-weight: 700;
-    font-size: 14.5px;
-    color: var(--ink);
-  }
-  .vendor-req .meta {
-    font-size: 12px;
-    color: #92400E;
-    margin-top: 4px;
-  }
-  .vendor-req .vendor-info {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid #F0E0B0;
-    font-size: 12.5px;
-    line-height: 1.7;
-  }
-  .vendor-req .vendor-info .row {
-    display: flex;
-    gap: 8px;
-  }
-  .vendor-req .vendor-info .k {
-    color: #6B4F00;
-    min-width: 64px;
-    font-size: 11.5px;
-  }
-  .vendor-req .vendor-info .v {
-    color: var(--ink);
-    font-weight: 500;
-    flex: 1;
-  }
-
-  /* Field label */
-  .field-label {
-    font-size: 13.5px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: var(--ink);
-  }
-  .field-label .req {
-    color: var(--danger);
-  }
-
-  /* Calendar */
-  .cal-container {
-    background: white;
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    padding: 14px 12px;
-  }
-  .cal-nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-    padding: 0 4px;
-  }
-  .cal-nav button {
-    background: var(--bg);
-    border: none;
-    width: 36px;
-    height: 36px;
+  .header::before {
+    content: ''; position: absolute; top: -50%; right: -20%;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(255,107,0,0.15), transparent 70%);
     border-radius: 50%;
-    font-size: 18px;
-    color: var(--ptt-navy);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  }
+  .header-brand { font-family: 'Outfit', sans-serif; font-size: 10px; letter-spacing: 2.5px; color: rgba(255,255,255,0.6); margin-bottom: 6px; font-weight: 600; }
+  .header-title { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; position: relative; }
+  .reqid-tag {
+    display: inline-block; margin-top: 6px;
+    background: rgba(255,255,255,0.15); padding: 3px 12px;
+    border-radius: 100px; font-family: 'Outfit', sans-serif;
+    font-size: 11px; letter-spacing: 1px; font-weight: 600;
+    backdrop-filter: blur(10px); position: relative;
+  }
+  .content { flex: 1; padding: 20px; }
+  .section-title {
+    font-size: 13px; font-weight: 700; color: var(--navy);
+    letter-spacing: 0.3px; margin-bottom: 12px;
+  }
+  .cal-wrap {
+    background: var(--gray-50); border: 1.5px solid var(--gray-200);
+    border-radius: 14px; padding: 16px; margin-bottom: 20px;
+  }
+  .cal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .cal-month { font-size: 15px; font-weight: 700; color: var(--gray-900); }
+  .cal-nav {
+    background: white; border: 1px solid var(--gray-200);
+    width: 32px; height: 32px; border-radius: 8px;
+    cursor: pointer; font-size: 16px; color: var(--gray-600);
+    display: inline-flex; align-items: center; justify-content: center;
     transition: all 0.15s ease;
   }
-  .cal-nav button:hover { background: #E0E7FF; }
-  .cal-nav button:active { transform: scale(0.92); }
-  .cal-nav .month { font-weight: 600; font-size: 14.5px; }
-
-  .cal-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 2px;
+  .cal-nav:hover { background: var(--navy); color: white; border-color: var(--navy); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+  .cal-dow {
+    text-align: center; font-size: 10px; font-weight: 700;
+    color: var(--gray-400); padding: 4px 0; letter-spacing: 0.3px;
   }
-  .day-head {
-    text-align: center;
-    font-size: 11px;
-    color: var(--ink-soft);
-    padding: 6px 0;
-    font-weight: 600;
+  .cal-day {
+    aspect-ratio: 1; background: white;
+    border: 1px solid transparent; border-radius: 8px;
+    font-family: 'Outfit', sans-serif; font-size: 14px; font-weight: 600;
+    color: var(--gray-900); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s ease; position: relative;
   }
-  .day-head.weekend { color: var(--danger); }
-
-  .day {
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 13.5px;
-    border-radius: 8px;
-    cursor: pointer;
-    position: relative;
-    color: var(--ink);
-    transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
-    border: 2px solid transparent;
+  .cal-day:hover:not(.disabled) { border-color: var(--sky); background: #F0F9FF; }
+  .cal-day.disabled { color: var(--gray-200); cursor: not-allowed; background: transparent; }
+  .cal-day.weekend { color: var(--red); }
+  .cal-day.holiday { color: var(--orange); }
+  .cal-day.selected {
+    background: linear-gradient(135deg, var(--navy), var(--sky));
+    color: white !important; border-color: var(--navy);
+    box-shadow: 0 4px 10px rgba(0,59,122,0.25);
   }
-  .day:hover:not(.disabled):not(.selected) {
-    background: #E0E7FF;
-    transform: scale(1.06);
+  .cal-day.today { font-weight: 800; }
+  .cal-day.today::after {
+    content: ''; position: absolute; bottom: 4px;
+    width: 3px; height: 3px; border-radius: 50%;
+    background: var(--orange);
   }
-  .day:active:not(.disabled) { transform: scale(0.92); }
-  .day.muted { color: #D1D5DB; }
-  .day.weekend {
-    color: var(--danger);
-    background: #FFF5F5;
-  }
-  .day.holiday {
-    color: var(--danger);
-    background: var(--red-light);
-    font-weight: 600;
-  }
-  .day.disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-  .day.today {
-    border: 2px solid var(--ptt-navy);
-    font-weight: 700;
-  }
-  .day.selected {
-    background: var(--ptt-navy) !important;
-    color: white !important;
-    font-weight: 700;
-    border: 2px solid var(--ptt-navy);
-    transform: scale(1.1);
-    box-shadow: 0 4px 12px rgba(0, 59, 122, 0.3);
-  }
-
+  .cal-day.selected.today::after { background: white; }
   .cal-legend {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    margin-top: 12px;
-    font-size: 11px;
-    color: var(--ink-soft);
-    padding: 0 4px;
+    display: flex; gap: 12px; flex-wrap: wrap;
+    margin-top: 12px; padding-top: 12px;
+    border-top: 1px dashed var(--gray-200);
+    font-size: 11px; color: var(--gray-600);
   }
-  .cal-legend-item { display: flex; align-items: center; gap: 4px; }
-  .cal-legend-dot { width: 10px; height: 10px; border-radius: 3px; }
-
-  /* Selected display */
-  .selected-display {
-    background: var(--gold-light);
-    border-left: 3px solid var(--ptt-gold);
-    padding: 14px 16px;
-    margin-top: 14px;
-    border-radius: 6px;
-    font-size: 14px;
-    opacity: 0;
-    transform: translateY(8px);
-    transition: all 0.3s ease;
+  .cal-legend-item { display: inline-flex; align-items: center; gap: 4px; }
+  .cal-legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .time-section {
+    background: var(--gray-50); border: 1.5px solid var(--gray-200);
+    border-radius: 14px; padding: 16px; margin-bottom: 20px;
+  }
+  .time-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .time-btn {
+    background: white; border: 2px solid var(--gray-200);
+    border-radius: 12px; padding: 14px 12px;
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    color: var(--gray-900); cursor: pointer;
+    transition: all 0.15s ease; text-align: center;
+  }
+  .time-btn:hover { border-color: var(--sky); background: #F0F9FF; }
+  .time-btn.selected {
+    background: linear-gradient(135deg, var(--navy), var(--sky));
+    color: white; border-color: var(--navy);
+    box-shadow: 0 4px 10px rgba(0,59,122,0.2);
+  }
+  .time-label-big {
+    font-family: 'Outfit', sans-serif; font-size: 18px; font-weight: 800;
+    letter-spacing: 0.5px; display: block; margin-bottom: 2px;
+  }
+  .time-label-small { font-size: 11px; opacity: 0.7; }
+  .selected-summary {
+    background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+    border: 1px solid #93C5FD; color: var(--navy);
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 16px;
+    font-size: 14px; line-height: 1.5;
     display: none;
   }
-  .selected-display.visible {
-    opacity: 1;
-    transform: translateY(0);
-    display: block;
-  }
-  .selected-display .label {
-    font-size: 11px;
-    color: #6B4F00;
-    margin-bottom: 4px;
-    letter-spacing: 1px;
-    font-weight: 600;
-  }
-  .selected-display .value { font-weight: 700; font-size: 15px; }
-
-  .placeholder {
-    color: var(--ink-soft);
-    font-style: italic;
-    text-align: center;
-    padding: 12px;
-    background: var(--bg);
-    border: 1px dashed var(--border);
-    border-radius: 6px;
-    margin-top: 12px;
-    font-size: 13px;
-  }
-
-  /* Time buttons */
-  .time-section {
-    margin-top: 18px;
-  }
-  .time-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-  .time-btn {
-    background: white;
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    padding: 16px 12px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
-    font-family: inherit;
-  }
-  .time-btn:hover:not(.selected) {
-    border-color: #94A3B8;
-    background: var(--bg);
-  }
-  .time-btn:active {
-    transform: scale(0.96);
-  }
-  .time-btn.selected {
-    border-color: var(--ptt-navy);
-    background: #E0E7FF;
-    box-shadow: 0 4px 12px rgba(0, 59, 122, 0.15);
-  }
-  .time-btn .emoji {
-    font-size: 26px;
-    display: block;
-    margin-bottom: 4px;
-  }
-  .time-btn .time-text {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--ptt-navy);
-  }
-  .time-btn .time-label {
-    font-size: 11px;
-    color: var(--ink-soft);
-    margin-top: 2px;
-  }
-  .time-btn.selected .time-label {
-    color: var(--ptt-navy);
-    font-weight: 600;
-  }
-
-  /* Buttons */
+  .selected-summary.show { display: block; }
+  .selected-summary strong { display: block; font-size: 16px; margin-bottom: 4px; }
   .btn-primary {
-    display: block;
-    width: 100%;
-    background: var(--ptt-navy);
-    color: white;
-    border: none;
-    padding: 14px;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 700;
-    margin-top: 16px;
-    cursor: pointer;
-    transition: all 0.15s ease;
+    width: 100%; padding: 16px;
+    background: linear-gradient(135deg, var(--navy), var(--sky));
+    color: white; border: none; border-radius: 14px;
+    font-family: inherit; font-size: 16px; font-weight: 600;
+    cursor: pointer; box-shadow: 0 6px 16px rgba(0,59,122,0.25);
+    transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
   }
-  .btn-primary:hover:not(:disabled) { background: var(--ptt-navy-dark); }
-  .btn-primary:disabled {
-    background: #94A3B8;
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
-  .btn-secondary {
-    display: block;
-    width: 100%;
-    background: white;
-    color: var(--ink);
-    border: 1px solid var(--border);
-    padding: 12px;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 13px;
+  .btn-primary:hover:not(:disabled) { box-shadow: 0 8px 20px rgba(0,59,122,0.35); transform: translateY(-1px); }
+  .btn-primary:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; box-shadow: none; }
+  .btn-ghost {
+    width: 100%; padding: 14px;
+    background: transparent; color: var(--gray-600);
+    border: none; border-radius: 12px;
+    font-family: inherit; font-size: 14px; cursor: pointer;
     margin-top: 8px;
-    cursor: pointer;
   }
-  .btn-secondary:hover { background: var(--bg); }
-
-  /* States */
-  .state { display: none; }
-  .state.active { display: block; }
-
-  /* Loading */
-  .loading-icon {
-    width: 56px;
-    height: 56px;
-    margin: 8px auto 16px;
-    border: 4px solid var(--border);
-    border-top-color: var(--ptt-navy);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
+  .footer { padding: 18px 20px; text-align: center; font-size: 11px; color: var(--gray-400); line-height: 1.6; border-top: 1px solid var(--gray-100); }
+  .error-banner {
+    background: linear-gradient(135deg, #FEE2E2, #FECACA);
+    border-left: 4px solid var(--red); color: #7F1D1D;
+    border-radius: 12px; padding: 14px 16px; margin-bottom: 16px;
+    font-size: 14px; display: none;
   }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text {
-    text-align: center;
-    font-size: 14px;
-    color: var(--ink-soft);
-  }
-
-  /* Footer */
-  .brand-footer {
-    background: var(--bg);
-    padding: 14px 24px;
-    text-align: center;
-    font-size: 11px;
-    color: var(--ink-soft);
-    border-top: 1px solid var(--border);
-    line-height: 1.6;
-  }
-
-  /* Error detail */
-  .error-detail {
-    background: var(--red-light);
-    color: var(--danger);
-    padding: 12px 14px;
-    border-radius: 6px;
-    font-size: 11.5px;
-    font-family: 'JetBrains Mono', monospace;
-    word-break: break-all;
-    margin-top: 12px;
-    text-align: left;
-    max-height: 100px;
-    overflow-y: auto;
-  }
+  .error-banner.show { display: block; }
 </style>
 </head>
 <body>
+<div class="app">
+  <div class="header">
+    <div class="header-brand">PTT • TSO SAFETY TRAINING</div>
+    <div class="header-title">เลือกวันอบรมใหม่</div>
+    <div class="reqid-tag" id="reqIdTag">REQ-XXX</div>
+  </div>
 
-<div class="container">
-  <div class="card">
+  <div class="content">
 
-    <div class="header">
-      <div class="brand">PTT TSO SAFETY</div>
-      <div class="title">📅 เลือกวันอบรม</div>
-      <div class="req-id" id="reqIdLabel">REQ-XXX</div>
+    <div class="error-banner" id="errBanner"></div>
+
+    <div class="section-title">📅 เลือกวันที่ต้องการ</div>
+    <div class="cal-wrap">
+      <div class="cal-header">
+        <button type="button" class="cal-nav" id="calPrev">‹</button>
+        <div class="cal-month" id="calMonth">-</div>
+        <button type="button" class="cal-nav" id="calNext">›</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend">
+        <span class="cal-legend-item"><span class="cal-legend-dot" style="background: var(--red);"></span>เสาร์-อาทิตย์</span>
+        <span class="cal-legend-item"><span class="cal-legend-dot" style="background: var(--orange);"></span>วันหยุดราชการ</span>
+      </div>
     </div>
 
-    <div class="body">
-
-      <!-- MAIN STATE: Pick Date -->
-      <div class="state active" id="state-main">
-
-        <div class="vendor-req">
-          <div class="label">📌 VENDOR ขออบรมวันที่</div>
-          <div class="value" id="vendorReqDate">—</div>
-          <div class="vendor-info" id="vendorInfo"></div>
-        </div>
-
-        <div class="field-label">
-          วันที่ต้องการอบรม <span class="req">*</span>
-        </div>
-
-        <div class="cal-container">
-          <div class="cal-nav">
-            <button type="button" id="calPrev">‹</button>
-            <span class="month" id="calMonthLabel">—</span>
-            <button type="button" id="calNext">›</button>
-          </div>
-          <div class="cal-grid" id="calGrid"></div>
-          <div class="cal-legend">
-            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#FEE2E2;"></div><span>วันหยุดราชการ</span></div>
-            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#FFF5F5;"></div><span>เสาร์-อาทิตย์</span></div>
-            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#003B7A;"></div><span>วันเลือก</span></div>
-          </div>
-        </div>
-
-        <div id="placeholder" class="placeholder">
-          👆 แตะวันที่ในแคลเลนเดอร์เพื่อเลือก
-        </div>
-        <div id="selectedDisplay" class="selected-display">
-          <div class="label">เลือกวันใหม่:</div>
-          <div class="value" id="selectedValue"></div>
-        </div>
-
-        <div class="time-section" id="timeSection" style="display:none;">
-          <div class="field-label">
-            เลือกเวลาอบรม <span class="req">*</span>
-          </div>
-          <div class="time-grid">
-            <button type="button" class="time-btn" data-time="09:00" id="timeMorning">
-              <span class="emoji">☀️</span>
-              <div class="time-text">09:00 น.</div>
-              <div class="time-label">เช้า</div>
-            </button>
-            <button type="button" class="time-btn" data-time="13:00" id="timeAfternoon">
-              <span class="emoji">🌤️</span>
-              <div class="time-text">13:00 น.</div>
-              <div class="time-label">บ่าย</div>
-            </button>
-          </div>
-        </div>
-
-        <button class="btn-primary" id="confirmBtn" disabled>✅ ยืนยันวันใหม่</button>
-        <button class="btn-secondary" onclick="window.close()">ปิดหน้านี้</button>
-
+    <div class="section-title">🕐 เลือกเวลา</div>
+    <div class="time-section">
+      <div class="time-options">
+        <button type="button" class="time-btn selected" data-time="09:00" onclick="selectTime('09:00')">
+          <span class="time-label-big">09:00</span>
+          <span class="time-label-small">เช้า</span>
+        </button>
+        <button type="button" class="time-btn" data-time="13:00" onclick="selectTime('13:00')">
+          <span class="time-label-big">13:00</span>
+          <span class="time-label-small">บ่าย</span>
+        </button>
       </div>
-
-      <!-- LOADING STATE -->
-      <div class="state" id="state-loading" style="padding: 32px 0; text-align: center;">
-        <div class="loading-icon"></div>
-        <div class="loading-text">กำลังบันทึก...<br><span style="font-size:12px;">ระบบกำลังยืนยันวันอบรมและส่ง Email หาผู้รับเหมา</span></div>
-      </div>
-
-      <!-- ERROR STATE -->
-      <div class="state" id="state-error" style="text-align: center;">
-        <div style="width:64px;height:64px;background:var(--red-light);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:8px auto 14px;font-size:36px;color:var(--danger);">✕</div>
-        <h2 style="margin-bottom:6px;">เกิดข้อผิดพลาด</h2>
-        <p style="font-size:13px;color:var(--ink-soft);margin-bottom:14px;">ไม่สามารถบันทึกการยืนยันได้</p>
-        <div class="error-detail" id="errorDetail"></div>
-        <button class="btn-primary" onclick="retrySubmit()">🔄 ลองอีกครั้ง</button>
-        <button class="btn-secondary" onclick="backToMain()">กลับไปเลือกใหม่</button>
-      </div>
-
     </div>
 
-    <div class="brand-footer">
-      ระบบอบรมความปลอดภัยผู้รับเหมา PTT TSO<br>
-      สายงานระบบท่อส่งก๊าซธรรมชาติ<br>
-      <strong>ฝ่ายปฏิบัติการระบบท่อส่งก๊าซธรรมชาติ ภาค 2 (ปกต.2)</strong><br>
-      ส่วนปฏิบัติการระบบท่อเขต 7 (ปท.7)
+    <div class="selected-summary" id="summary">
+      <strong>📋 สรุปการเลือก</strong>
+      <span id="summaryText">-</span>
     </div>
 
+    <button class="btn-primary" id="confirmBtn" onclick="confirmDate()" disabled>✅ ยืนยันวันใหม่</button>
+    <button class="btn-ghost" onclick="window.close()">ปิดหน้านี้</button>
+  </div>
+
+  <div class="footer">
+    สายงานระบบท่อส่งก๊าซธรรมชาติ<br>
+    ฝ่ายปฏิบัติการระบบท่อส่งก๊าซธรรมชาติ ภาค 2 (ปกต.2)
   </div>
 </div>
 
 <script>
-  // ========================================================
-  // CONFIG
-  // ========================================================
-  const FLOW_URL = 'https://defaultf2fda5e72ea1450d9fc12af5f86300.95.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/b3e62e8e8cb64f3fa98209f828a25a06/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AylRyg_cTCZvEENOOR4evJhA60cCJu2rDL-9A1L3RXQ';
+const params = new URLSearchParams(window.location.search);
+const requestId = params.get('req') || '';
+document.getElementById('reqIdTag').textContent = requestId || 'REQ-XXX';
 
-  // ========================================================
-  // CALENDAR DATA
-  // ========================================================
-  const HOLIDAYS = {
-    '2026-01-01': 'วันปีใหม่',
-    '2026-02-03': 'วันมาฆบูชา',
-    '2026-04-06': 'วันจักรี',
-    '2026-04-13': 'วันสงกรานต์',
-    '2026-04-14': 'วันสงกรานต์',
-    '2026-04-15': 'วันสงกรานต์',
-    '2026-05-01': 'วันแรงงาน',
-    '2026-05-05': 'วันฉัตรมงคล',
-    '2026-05-11': 'วันวิสาขบูชา',
-    '2026-06-03': 'วันสมเด็จพระราชินี',
-    '2026-07-09': 'วันอาสาฬหบูชา',
-    '2026-07-10': 'วันเข้าพรรษา',
-    '2026-07-28': 'วันรัชกาลที่ 10',
-    '2026-08-12': 'วันแม่',
-    '2026-10-13': 'วันรัชกาลที่ 9',
-    '2026-10-23': 'วันปิยมหาราช',
-    '2026-12-05': 'วันพ่อ',
-    '2026-12-10': 'วันรัฐธรรมนูญ',
-    '2026-12-31': 'สิ้นปี',
-    '2027-01-01': 'วันปีใหม่'
-  };
-  const THAI_MONTHS_LONG = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-                            'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-  const THAI_MONTHS_SHORT = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
-                             'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-  const THAI_DAYS = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
+if (!requestId) {
+  const err = document.getElementById('errBanner');
+  err.textContent = '⚠️ ไม่มี Request ID — โปรดเปิดลิงก์จากอีเมล';
+  err.classList.add('show');
+}
 
-  // ========================================================
-  // STATE
-  // ========================================================
-  const params = new URLSearchParams(window.location.search);
-  const requestId = params.get('req') || '';
-  const vendorDate = params.get('vendorDate') || '';
-  const vendorTime = params.get('vendorTime') || '09:00';
-  const company = params.get('company') || '';
-  const contactName = params.get('contactName') || '';
-  const contactPhone = params.get('contactPhone') || '';
-  const trainees = params.get('trainees') || '';
+// ==================== CALENDAR ====================
+// pick-date allows ALL days (including weekends, holidays) — จป. มีอำนาจเลือกวันใดก็ได้
+const HOLIDAYS = {
+  '2026-01-01': 'วันปีใหม่', '2026-02-03': 'วันมาฆบูชา', '2026-04-06': 'วันจักรี',
+  '2026-04-13': 'วันสงกรานต์', '2026-04-14': 'วันสงกรานต์', '2026-04-15': 'วันสงกรานต์',
+  '2026-05-01': 'วันแรงงาน', '2026-05-05': 'วันฉัตรมงคล', '2026-05-11': 'วันวิสาขบูชา',
+  '2026-06-03': 'วันสมเด็จพระราชินี', '2026-07-09': 'วันอาสาฬหบูชา', '2026-07-10': 'วันเข้าพรรษา',
+  '2026-07-28': 'วันรัชกาลที่ 10', '2026-08-12': 'วันแม่', '2026-10-13': 'วันรัชกาลที่ 9',
+  '2026-10-23': 'วันปิยมหาราช', '2026-12-05': 'วันพ่อ', '2026-12-10': 'วันรัฐธรรมนูญ',
+  '2026-12-31': 'สิ้นปี', '2027-01-01': 'วันปีใหม่'
+};
+const THAI_MONTHS = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
+                     'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+const THAI_MONTHS_SHORT = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+                           'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+const THAI_DAYS = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
 
-  let calCurrentMonth = new Date().getMonth();
-  let calCurrentYear = new Date().getFullYear();
-  let calSelectedDate = null;
-  let calSelectedTime = null;  // '09:00' หรือ '13:00'
-  const calToday = new Date();
-  calToday.setHours(0, 0, 0, 0);
+const today = new Date(); today.setHours(0,0,0,0);
+let calMonth = today.getMonth();
+let calYear = today.getFullYear();
+let calSelectedDate = null;
+let calSelectedTime = '09:00';
 
-  // ถ้ามีวันที่ Vendor ขอ — แสดงเดือนนั้นเป็นค่าเริ่มต้น
-  if (vendorDate) {
-    const d = new Date(vendorDate);
-    calCurrentMonth = d.getMonth();
-    calCurrentYear = d.getFullYear();
-  }
+function isoDate(d) {
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,'0');
+  const dd = String(d.getDate()).padStart(2,'0');
+  return `${y}-${m}-${dd}`;
+}
 
-  // ========================================================
-  // HELPERS
-  // ========================================================
-  function calIsoDate(d) {
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${day}`;
-  }
-
-  function formatThaiDate(isoDate) {
-    if (!isoDate) return '—';
-    try {
-      const d = new Date(isoDate);
-      const dayName = THAI_DAYS[d.getDay()];
-      const monthName = THAI_MONTHS_SHORT[d.getMonth()];
-      return `วัน${dayName} ${d.getDate()} ${monthName} ${d.getFullYear() + 543}`;
-    } catch (e) {
-      return isoDate;
-    }
-  }
-
-  function showState(name) {
-    document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
-    document.getElementById('state-' + name).classList.add('active');
-  }
-
-  // ========================================================
-  // INIT INFO
-  // ========================================================
-  document.getElementById('reqIdLabel').textContent = requestId || 'REQ-XXX';
-  document.getElementById('vendorReqDate').textContent =
-    vendorDate ? `${formatThaiDate(vendorDate)} — ${vendorTime} น.` : 'ไม่ระบุ';
-
-  // แสดงข้อมูล Vendor (บริษัท + ผู้ติดต่อ + เบอร์ + จำนวน)
-  const vendorInfoEl = document.getElementById('vendorInfo');
-  const infoRows = [];
-  if (company) infoRows.push(`<div class="row"><span class="k">บริษัท:</span><span class="v">${escapeHtml(company)}</span></div>`);
-  if (contactName) infoRows.push(`<div class="row"><span class="k">ผู้ติดต่อ:</span><span class="v">${escapeHtml(contactName)}</span></div>`);
-  if (contactPhone) infoRows.push(`<div class="row"><span class="k">เบอร์:</span><span class="v">${escapeHtml(contactPhone)}</span></div>`);
-  if (trainees) infoRows.push(`<div class="row"><span class="k">ผู้เข้าอบรม:</span><span class="v">${escapeHtml(trainees)} คน</span></div>`);
-  vendorInfoEl.innerHTML = infoRows.join('');
-
-  function escapeHtml(s) {
-    return String(s)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-  }
-
-  // ========================================================
-  // CALENDAR
-  // ========================================================
-  function renderCalendar() {
-    document.getElementById('calMonthLabel').textContent =
-      `${THAI_MONTHS_LONG[calCurrentMonth]} ${calCurrentYear + 543}`;
-    const grid = document.getElementById('calGrid');
-    grid.innerHTML = '';
-    const dayNames = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
-    dayNames.forEach((dn, i) => {
-      const head = document.createElement('div');
-      head.className = 'day-head' + ((i === 0 || i === 6) ? ' weekend' : '');
-      head.textContent = dn;
-      grid.appendChild(head);
-    });
-    const firstDay = new Date(calCurrentYear, calCurrentMonth, 1);
-    const firstWeekday = firstDay.getDay();
-    const daysInMonth = new Date(calCurrentYear, calCurrentMonth + 1, 0).getDate();
-    const daysInPrevMonth = new Date(calCurrentYear, calCurrentMonth, 0).getDate();
-
-    for (let i = firstWeekday - 1; i >= 0; i--) {
-      const cell = document.createElement('div');
-      cell.className = 'day muted disabled';
-      cell.textContent = daysInPrevMonth - i;
-      grid.appendChild(cell);
-    }
-    for (let day = 1; day <= daysInMonth; day++) {
-      const date = new Date(calCurrentYear, calCurrentMonth, day);
-      date.setHours(0, 0, 0, 0);
-      const iso = calIsoDate(date);
-      const weekday = date.getDay();
-      const isWeekend = (weekday === 0 || weekday === 6);
-      const holidayName = HOLIDAYS[iso];
-      const isPast = date < calToday;
-      const isToday = date.getTime() === calToday.getTime();
-      const isSelected = (calSelectedDate === iso);
-      const disabled = isPast || isWeekend || !!holidayName;
-
-      const cell = document.createElement('div');
-      cell.className = 'day';
-      if (isToday) cell.classList.add('today');
-      if (isWeekend) cell.classList.add('weekend');
-      if (holidayName) {
-        cell.classList.add('holiday');
-        cell.title = holidayName;
-      }
-      if (disabled) cell.classList.add('disabled');
-      if (isSelected) cell.classList.add('selected');
-      cell.textContent = day;
-
-      if (!disabled) {
-        cell.addEventListener('click', () => {
-          calSelectedDate = iso;
-          renderCalendar();
-          showSelectedDate(date);
-        });
-      }
-      grid.appendChild(cell);
-    }
-    const totalCellsBefore = firstWeekday + daysInMonth;
-    const remaining = (7 - (totalCellsBefore % 7)) % 7;
-    for (let i = 1; i <= remaining; i++) {
-      const cell = document.createElement('div');
-      cell.className = 'day muted disabled';
-      cell.textContent = i;
-      grid.appendChild(cell);
-    }
-  }
-
-  function showSelectedDate(date) {
-    const dayName = THAI_DAYS[date.getDay()];
-    const monthName = THAI_MONTHS_SHORT[date.getMonth()];
-    document.getElementById('selectedValue').textContent =
-      `วัน${dayName} ${date.getDate()} ${monthName} ${date.getFullYear() + 543}`;
-    document.getElementById('placeholder').style.display = 'none';
-    document.getElementById('selectedDisplay').classList.add('visible');
-    // แสดง section เลือกเวลา (ถ้ายังซ่อนอยู่)
-    document.getElementById('timeSection').style.display = 'block';
-    updateConfirmButton();
-  }
-
-  function updateConfirmButton() {
-    const btn = document.getElementById('confirmBtn');
-    if (calSelectedDate && calSelectedTime) {
-      btn.disabled = false;
-    } else {
-      btn.disabled = true;
-    }
-  }
-
-  // Time button selection
-  document.querySelectorAll('.time-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.time-btn').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
-      calSelectedTime = btn.dataset.time;
-      updateConfirmButton();
-    });
+function renderCalendar() {
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  document.getElementById('calMonth').textContent = `${THAI_MONTHS[calMonth]} ${calYear + 543}`;
+  
+  ['อา','จ','อ','พ','พฤ','ศ','ส'].forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'cal-dow';
+    el.textContent = d;
+    grid.appendChild(el);
   });
-
-  document.getElementById('calPrev').addEventListener('click', () => {
-    if (calCurrentMonth === 0) {
-      calCurrentMonth = 11;
-      calCurrentYear--;
+  
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+  
+  for (let i = 0; i < firstDay; i++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day disabled';
+    grid.appendChild(el);
+  }
+  
+  for (let d = 1; d <= daysInMonth; d++) {
+    const date = new Date(calYear, calMonth, d);
+    const iso = isoDate(date);
+    const dow = date.getDay();
+    const isWeekend = dow === 0 || dow === 6;
+    const isHoliday = !!HOLIDAYS[iso];
+    const isPast = date < today;
+    const isToday = iso === isoDate(today);
+    
+    const el = document.createElement('button');
+    el.type = 'button';
+    el.className = 'cal-day';
+    el.textContent = d;
+    if (isWeekend) el.classList.add('weekend');
+    if (isHoliday) el.classList.add('holiday');
+    if (isToday) el.classList.add('today');
+    if (isPast) {
+      el.classList.add('disabled');
     } else {
-      calCurrentMonth--;
+      // จป. เลือกได้ทุกวัน (รวม weekend + holiday) — ตามเอกสาร HANDOFF
+      el.addEventListener('click', () => selectDate(iso, date));
     }
-    renderCalendar();
-  });
-  document.getElementById('calNext').addEventListener('click', () => {
-    if (calCurrentMonth === 11) {
-      calCurrentMonth = 0;
-      calCurrentYear++;
-    } else {
-      calCurrentMonth++;
-    }
-    renderCalendar();
-  });
+    if (iso === calSelectedDate) el.classList.add('selected');
+    grid.appendChild(el);
+  }
+}
 
+function selectDate(iso, date) {
+  calSelectedDate = iso;
   renderCalendar();
+  updateSummary();
+}
 
-  // ========================================================
-  // SUBMIT
-  // ========================================================
-  document.getElementById('confirmBtn').addEventListener('click', () => {
-    if (!calSelectedDate || !calSelectedTime) {
-      alert('กรุณาเลือกวันและเวลาก่อน');
-      return;
-    }
-    submitConfirmation();
+function selectTime(time) {
+  calSelectedTime = time;
+  document.querySelectorAll('.time-btn').forEach(b => {
+    b.classList.toggle('selected', b.dataset.time === time);
   });
+  updateSummary();
+}
 
-  async function submitConfirmation() {
-    if (!requestId) {
-      showError('ไม่มี Request ID');
-      return;
-    }
-    showState('loading');
-
-    try {
-      const res = await fetch(FLOW_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          requestId: requestId,
-          scheduledDate: calSelectedDate,
-          scheduledTime: calSelectedTime
-        })
-      });
-
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status} ${res.statusText}`);
-      }
-
-      // Success → redirect ไป confirmed.html
-      const url = `confirmed.html?req=${encodeURIComponent(requestId)}&date=${encodeURIComponent(calSelectedDate)}&time=${encodeURIComponent(calSelectedTime)}&from=pick`;
-      window.location.href = url;
-
-    } catch (e) {
-      showError(e.message);
-    }
+function updateSummary() {
+  const btn = document.getElementById('confirmBtn');
+  if (!calSelectedDate) {
+    btn.disabled = true;
+    document.getElementById('summary').classList.remove('show');
+    return;
   }
+  btn.disabled = false;
+  const d = new Date(calSelectedDate);
+  const txt = `${THAI_DAYS[d.getDay()]} ${d.getDate()} ${THAI_MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()+543} เวลา ${calSelectedTime} น.`;
+  document.getElementById('summaryText').textContent = txt;
+  document.getElementById('summary').classList.add('show');
+}
 
-  function showError(msg) {
-    document.getElementById('errorDetail').textContent = msg;
-    showState('error');
-  }
+document.getElementById('calPrev').addEventListener('click', () => {
+  calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; }
+  renderCalendar();
+});
+document.getElementById('calNext').addEventListener('click', () => {
+  calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; }
+  renderCalendar();
+});
+renderCalendar();
 
-  function retrySubmit() {
-    submitConfirmation();
+function confirmDate() {
+  if (!requestId) {
+    const err = document.getElementById('errBanner');
+    err.textContent = '⚠️ ไม่มี Request ID — โปรดเปิดลิงก์จากอีเมล';
+    err.classList.add('show');
+    return;
   }
-
-  function backToMain() {
-    showState('main');
-  }
+  if (!calSelectedDate) return;
+  
+  // Redirect to confirmed.html — Flow 4 จะถูกเรียกที่นั่น
+  const url = `confirmed.html?req=${encodeURIComponent(requestId)}&date=${encodeURIComponent(calSelectedDate)}&time=${encodeURIComponent(calSelectedTime)}&from=pick`;
+  window.location.href = url;
+}
 </script>
-
 </body>
 </html>

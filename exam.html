@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>ทดสอบความปลอดภัย — PTT TSO</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<title>แบบทดสอบความปลอดภัย — PTT TSO</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
   :root {
     --navy: #003B7A; --navy-dark: #002752; --sky: #1E90FF;
@@ -33,85 +34,183 @@
     background: radial-gradient(circle, rgba(255,107,0,0.15), transparent 70%);
     border-radius: 50%;
   }
-  .header-brand { font-family: 'Outfit', sans-serif; font-size: 10px; letter-spacing: 2.5px; color: rgba(255,255,255,0.6); margin-bottom: 6px; font-weight: 600; }
+  .header-brand { font-family: 'Outfit', sans-serif; font-size: 10px; letter-spacing: 2.5px; color: rgba(255,255,255,0.6); margin-bottom: 4px; font-weight: 600; }
   .header-title { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; position: relative; }
-  .header-sub { font-size: 12px; margin-top: 4px; color: rgba(255,255,255,0.7); }
-  .progress-wrap { padding: 16px 20px 0; background: white; }
-  .progress-bar { height: 6px; background: var(--gray-200); border-radius: 100px; overflow: hidden; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--sky), var(--navy)); border-radius: 100px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); width: 0%; }
-  .progress-text { margin-top: 8px; display: flex; justify-content: space-between; font-size: 12px; color: var(--gray-600); }
-  .progress-current { font-weight: 700; color: var(--navy); }
-  .screen { flex: 1; padding: 24px 20px; display: none; animation: fadeIn 0.4s ease; }
-  .screen.active { display: flex; flex-direction: column; }
+  .progress-bar {
+    height: 4px; background: rgba(255,255,255,0.2); border-radius: 4px;
+    margin-top: 14px; overflow: hidden; position: relative;
+  }
+  .progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--orange), #FFA84B);
+    transition: width 0.3s ease; border-radius: 4px;
+  }
+  .progress-text { font-family: 'Outfit', sans-serif; font-size: 11px; color: rgba(255,255,255,0.85); margin-top: 6px; position: relative; }
+  .content { flex: 1; padding: 24px 20px; }
+  .screen { display: none; animation: fadeIn 0.4s ease; }
+  .screen.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .center { text-align: center; }
   .icon-circle {
     width: 80px; height: 80px; border-radius: 24px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 36px; margin: 30px auto 24px; color: white;
-    box-shadow: 0 12px 32px rgba(30,144,255,0.3);
+    font-size: 36px; color: white; margin: 20px auto;
   }
-  .icon-circle.navy { background: linear-gradient(135deg, var(--navy), var(--sky)); }
-  .icon-circle.green { background: linear-gradient(135deg, var(--green), #15803D); }
+  .icon-circle.navy { background: linear-gradient(135deg, var(--navy), var(--sky)); box-shadow: 0 12px 32px rgba(30,144,255,0.3); }
+  .icon-circle.green { background: linear-gradient(135deg, var(--green), #15803D); box-shadow: 0 12px 32px rgba(22,163,74,0.25); }
   .icon-circle.red { background: linear-gradient(135deg, var(--red), #B91C1C); box-shadow: 0 12px 32px rgba(220,38,38,0.25); }
   .icon-circle.amber { background: linear-gradient(135deg, var(--amber), #B45309); box-shadow: 0 12px 32px rgba(217,119,6,0.25); }
-  .center-title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 8px; letter-spacing: -0.5px; }
-  .center-sub { text-align: center; color: var(--gray-600); margin-bottom: 28px; font-size: 14px; }
-  .info-card { background: var(--gray-50); border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--gray-200); }
-  .info-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 14px; }
+  .screen-title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 8px; letter-spacing: -0.5px; }
+  .screen-sub { color: var(--gray-600); font-size: 14px; text-align: center; margin-bottom: 20px; line-height: 1.6; }
+  .info-card {
+    background: var(--gray-50); border: 1px solid var(--gray-200);
+    border-radius: 14px; padding: 16px; margin-bottom: 16px;
+  }
+  .info-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 7px 0; font-size: 14px; gap: 12px;
+  }
   .info-row + .info-row { border-top: 1px dashed var(--gray-200); }
-  .info-label { color: var(--gray-600); }
-  .info-value { font-weight: 600; color: var(--gray-900); }
-  .info-value.division { background: var(--navy); color: white; padding: 3px 12px; border-radius: 100px; font-family: 'Outfit', sans-serif; font-size: 12px; letter-spacing: 1px; }
-  .exam-rules { background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border-radius: 16px; padding: 18px 20px; border-left: 4px solid var(--orange); margin-bottom: 24px; }
-  .rules-title { font-weight: 700; color: #92400E; margin-bottom: 8px; font-size: 14px; }
-  .rules-list { list-style: none; font-size: 13px; color: #78350F; }
-  .rules-list li { padding: 3px 0; padding-left: 20px; position: relative; }
-  .rules-list li::before { content: '•'; position: absolute; left: 8px; color: var(--orange); font-weight: 700; }
-  .question-num { font-family: 'Outfit', sans-serif; font-size: 11px; letter-spacing: 2px; color: var(--gray-400); text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
-  .question-text { font-size: 18px; font-weight: 600; line-height: 1.45; color: var(--gray-900); margin-bottom: 24px; letter-spacing: -0.3px; }
-  .choices { display: flex; flex-direction: column; gap: 12px; }
-  .choice { background: white; border: 2px solid var(--gray-200); border-radius: 14px; padding: 16px 18px; cursor: pointer; display: flex; align-items: center; gap: 14px; transition: all 0.2s ease; text-align: left; width: 100%; font-family: inherit; font-size: 15px; color: var(--gray-900); line-height: 1.4; }
+  .info-label { color: var(--gray-600); white-space: nowrap; }
+  .info-value { font-weight: 600; color: var(--gray-900); text-align: right; }
+  .question-card {
+    background: white; border: 1.5px solid var(--gray-200);
+    border-radius: 16px; padding: 20px; margin-bottom: 16px;
+  }
+  .question-number {
+    display: inline-block; background: linear-gradient(135deg, var(--navy), var(--sky));
+    color: white; padding: 4px 12px; border-radius: 100px;
+    font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 11px;
+    letter-spacing: 0.5px; margin-bottom: 10px;
+  }
+  .question-text {
+    font-size: 15px; font-weight: 600; color: var(--gray-900);
+    line-height: 1.5; margin-bottom: 16px;
+  }
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+  .choice {
+    background: white; border: 1.5px solid var(--gray-200);
+    border-radius: 12px; padding: 13px 14px;
+    cursor: pointer; transition: all 0.15s ease;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; line-height: 1.4;
+  }
   .choice:hover { border-color: var(--sky); background: #F0F9FF; }
-  .choice:active { transform: scale(0.98); }
-  .choice.selected { border-color: var(--navy); background: linear-gradient(135deg, #EFF6FF, #DBEAFE); }
-  .choice-letter { width: 32px; height: 32px; background: var(--gray-100); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--gray-600); flex-shrink: 0; font-size: 14px; transition: all 0.2s ease; }
-  .choice.selected .choice-letter { background: var(--navy); color: white; }
-  .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
-  .btn { flex: 1; padding: 14px; border-radius: 12px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
-  .btn:active { transform: scale(0.97); }
-  .btn-primary { background: linear-gradient(135deg, var(--navy), var(--sky)); color: white; box-shadow: 0 4px 12px rgba(0,59,122,0.25); }
-  .btn-primary:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; box-shadow: none; }
-  .btn-ghost { background: var(--gray-100); color: var(--gray-600); }
-  .btn-large { width: 100%; padding: 16px; font-size: 16px; }
-  .loading-content { text-align: center; margin: auto; padding: 40px 20px; }
-  .spinner { width: 56px; height: 56px; border: 4px solid var(--gray-200); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 20px; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .loading-text { font-size: 16px; color: var(--gray-600); font-weight: 500; }
-  .result-icon { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 20px auto 24px; font-size: 56px; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
-  @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
-  .result-icon.pass { background: linear-gradient(135deg, #DCFCE7, #BBF7D0); color: var(--green); box-shadow: 0 12px 32px rgba(22,163,74,0.2); }
-  .result-icon.fail { background: linear-gradient(135deg, #FEE2E2, #FECACA); color: var(--red); box-shadow: 0 12px 32px rgba(220,38,38,0.15); }
-  .result-title { text-align: center; font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
-  .result-title.pass { color: var(--green); }
-  .result-title.fail { color: var(--red); }
-  .result-sub { text-align: center; color: var(--gray-600); font-size: 14px; margin-bottom: 24px; }
-  .score-card { background: var(--gray-50); border-radius: 20px; padding: 24px; text-align: center; margin-bottom: 16px; border: 1px solid var(--gray-200); }
-  .score-big { font-family: 'Outfit', sans-serif; font-size: 64px; font-weight: 800; line-height: 1; margin-bottom: 4px; background: linear-gradient(135deg, var(--navy), var(--sky)); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -2px; }
-  .score-big.fail { background: linear-gradient(135deg, var(--red), #EF4444); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .score-label { font-size: 13px; color: var(--gray-600); text-transform: uppercase; letter-spacing: 2px; font-weight: 600; font-family: 'Outfit', sans-serif; }
-  .cert-card { background: linear-gradient(135deg, #1E3A8A, var(--navy)); color: white; border-radius: 20px; padding: 22px; margin-bottom: 16px; position: relative; overflow: hidden; }
-  .cert-card::after { content: ''; position: absolute; top: -50%; right: -20%; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,215,0,0.15), transparent 70%); border-radius: 50%; }
+  .choice.selected {
+    background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+    border-color: var(--sky); color: var(--navy);
+  }
+  .choice-letter {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--gray-100); color: var(--gray-600);
+    display: inline-flex; align-items: center; justify-content: center;
+    font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 13px;
+    flex-shrink: 0; transition: all 0.15s ease;
+  }
+  .choice.selected .choice-letter {
+    background: linear-gradient(135deg, var(--navy), var(--sky));
+    color: white;
+  }
+  .nav-row {
+    display: grid; grid-template-columns: 1fr 2fr; gap: 10px;
+    margin-top: 8px;
+  }
+  .btn {
+    padding: 14px; border: none; border-radius: 12px;
+    font-family: inherit; font-size: 15px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--navy), var(--sky));
+    color: white; box-shadow: 0 6px 16px rgba(0,59,122,0.25);
+  }
+  .btn-primary:hover:not(:disabled) { box-shadow: 0 8px 20px rgba(0,59,122,0.35); transform: translateY(-1px); }
+  .btn-ghost {
+    background: var(--gray-100); color: var(--gray-600);
+  }
+  .btn-ghost:hover:not(:disabled) { background: var(--gray-200); }
+  .btn-full { grid-column: 1 / -1; }
+  .error-detail {
+    background: var(--gray-50); border-radius: 12px;
+    padding: 16px; margin-bottom: 16px;
+    font-size: 14px; color: var(--gray-600); text-align: center;
+    line-height: 1.6;
+  }
+  .error-detail strong { color: var(--gray-900); }
+  .warning-card {
+    background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+    border-left: 4px solid var(--amber); border-radius: 12px;
+    padding: 14px 16px; margin-bottom: 16px;
+    font-size: 13px; color: #78350F; line-height: 1.6;
+  }
+  .warning-card strong { color: #92400E; }
+  .intro-list { list-style: none; padding: 0; margin: 0 0 20px; }
+  .intro-list li {
+    padding: 10px 0; padding-left: 36px; position: relative;
+    font-size: 14px; color: var(--gray-600); line-height: 1.5;
+    border-bottom: 1px dashed var(--gray-200);
+  }
+  .intro-list li:last-child { border-bottom: none; }
+  .intro-list li::before {
+    content: ''; position: absolute; left: 0; top: 12px;
+    width: 22px; height: 22px;
+    background: linear-gradient(135deg, var(--navy), var(--sky));
+    border-radius: 7px; color: white;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Outfit', sans-serif; font-weight: 800; font-size: 12px;
+    counter-increment: intro-counter; content: counter(intro-counter);
+  }
+  .intro-list { counter-reset: intro-counter; }
+  .score-display {
+    background: linear-gradient(135deg, var(--navy), #1E3A8A);
+    color: white; border-radius: 20px; padding: 22px;
+    margin-bottom: 16px; text-align: center; position: relative; overflow: hidden;
+  }
+  .score-display.fail { background: linear-gradient(135deg, #991B1B, var(--red)); }
+  .score-display::after {
+    content: ''; position: absolute; top: -50%; right: -20%;
+    width: 150px; height: 150px;
+    background: radial-gradient(circle, rgba(255,215,0,0.15), transparent 70%);
+    border-radius: 50%;
+  }
+  .score-label { font-family: 'Outfit', sans-serif; font-size: 10px; letter-spacing: 2.5px; color: rgba(255,255,255,0.7); font-weight: 600; margin-bottom: 8px; position: relative; }
+  .score-big {
+    font-family: 'Outfit', sans-serif; font-size: 56px; font-weight: 800;
+    line-height: 1; margin-bottom: 4px; position: relative;
+  }
+  .score-of { font-size: 14px; opacity: 0.8; position: relative; }
+  .cert-card {
+    background: linear-gradient(135deg, #1E3A8A, var(--navy));
+    color: white; border-radius: 20px; padding: 22px;
+    margin-bottom: 16px; position: relative; overflow: hidden;
+  }
+  .cert-card::after {
+    content: ''; position: absolute; top: -50%; right: -20%;
+    width: 150px; height: 150px;
+    background: radial-gradient(circle, rgba(255,215,0,0.15), transparent 70%);
+    border-radius: 50%;
+  }
   .cert-label { font-family: 'Outfit', sans-serif; font-size: 10px; letter-spacing: 2.5px; color: rgba(255,255,255,0.7); font-weight: 600; margin-bottom: 10px; position: relative; }
   .cert-no { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: 1px; margin-bottom: 16px; position: relative; }
-  .cert-link { display: inline-flex; align-items: center; gap: 6px; color: white; text-decoration: none; background: rgba(255,255,255,0.18); padding: 9px 16px; border-radius: 100px; font-size: 13px; font-weight: 600; backdrop-filter: blur(10px); position: relative; }
+  .cert-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: white; text-decoration: none;
+    background: rgba(255,255,255,0.18); padding: 10px 16px;
+    border-radius: 100px; font-size: 13px; font-weight: 600;
+    backdrop-filter: blur(10px); position: relative; cursor: pointer; border: none;
+    font-family: inherit;
+  }
   .cert-link:hover { background: rgba(255,255,255,0.25); }
-  .cert-meta { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 10px; position: relative; }
-  .warning-card { background: linear-gradient(135deg, #FEF3C7, #FDE68A); border-left: 4px solid var(--amber); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; font-size: 13px; color: #78350F; line-height: 1.6; }
-  .warning-card strong { color: #92400E; }
-  .footer { padding: 14px 20px; text-align: center; font-size: 10.5px; color: var(--gray-400); line-height: 1.5; border-top: 1px solid var(--gray-100); }
-  .error-msg { color: var(--gray-600); font-size: 14px; margin-bottom: 24px; text-align: center; }
-  .error-detail { background: var(--gray-50); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; font-size: 13px; color: var(--gray-600); text-align: center; }
-  .error-detail strong { color: var(--gray-900); font-weight: 700; }
+  .spinner-wrap { text-align: center; padding: 40px 0; }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 5px solid var(--gray-200); border-top-color: var(--navy);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .footer { padding: 18px 20px; text-align: center; font-size: 11px; color: var(--gray-400); line-height: 1.6; border-top: 1px solid var(--gray-100); }
 </style>
 </head>
 <body>
@@ -119,346 +218,589 @@
   <div class="header">
     <div class="header-brand">PTT • TSO SAFETY EXAM</div>
     <div class="header-title">แบบทดสอบความปลอดภัย</div>
-    <div class="header-sub">ผู้รับเหมา ปฏิบัติงานในแนวท่อก๊าซธรรมชาติ</div>
-  </div>
-  
-  <div class="progress-wrap" id="progressWrap" style="display: none;">
-    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
-    <div class="progress-text">
-      <span>คำถาม <span class="progress-current" id="qCurrent">1</span> / <span id="qTotal">10</span></span>
-      <span>เลือกแล้ว <span id="qAnswered">0</span></span>
-    </div>
+    <div class="progress-bar" id="progBar" style="display:none;"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+    <div class="progress-text" id="progText" style="display:none;">ข้อ 1 / 10</div>
   </div>
 
-  <div class="screen active" id="screenValidating">
-    <div class="loading-content">
-      <div class="spinner"></div>
-      <div class="loading-text">กำลังตรวจสอบสิทธิ์...</div>
+  <div class="content">
+
+    <!-- VALIDATING (Flow 1 check) -->
+    <div class="screen active" id="screen-validating">
+      <div class="spinner-wrap">
+        <div class="spinner"></div>
+        <div style="color: var(--gray-600); font-size: 14px;">กำลังตรวจสอบสิทธิ์...</div>
+      </div>
     </div>
+
+    <!-- NOT REGISTERED -->
+    <div class="screen" id="screen-not-registered">
+      <div class="icon-circle red">✗</div>
+      <div class="screen-title">ไม่พบรายชื่อ</div>
+      <div class="screen-sub">เลขประจำตัวประชาชนนี้ไม่ได้ลงทะเบียนอบรม</div>
+      <div class="error-detail">
+        กรุณาติดต่อบริษัทต้นสังกัด<br>
+        เพื่อ<strong>ส่งคำขออบรม</strong>กับ ปตท. ก่อนล่วงหน้า
+      </div>
+      <button class="btn btn-ghost btn-full" onclick="goHome()">กลับหน้าหลัก</button>
+    </div>
+
+    <!-- WRONG DATE -->
+    <div class="screen" id="screen-wrong-date">
+      <div class="icon-circle amber">📅</div>
+      <div class="screen-title">วันนี้ไม่ใช่วันอบรม</div>
+      <div class="screen-sub">ท่านลงทะเบียนสำหรับวันอื่น</div>
+      <div class="error-detail">
+        วันอบรมของท่านคือ<br>
+        <strong id="wrongDateText" style="font-size: 18px; color: var(--amber); font-family: 'Outfit', sans-serif;">-</strong>
+      </div>
+      <button class="btn btn-ghost btn-full" onclick="goHome()">กลับหน้าหลัก</button>
+    </div>
+
+    <!-- HAS VALID CERT (already passed - shouldn't re-take) -->
+    <div class="screen" id="screen-has-valid-cert">
+      <div class="icon-circle green">✓</div>
+      <div class="screen-title">มีใบวุฒิบัตรอยู่แล้ว</div>
+      <div class="screen-sub">ใบวุฒิบัตรของท่านยังใช้ได้ ไม่จำเป็นต้องสอบใหม่</div>
+      <div class="info-card">
+        <div class="info-row"><span class="info-label">เลขที่ใบวุฒิบัตร</span><span class="info-value" id="validCertNo">-</span></div>
+        <div class="info-row"><span class="info-label">หมดอายุ</span><span class="info-value" id="validExpiry">-</span></div>
+      </div>
+      <div class="warning-card">
+        <strong>ต้องการสอบใหม่เพื่อต่ออายุ?</strong> สามารถทำได้ — กดปุ่มด้านล่างเพื่อเริ่มทดสอบใหม่
+      </div>
+      <button class="btn btn-primary btn-full" onclick="proceedToIntro()">สอบใหม่เพื่อต่ออายุ →</button>
+      <button class="btn btn-ghost btn-full" style="margin-top:10px;" onclick="goHome()">กลับหน้าหลัก</button>
+    </div>
+
+    <!-- EXPIRED NOTICE (warning, can proceed) -->
+    <div class="screen" id="screen-expired-notice">
+      <div class="icon-circle amber">!</div>
+      <div class="screen-title">ใบวุฒิบัตรหมดอายุแล้ว</div>
+      <div class="screen-sub">กรุณาทดสอบใหม่เพื่อรับใบวุฒิบัตรชุดใหม่</div>
+      <div class="warning-card">
+        <strong>ใบเก่า:</strong> <span id="expCertNo">-</span><br>
+        <strong>หมดอายุ:</strong> <span id="expExpiry">-</span>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="proceedToIntro()">เริ่มทดสอบใหม่ →</button>
+    </div>
+
+    <!-- INTRO -->
+    <div class="screen" id="screen-intro">
+      <div class="icon-circle navy">📝</div>
+      <div class="screen-title">พร้อมเริ่มทดสอบ</div>
+      <div class="screen-sub">กรุณาอ่านกติกาก่อนเริ่มทำแบบทดสอบ</div>
+      <ol class="intro-list">
+        <li><strong>10 ข้อ</strong> สุ่มจากคลังคำถาม 20 ข้อ</li>
+        <li>ต้องตอบถูก <strong>8 ข้อขึ้นไป</strong> จึงจะผ่านเกณฑ์</li>
+        <li>ไม่จำกัดเวลา — ทำได้ตามสะดวก</li>
+        <li>ใบวุฒิบัตรมีอายุ <strong>1 ปี</strong> นับจากวันที่สอบ</li>
+        <li>ผ่านแล้วจะได้รับใบวุฒิบัตร PDF ทันที</li>
+      </ol>
+      <button class="btn btn-primary btn-full" onclick="startExam()">เริ่มทำแบบทดสอบ →</button>
+    </div>
+
+    <!-- EXAM -->
+    <div class="screen" id="screen-exam">
+      <div class="question-card">
+        <span class="question-number" id="qNumber">ข้อ 1 จาก 10</span>
+        <div class="question-text" id="qText">-</div>
+        <div class="choices" id="qChoices"></div>
+      </div>
+      <div class="nav-row">
+        <button class="btn btn-ghost" id="btnPrev" onclick="prevQuestion()">← ย้อนกลับ</button>
+        <button class="btn btn-primary" id="btnNext" onclick="nextQuestion()" disabled>ถัดไป →</button>
+      </div>
+    </div>
+
+    <!-- SUBMITTING -->
+    <div class="screen" id="screen-submitting">
+      <div class="spinner-wrap">
+        <div class="spinner"></div>
+        <div style="color: var(--gray-600); font-size: 14px;" id="submitMsg">กำลังตรวจคำตอบและออกใบวุฒิบัตร...</div>
+      </div>
+    </div>
+
+    <!-- RESULT - PASS -->
+    <div class="screen" id="screen-pass">
+      <div class="score-display">
+        <div class="score-label">SCORE</div>
+        <div class="score-big" id="passScore">-</div>
+        <div class="score-of">จาก 10 ข้อ • ผ่านเกณฑ์</div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-label">CERTIFICATE</div>
+        <div class="cert-no" id="passCertNo">-</div>
+        <button class="cert-link" id="btnDownloadCert" onclick="downloadCert()">📄 ดาวน์โหลดใบวุฒิบัตร</button>
+      </div>
+      <div class="info-card">
+        <div class="info-row"><span class="info-label">ชื่อ-นามสกุล</span><span class="info-value" id="passName">-</span></div>
+        <div class="info-row"><span class="info-label">วันที่สอบ</span><span class="info-value" id="passExamDate">-</span></div>
+        <div class="info-row"><span class="info-label">วันหมดอายุ</span><span class="info-value" id="passExpiry">-</span></div>
+      </div>
+      <button class="btn btn-ghost btn-full" onclick="goHome()">เสร็จสิ้น</button>
+    </div>
+
+    <!-- RESULT - FAIL -->
+    <div class="screen" id="screen-fail">
+      <div class="score-display fail">
+        <div class="score-label">SCORE</div>
+        <div class="score-big" id="failScore">-</div>
+        <div class="score-of">จาก 10 ข้อ • ไม่ผ่านเกณฑ์</div>
+      </div>
+      <div class="error-detail">
+        เกณฑ์ผ่าน: <strong>8 ข้อขึ้นไป</strong><br>
+        กรุณาทำแบบทดสอบใหม่อีกครั้ง
+      </div>
+      <button class="btn btn-primary btn-full" onclick="retryExam()">ลองใหม่</button>
+      <button class="btn btn-ghost btn-full" style="margin-top:10px;" onclick="goHome()">กลับหน้าหลัก</button>
+    </div>
+
+    <!-- ERROR -->
+    <div class="screen" id="screen-error">
+      <div class="icon-circle red">!</div>
+      <div class="screen-title">เกิดข้อผิดพลาด</div>
+      <div class="screen-sub" id="errMsg">ระบบไม่สามารถดำเนินการได้ในขณะนี้</div>
+      <button class="btn btn-primary btn-full" onclick="window.location.reload()">🔄 ลองอีกครั้ง</button>
+      <button class="btn btn-ghost btn-full" style="margin-top:10px;" onclick="goHome()">กลับหน้าหลัก</button>
+    </div>
+
   </div>
 
-  <div class="screen" id="screenNotRegistered">
-    <div class="icon-circle red">⛔</div>
-    <div class="center-title">ไม่พบรายชื่อ</div>
-    <div class="center-sub">เลขประจำตัวประชาชนนี้ไม่ได้ลงทะเบียนอบรม</div>
-    <div class="error-detail">กรุณาติดต่อบริษัทต้นสังกัด<br>เพื่อ<strong>ส่งคำขออบรม</strong>กับ ปตท. ก่อนล่วงหน้า</div>
-    <button class="btn btn-ghost btn-large" onclick="window.location.href='index.html'">← กลับหน้าหลัก</button>
-  </div>
-
-  <div class="screen" id="screenWrongDate">
-    <div class="icon-circle amber">📅</div>
-    <div class="center-title">วันนี้ไม่ใช่วันอบรม</div>
-    <div class="center-sub">คุณลงทะเบียนสำหรับวันอื่น</div>
-    <div class="error-detail">
-      วันอบรมของคุณคือ<br>
-      <strong style="font-size: 18px; color: var(--amber);" id="wrongScheduledDate">-</strong><br>
-      <span style="font-size: 11px;">กรุณามาตรงตามวันที่กำหนด</span>
-    </div>
-    <button class="btn btn-ghost btn-large" onclick="window.location.href='index.html'">← กลับหน้าหลัก</button>
-  </div>
-
-  <div class="screen" id="screenHasValidCert">
-    <div class="icon-circle green">✓</div>
-    <div class="center-title">คุณมีใบวุฒิบัตรอยู่แล้ว</div>
-    <div class="center-sub">ยังไม่หมดอายุ — ไม่ต้องทดสอบใหม่</div>
-    <div class="cert-card">
-      <div class="cert-label">VALID CERTIFICATE</div>
-      <div class="cert-no" id="validCertNo">-</div>
-      <a class="cert-link" id="validCertLink" href="#" target="_blank">📄 เปิดดูใบวุฒิบัตร</a>
-      <div class="cert-meta">วันหมดอายุ: <strong id="validExpiry">-</strong></div>
-    </div>
-  </div>
-
-  <div class="screen" id="screenExpiredWarning">
-    <div class="icon-circle amber">⚠️</div>
-    <div class="center-title">ใบวุฒิบัตรหมดอายุแล้ว</div>
-    <div class="center-sub">กรุณาทำการอบรมและทดสอบใหม่</div>
-    <div class="warning-card">
-      <strong>หมายเหตุ:</strong> ใบวุฒิบัตรเดิม (<span id="oldCertNo">-</span>) หมดอายุเมื่อ <span id="oldExpiry">-</span><br>
-      คุณต้องทดสอบใหม่เพื่อรับใบวุฒิบัตรชุดใหม่
-    </div>
-    <button class="btn btn-primary btn-large" onclick="proceedToExam()">เริ่มทดสอบใหม่ →</button>
-  </div>
-
-  <div class="screen" id="screenStart">
-    <div class="icon-circle navy">📋</div>
-    <div class="center-title">พร้อมเริ่มทดสอบ?</div>
-    <div class="center-sub">กรุณาตรวจสอบข้อมูลก่อนเริ่มทดสอบ</div>
-    <div class="info-card">
-      <div class="info-row"><span class="info-label">ชื่อ-นามสกุล</span><span class="info-value" id="dispName">-</span></div>
-      <div class="info-row"><span class="info-label">เลขประจำตัว</span><span class="info-value" id="dispId">-</span></div>
-      <div class="info-row"><span class="info-label">บริษัท</span><span class="info-value" id="dispCompany">-</span></div>
-      <div class="info-row"><span class="info-label">ส่วนงาน</span><span class="info-value division" id="dispDivision">-</span></div>
-    </div>
-    <div class="exam-rules">
-      <div class="rules-title">⚡ กติกาการทดสอบ</div>
-      <ul class="rules-list">
-        <li>มี 10 ข้อ สุ่มจากคลัง 20 ข้อ</li>
-        <li>เลือกคำตอบที่ถูกต้องที่สุด</li>
-        <li>ผ่านเกณฑ์ที่ <strong>7/10 คะแนน</strong></li>
-        <li>หากผ่าน จะได้รับใบวุฒิบัตรอัตโนมัติ</li>
-      </ul>
-    </div>
-    <button class="btn btn-primary btn-large" id="btnStart">เริ่มทำแบบทดสอบ →</button>
-  </div>
-
-  <div class="screen" id="screenExam">
-    <div class="question-num" id="qNum">QUESTION 1</div>
-    <div class="question-text" id="qText">-</div>
-    <div class="choices" id="choices"></div>
-    <div class="nav-buttons">
-      <button class="btn btn-ghost" id="btnPrev" style="display: none;">← ก่อนหน้า</button>
-      <button class="btn btn-primary" id="btnNext" disabled>ถัดไป →</button>
-    </div>
-  </div>
-
-  <div class="screen" id="screenSubmitting">
-    <div class="loading-content">
-      <div class="spinner"></div>
-      <div class="loading-text">กำลังบันทึกผลทดสอบ...</div>
-    </div>
-  </div>
-
-  <div class="screen" id="screenResult">
-    <div class="result-icon" id="resultIcon">✓</div>
-    <div class="result-title" id="resultTitle">ผ่านการทดสอบ</div>
-    <div class="result-sub" id="resultSub">ยินดีด้วย — คุณได้รับใบวุฒิบัตรแล้ว</div>
-    <div class="score-card">
-      <div class="score-big" id="scoreBig">0/10</div>
-      <div class="score-label" id="scoreLabel">YOUR SCORE</div>
-    </div>
-    <div class="cert-card" id="certCard" style="display: none;">
-      <div class="cert-label">CERTIFICATE NO.</div>
-      <div class="cert-no" id="certNo">-</div>
-      <a class="cert-link" id="certLink" href="#" target="_blank">📄 เปิดดูใบวุฒิบัตร</a>
-    </div>
-    <button class="btn btn-primary btn-large" onclick="window.close()" style="margin-top: 8px;">ปิดหน้านี้</button>
-  </div>
-
-  <div class="screen" id="screenError">
-    <div class="icon-circle red">⚠️</div>
-    <div class="center-title" id="errorTitle">เกิดข้อผิดพลาด</div>
-    <div class="error-msg" id="errorMsg">-</div>
-    <button class="btn btn-primary btn-large" onclick="location.reload()">ลองใหม่</button>
-  </div>
-  
   <div class="footer">
     สายงานระบบท่อส่งก๊าซธรรมชาติ<br>
-    ฝ่ายปฏิบัติการระบบท่อส่งก๊าซธรรมชาติ ภาค 2 (ปกต.2)<br>
-    ส่วนปฏิบัติการระบบท่อเขต <span id="ftDivision">PO7</span>
+    ฝ่ายปฏิบัติการระบบท่อส่งก๊าซธรรมชาติ ภาค 2 (ปกต.2)
   </div>
 </div>
 
 <script>
+// ==================== CONFIG ====================
 const FLOW1_URL = 'https://defaultf2fda5e72ea1450d9fc12af5f86300.95.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3e39b39e312e458087586fb0752dccf4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uewTLw5vaCzlY3HVcX-ABR_qLTGz1ZGWyYHwWNcCXiM';
 const FLOW2_URL = 'https://defaultf2fda5e72ea1450d9fc12af5f86300.95.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/8394a34120814821add245c7376e40f5/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UORTFcL-JLw_zlRE0Kv8TN8Yq4nxPYsC2ugT05PxAxk';
 const API_KEY = 'PTT-PO7-2026-SECRET';
-const EXAM_SIZE = 10;
-const PASS_THRESHOLD = 7;
 
+const EXAM_SIZE = 10;
+const PASS_SCORE = 8;
+const CERT_VALIDITY_YEARS = 1;
+
+// ==================== STATE ====================
+const params = new URLSearchParams(window.location.search);
+const state = {
+  nationalId: params.get('nationalId') || localStorage.getItem('ptt_nationalId') || '',
+  division: params.get('division') || localStorage.getItem('ptt_division') || 'PO7',
+  fullName: params.get('fullName') || localStorage.getItem('ptt_fullName') || '',
+  company: params.get('company') || localStorage.getItem('ptt_company') || '',
+  shuffledQuestions: [],
+  currentIdx: 0,
+  answers: [],
+  certPdfBase64: null,
+  certNo: null
+};
+
+// ==================== QUESTIONS (20 ข้อ) ====================
 const QUESTIONS = [
-  {q:"คุณจะรู้ได้อย่างไรว่าในพื้นที่ทำงานมีก๊าซธรรมชาติรั่ว?",choices:["ดมกลิ่นในอากาศ","ใช้เครื่องตรวจวัดก๊าซ","มองด้วยตาเปล่า","รอจนรู้สึกผิดปกติทางร่างกาย"],answer:1},
-  {q:"เมื่อเครื่องตรวจวัดก๊าซส่งเสียงเตือนระหว่างทำงาน ควรทำอย่างไรเป็นอันดับแรก?",choices:["ปิดเครื่องเพราะเสียงรบกวน","หยุดงานทันที อพยพออกจากพื้นที่ และแจ้งหัวหน้างาน","ทำงานต่อให้เสร็จก่อนแล้วค่อยแจ้ง","ตรวจสอบว่าเครื่องเสียหรือไม่"],answer:1},
-  {q:"ในการทำงานที่มีความเสี่ยง ใครคือด่านสุดท้ายในการป้องกันอุบัติเหตุของตัวคุณเอง?",choices:["ระบบความปลอดภัยของบริษัท","หัวหน้างาน","ตัวคุณเอง","อุปกรณ์ความปลอดภัย"],answer:2},
-  {q:"ได้ยินเสียงไซเรนเตือนภัยฉุกเฉินขณะทำงาน ควรทำอย่างไร?",choices:["หยุดงานทันที และไปยังจุดรวมพลที่กำหนด","ทำงานต่อจนเสร็จขั้นตอนปัจจุบันก่อน","วิ่งกลับบ้านทันที","โทรหาครอบครัวก่อนเป็นอันดับแรก"],answer:0},
-  {q:"เพื่อนร่วมงานตกจากนั่งร้านได้รับบาดเจ็บ ควรทำอะไรเป็นอันดับแรก?",choices:["ยกผู้บาดเจ็บออกจากที่เกิดเหตุทันที","ประเมินความปลอดภัยพื้นที่ แจ้งฉุกเฉิน และไม่เคลื่อนย้ายผู้บาดเจ็บโดยไม่จำเป็น","ถ่ายรูปเก็บไว้เป็นหลักฐานก่อน","ทำงานต่อให้เสร็จก่อนแล้วค่อยช่วย"],answer:1},
-  {q:"ก่อนใช้รถขุดทำงานใกล้แนวท่อก๊าซ ต้องทำอะไรก่อน?",choices:["เริ่มขุดตามแผนงานทันที","ขอใบอนุญาตขุด และตรวจสอบตำแหน่งท่อกับเจ้าหน้าที่","ใช้แผนเดิมที่เคยขุดในพื้นที่นี้","โทรแจ้งหัวหน้างานหลังขุดเสร็จ"],answer:1},
-  {q:"คุณเห็นเพื่อนร่วมงานไม่สวมหมวกนิรภัยขณะทำงาน ควรทำอย่างไร?",choices:["ไม่ใช่เรื่องของฉัน ปล่อยผ่านไป","เตือนเพื่อนก่อน หากไม่ยอมใส่จึงแจ้งหัวหน้างาน","ถ่ายรูปเก็บไว้เป็นหลักฐาน","ไปฟ้องหัวหน้างานทันทีโดยไม่ต้องเตือน"],answer:1},
-  {q:"ก่อนเชื่อมงานในพื้นที่ใกล้แนวท่อก๊าซ ต้องทำอะไรเป็นอันดับแรก?",choices:["เริ่มเชื่อมได้เลย หากเป็นพื้นที่งานของตัวเอง","ขออนุญาตงานที่ก่อความร้อน และตรวจวัดก๊าซในพื้นที่ก่อน","ปูพลาสติกคลุมแนวท่อไว้ก่อนเชื่อม","ทำเฉพาะตอนกลางคืนที่อากาศเย็น"],answer:1},
-  {q:"ท่าทางที่ถูกต้องในการยกของหนักด้วยมือคืออะไร?",choices:["ก้มหลังลงไปยกของขึ้น","ย่อเข่า หลังตรง ใช้แรงขายก และของอยู่ใกล้ลำตัว","ใช้ขาข้างเดียวค้ำพื้นเพื่อสมดุล","ก้มตัวไปข้างหน้ามากที่สุดเพื่อเอื้อมถึง"],answer:1},
-  {q:"หัวหน้าสั่งให้ทำงานที่คุณคิดว่าไม่ปลอดภัย ควรทำอย่างไร?",choices:["ทำตามคำสั่ง เพราะเป็นหัวหน้า","แจ้งข้อกังวลกับหัวหน้า — คุณมีสิทธิ์หยุดงานที่ไม่ปลอดภัย","ปฏิเสธทันที และออกจากงาน","ทำไปก่อน ถ้ารอดก็โชคดี"],answer:1},
-  {q:"พบสารเคมีหกบนพื้น แต่ไม่ทราบว่าเป็นสารอะไร ควรทำอย่างไร?",choices:["เช็ดออกด้วยผ้าทันที","กั้นพื้นที่ ไม่สัมผัส แจ้งหัวหน้างาน และหาข้อมูลความปลอดภัยของสารนั้น","ใช้น้ำราดให้เจือจาง","ดมกลิ่นเพื่อตรวจสอบว่าเป็นสารอะไร"],answer:1},
-  {q:"เครื่องมือไฟฟ้าที่จะใช้มีสายไฟชำรุดเล็กน้อย ควรทำอย่างไร?",choices:["พันด้วยเทปพันสายไฟแล้วใช้ต่อ","ไม่ใช้ และส่งซ่อมหรือเปลี่ยนเครื่องใหม่","ใช้ในงานเบาๆ ก่อนน่าจะไม่เป็นไร","ขอเพื่อนใช้แทนตัวเอง"],answer:1},
-  {q:"เมื่อต้องอพยพออกจากอาคารฉุกเฉิน (เช่น ไฟไหม้) ควรใช้ทางใด?",choices:["ลิฟต์ เพราะเร็วกว่า","บันไดหนีไฟ","ปีนหน้าต่างออกไป","รอลิฟต์อยู่ในชั้นเดิม"],answer:1},
-  {q:"ขณะทำงานบนนั่งร้านสูง 5 เมตร อุปกรณ์ที่ขาดไม่ได้คืออะไร?",choices:["หมวกแก๊ปและแว่นตา","สายรัดเซฟตี้ที่เกี่ยวกับจุดยึดที่แข็งแรง","รองเท้าผ้าใบใส่สบาย","ถุงมือผ้าธรรมดา"],answer:1},
-  {q:"ก่อนเข้าทำงานในถังเก็บก๊าซหรือพื้นที่อับอากาศ สิ่งที่สำคัญที่สุดคืออะไร?",choices:["เตรียมอาหารและน้ำดื่มให้พอ","ขอใบอนุญาตเข้าทำงาน ตรวจวัดก๊าซ และมีผู้เฝ้าระวังภายนอก","แต่งกายให้เรียบร้อย","เตรียมเครื่องมือให้ครบทุกชิ้น"],answer:1},
-  {q:"ขณะทำงาน มีรถบรรทุกถอยหลังเข้ามาใกล้ ควรทำอย่างไร?",choices:["ทำงานต่อไป รถจะหลีกเอง","หยุดงาน หลบออกจากเส้นทาง และให้สัญญาณคนขับให้เห็นชัด","ตะโกนใส่คนขับให้หยุด","กระโดดหลบในวินาทีสุดท้าย"],answer:1},
-  {q:"ขณะทำงานกลางแจ้ง ฟ้าเริ่มมืดและได้ยินเสียงฟ้าร้อง ควรทำอย่างไร?",choices:["ทำงานต่อจนฝนตกหนัก","หยุดงานบนที่สูง/กลางแจ้ง เข้าที่กำบัง และรอจนปลอดภัย","กางร่มแล้วทำต่อ","ใส่เสื้อกันฝนแล้วทำต่อ"],answer:1},
-  {q:"พบไฟไหม้ขนาดเล็กที่ยังควบคุมได้ ควรทำอย่างไร?",choices:["ยืนดูเฉยๆ ไม่ทำอะไร","แจ้งหัวหน้างานทันที และใช้ถังดับเพลิงที่เหมาะสมหากปลอดภัย","วิ่งหนีออกจากพื้นที่โดยไม่บอกใคร","ถ่ายรูปและคลิปวิดีโอเก็บไว้ก่อน"],answer:1},
-  {q:"เพื่อนร่วมงานชวนข้ามขั้นตอนความปลอดภัยเพราะกำลังรีบ ควรทำอย่างไร?",choices:["ทำตามเพื่อนเพราะรีบเหมือนกัน","ปฏิเสธ และทำตามขั้นตอนความปลอดภัยที่กำหนด","ทำครึ่งหนึ่งของขั้นตอนพอ","บันทึกในเอกสารว่าทำครบ ทั้งที่ไม่ได้ทำ"],answer:1},
-  {q:"พบป้ายเตือนสีเหลือง \"แนวท่อก๊าซธรรมชาติ\" บนพื้นดิน หมายถึงอะไร?",choices:["เป็นที่จอดรถสำหรับเจ้าหน้าที่","มีท่อก๊าซอยู่ใต้ดิน — ห้ามขุดโดยไม่ได้รับอนุญาต","เป็นพื้นที่เก็บอุปกรณ์","เป็นทางเดินสำหรับพนักงาน"],answer:1}
+  { q: "คุณจะรู้ได้อย่างไรว่าในพื้นที่ทำงานมีก๊าซธรรมชาติรั่ว?", choices: ["ดมกลิ่นในอากาศ","ใช้เครื่องตรวจวัดก๊าซ","มองด้วยตาเปล่า","รอจนรู้สึกผิดปกติทางร่างกาย"], answer: 1 },
+  { q: "เมื่อเครื่องตรวจวัดก๊าซส่งเสียงเตือนระหว่างทำงาน ควรทำอย่างไรเป็นอันดับแรก?", choices: ["ปิดเครื่องเพราะเสียงรบกวน","หยุดงานทันที อพยพออกจากพื้นที่ และแจ้งหัวหน้างาน","ทำงานต่อให้เสร็จก่อนแล้วค่อยแจ้ง","ตรวจสอบว่าเครื่องเสียหรือไม่"], answer: 1 },
+  { q: "ในการทำงานที่มีความเสี่ยง ใครคือด่านสุดท้ายในการป้องกันอุบัติเหตุของตัวคุณเอง?", choices: ["ระบบความปลอดภัยของบริษัท","หัวหน้างาน","ตัวคุณเอง","อุปกรณ์ความปลอดภัย"], answer: 2 },
+  { q: "ได้ยินเสียงไซเรนเตือนภัยฉุกเฉินขณะทำงาน ควรทำอย่างไร?", choices: ["หยุดงานทันที และไปยังจุดรวมพลที่กำหนด","ทำงานต่อจนเสร็จขั้นตอนปัจจุบันก่อน","วิ่งกลับบ้านทันที","โทรหาครอบครัวก่อนเป็นอันดับแรก"], answer: 0 },
+  { q: "เพื่อนร่วมงานตกจากนั่งร้านได้รับบาดเจ็บ ควรทำอะไรเป็นอันดับแรก?", choices: ["ยกผู้บาดเจ็บออกจากที่เกิดเหตุทันที","ประเมินความปลอดภัยพื้นที่ แจ้งฉุกเฉิน และไม่เคลื่อนย้ายผู้บาดเจ็บโดยไม่จำเป็น","ถ่ายรูปเก็บไว้เป็นหลักฐานก่อน","ทำงานต่อให้เสร็จก่อนแล้วค่อยช่วย"], answer: 1 },
+  { q: "ก่อนใช้รถขุดทำงานใกล้แนวท่อก๊าซ ต้องทำอะไรก่อน?", choices: ["เริ่มขุดตามแผนงานทันที","ขอใบอนุญาตขุด และตรวจสอบตำแหน่งท่อกับเจ้าหน้าที่","ใช้แผนเดิมที่เคยขุดในพื้นที่นี้","โทรแจ้งหัวหน้างานหลังขุดเสร็จ"], answer: 1 },
+  { q: "คุณเห็นเพื่อนร่วมงานไม่สวมหมวกนิรภัยขณะทำงาน ควรทำอย่างไร?", choices: ["ไม่ใช่เรื่องของฉัน ปล่อยผ่านไป","เตือนเพื่อนก่อน หากไม่ยอมใส่จึงแจ้งหัวหน้างาน","ถ่ายรูปเก็บไว้เป็นหลักฐาน","ไปฟ้องหัวหน้างานทันทีโดยไม่ต้องเตือน"], answer: 1 },
+  { q: "ก่อนเชื่อมงานในพื้นที่ใกล้แนวท่อก๊าซ ต้องทำอะไรเป็นอันดับแรก?", choices: ["เริ่มเชื่อมได้เลย หากเป็นพื้นที่งานของตัวเอง","ขออนุญาตงานที่ก่อความร้อน และตรวจวัดก๊าซในพื้นที่ก่อน","ปูพลาสติกคลุมแนวท่อไว้ก่อนเชื่อม","ทำเฉพาะตอนกลางคืนที่อากาศเย็น"], answer: 1 },
+  { q: "ท่าทางที่ถูกต้องในการยกของหนักด้วยมือคืออะไร?", choices: ["ก้มหลังลงไปยกของขึ้น","ย่อเข่า หลังตรง ใช้แรงขายก และของอยู่ใกล้ลำตัว","ใช้ขาข้างเดียวค้ำพื้นเพื่อสมดุล","ก้มตัวไปข้างหน้ามากที่สุดเพื่อเอื้อมถึง"], answer: 1 },
+  { q: "หัวหน้าสั่งให้ทำงานที่คุณคิดว่าไม่ปลอดภัย ควรทำอย่างไร?", choices: ["ทำตามคำสั่ง เพราะเป็นหัวหน้า","แจ้งข้อกังวลกับหัวหน้า — คุณมีสิทธิ์หยุดงานที่ไม่ปลอดภัย","ปฏิเสธทันที และออกจากงาน","ทำไปก่อน ถ้ารอดก็โชคดี"], answer: 1 },
+  { q: "พบสารเคมีหกบนพื้น แต่ไม่ทราบว่าเป็นสารอะไร ควรทำอย่างไร?", choices: ["เช็ดออกด้วยผ้าทันที","กั้นพื้นที่ ไม่สัมผัส แจ้งหัวหน้างาน และหาข้อมูลความปลอดภัยของสารนั้น","ใช้น้ำราดให้เจือจาง","ดมกลิ่นเพื่อตรวจสอบว่าเป็นสารอะไร"], answer: 1 },
+  { q: "เครื่องมือไฟฟ้าที่จะใช้มีสายไฟชำรุดเล็กน้อย ควรทำอย่างไร?", choices: ["พันด้วยเทปพันสายไฟแล้วใช้ต่อ","ไม่ใช้ และส่งซ่อมหรือเปลี่ยนเครื่องใหม่","ใช้ในงานเบาๆ ก่อนน่าจะไม่เป็นไร","ขอเพื่อนใช้แทนตัวเอง"], answer: 1 },
+  { q: "เมื่อต้องอพยพออกจากอาคารฉุกเฉิน (เช่น ไฟไหม้) ควรใช้ทางใด?", choices: ["ลิฟต์ เพราะเร็วกว่า","บันไดหนีไฟ","ปีนหน้าต่างออกไป","รอลิฟต์อยู่ในชั้นเดิม"], answer: 1 },
+  { q: "ขณะทำงานบนนั่งร้านสูง 5 เมตร อุปกรณ์ที่ขาดไม่ได้คืออะไร?", choices: ["หมวกแก๊ปและแว่นตา","สายรัดเซฟตี้ที่เกี่ยวกับจุดยึดที่แข็งแรง","รองเท้าผ้าใบใส่สบาย","ถุงมือผ้าธรรมดา"], answer: 1 },
+  { q: "ก่อนเข้าทำงานในถังเก็บก๊าซหรือพื้นที่อับอากาศ สิ่งที่สำคัญที่สุดคืออะไร?", choices: ["เตรียมอาหารและน้ำดื่มให้พอ","ขอใบอนุญาตเข้าทำงาน ตรวจวัดก๊าซ และมีผู้เฝ้าระวังภายนอก","แต่งกายให้เรียบร้อย","เตรียมเครื่องมือให้ครบทุกชิ้น"], answer: 1 },
+  { q: "ขณะทำงาน มีรถบรรทุกถอยหลังเข้ามาใกล้ ควรทำอย่างไร?", choices: ["ทำงานต่อไป รถจะหลีกเอง","หยุดงาน หลบออกจากเส้นทาง และให้สัญญาณคนขับให้เห็นชัด","ตะโกนใส่คนขับให้หยุด","กระโดดหลบในวินาทีสุดท้าย"], answer: 1 },
+  { q: "ขณะทำงานกลางแจ้ง ฟ้าเริ่มมืดและได้ยินเสียงฟ้าร้อง ควรทำอย่างไร?", choices: ["ทำงานต่อจนฝนตกหนัก","หยุดงานบนที่สูง/กลางแจ้ง เข้าที่กำบัง และรอจนปลอดภัย","กางร่มแล้วทำต่อ","ใส่เสื้อกันฝนแล้วทำต่อ"], answer: 1 },
+  { q: "พบไฟไหม้ขนาดเล็กที่ยังควบคุมได้ ควรทำอย่างไร?", choices: ["ยืนดูเฉยๆ ไม่ทำอะไร","แจ้งหัวหน้างานทันที และใช้ถังดับเพลิงที่เหมาะสมหากปลอดภัย","วิ่งหนีออกจากพื้นที่โดยไม่บอกใคร","ถ่ายรูปและคลิปวิดีโอเก็บไว้ก่อน"], answer: 1 },
+  { q: "เพื่อนร่วมงานชวนข้ามขั้นตอนความปลอดภัยเพราะกำลังรีบ ควรทำอย่างไร?", choices: ["ทำตามเพื่อนเพราะรีบเหมือนกัน","ปฏิเสธ และทำตามขั้นตอนความปลอดภัยที่กำหนด","ทำครึ่งหนึ่งของขั้นตอนพอ","บันทึกในเอกสารว่าทำครบ ทั้งที่ไม่ได้ทำ"], answer: 1 },
+  { q: "พบป้ายเตือนสีเหลือง \"แนวท่อก๊าซธรรมชาติ\" บนพื้นดิน หมายถึงอะไร?", choices: ["เป็นที่จอดรถสำหรับเจ้าหน้าที่","มีท่อก๊าซอยู่ใต้ดิน — ห้ามขุดโดยไม่ได้รับอนุญาต","เป็นพื้นที่เก็บอุปกรณ์","เป็นทางเดินสำหรับพนักงาน"], answer: 1 }
 ];
 
-let state = { nationalId: '', fullName: '', company: '', division: 'PO7', selectedQuestions: [], answers: [], currentIdx: 0 };
-const $ = (id) => document.getElementById(id);
+// ==================== CERT GENERATION ====================
+// ⚠️ TODO: วาง CERT_BG_BASE64 ของจริงจาก v1/exam.html มาที่นี่
+// const CERT_BG_BASE64 = '/9j/4AAQSkZJRg...';  // ~220KB base64 ของ background ใบเซอร์
+// ถ้ายังไม่ใส่ — ระบบจะใช้พื้นหลังขาวธรรมดาแทน (ใช้งานได้แต่ไม่สวย)
+const CERT_BG_BASE64 = '';  // ← วาง base64 ที่นี่
+
+const CERT_CONFIG = {
+  width: 1240,
+  height: 1754,
+  fields: {
+    fullName:   { x: 620,  y: 780,  size: 60, color: '#000000', align: 'center', bold: true },
+    examDate:   { x: 545,  y: 1161, size: 36, color: '#000000', align: 'left',   bold: false },
+    expiryDate: { x: 545,  y: 1215, size: 36, color: '#FF0000', align: 'left',   bold: false },
+    certNo:     { x: 845,  y: 1738, size: 40, color: '#85CAE9', align: 'left',   bold: false }
+  }
+};
+
+function formatThaiDate(isoDate) {
+  const months = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+                  'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  const d = new Date(isoDate);
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+}
+
+let _certBgImg = null;
+function loadCertBg() {
+  return new Promise((resolve) => {
+    if (!CERT_BG_BASE64) return resolve(null);
+    if (_certBgImg) return resolve(_certBgImg);
+    const img = new Image();
+    img.onload = () => { _certBgImg = img; resolve(img); };
+    img.onerror = () => resolve(null);
+    img.src = 'data:image/jpeg;base64,' + CERT_BG_BASE64;
+  });
+}
+
+async function generateCertPdf(data) {
+  const bgImg = await loadCertBg();
+  if (document.fonts && document.fonts.ready) await document.fonts.ready;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = CERT_CONFIG.width;
+  canvas.height = CERT_CONFIG.height;
+  const ctx = canvas.getContext('2d');
+  
+  if (bgImg) {
+    ctx.drawImage(bgImg, 0, 0, CERT_CONFIG.width, CERT_CONFIG.height);
+  } else {
+    // Fallback: พื้นหลังขาว + กรอบ + หัวกระดาษ
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, CERT_CONFIG.width, CERT_CONFIG.height);
+    ctx.strokeStyle = '#003B7A';
+    ctx.lineWidth = 8;
+    ctx.strokeRect(40, 40, CERT_CONFIG.width-80, CERT_CONFIG.height-80);
+    ctx.fillStyle = '#003B7A';
+    ctx.font = 'bold 64px Sarabun, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('ใบวุฒิบัตร', CERT_CONFIG.width/2, 250);
+    ctx.font = '32px Sarabun, sans-serif';
+    ctx.fillText('การอบรมความปลอดภัยผู้รับเหมา', CERT_CONFIG.width/2, 320);
+    ctx.fillText('สายงานระบบท่อส่งก๊าซธรรมชาติ (ปกต.2)', CERT_CONFIG.width/2, 380);
+    ctx.font = '28px Sarabun, sans-serif';
+    ctx.fillText('ขอมอบใบวุฒิบัตรนี้แก่', CERT_CONFIG.width/2, 700);
+    ctx.font = '28px Sarabun, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('วันที่สอบ:', 320, 1161);
+    ctx.fillText('วันหมดอายุ:', 320, 1215);
+    ctx.fillText('เลขที่:', 620, 1738);
+  }
+
+  const drawField = (text, cfg) => {
+    ctx.fillStyle = cfg.color;
+    ctx.font = `${cfg.bold ? 'bold ' : ''}${cfg.size}px Sarabun, 'IBM Plex Sans Thai', sans-serif`;
+    ctx.textAlign = cfg.align;
+    ctx.fillText(text, cfg.x, cfg.y);
+  };
+
+  drawField(data.fullName,   CERT_CONFIG.fields.fullName);
+  drawField(data.examDate,   CERT_CONFIG.fields.examDate);
+  drawField(data.expiryDate, CERT_CONFIG.fields.expiryDate);
+  drawField(data.certNo,     CERT_CONFIG.fields.certNo);
+
+  const imgData = canvas.toDataURL('image/jpeg', 0.85);
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
+  pdf.addImage(imgData, 'JPEG', 0, 0, 595, 842);
+  return pdf.output('datauristring').split(',')[1];
+}
+
+// ==================== HELPERS ====================
+function $(id) { return document.getElementById(id); }
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   $(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const isExam = id === 'screen-exam';
+  $('progBar').style.display = isExam ? 'block' : 'none';
+  $('progText').style.display = isExam ? 'block' : 'none';
 }
-function shuffleArray(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
-  return a;
-}
-function showError(title, msg) { $('errorTitle').textContent = title; $('errorMsg').textContent = msg; showScreen('screenError'); }
 
-async function init() {
-  const params = new URLSearchParams(window.location.search);
-  state.nationalId = params.get('nationalId') || localStorage.getItem('ptt_nationalId') || '';
-  state.fullName = params.get('fullName') || localStorage.getItem('ptt_fullName') || '';
-  state.company = params.get('company') || localStorage.getItem('ptt_company') || '';
-  state.division = params.get('division') || localStorage.getItem('ptt_division') || 'PO7';
-  $('ftDivision').textContent = state.division;
-  
-  if (!state.nationalId || !state.division) {
-    showError('ข้อมูลผู้สอบไม่ครบ', 'กรุณากลับไปเริ่มจากหน้าหลัก');
+function formatShortDate(iso) {
+  if (!iso) return '-';
+  const months = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  const d = new Date(iso);
+  if (isNaN(d)) return iso;
+  return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()+543}`;
+}
+
+function goHome() {
+  window.location.href = 'index.html';
+}
+
+// ==================== PRE-VALIDATION ====================
+function isValidId(v) {
+  return /^\d{13}$/.test(v) || /^[A-Za-z0-9]{6,}$/.test(v);
+}
+
+async function validateAccess() {
+  if (!state.nationalId || !isValidId(state.nationalId)) {
+    $('errMsg').textContent = 'ไม่พบข้อมูลบัตร — กรุณาเริ่มจากหน้าหลัก';
+    showScreen('screen-error');
     return;
   }
-  
+
   try {
     const res = await fetch(FLOW1_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ apiKey: API_KEY, nationalId: state.nationalId, division: state.division })
     });
+    if (!res.ok) throw new Error('Server error ' + res.status);
     const data = await res.json();
     handleValidation(data);
   } catch (err) {
-    showError('ตรวจสอบสิทธิ์ไม่สำเร็จ', err.message || 'กรุณาลองใหม่');
+    $('errMsg').textContent = 'เชื่อมต่อระบบไม่สำเร็จ — ' + (err.message || 'กรุณาลองใหม่');
+    showScreen('screen-error');
   }
 }
 
-function handleValidation(data) {
-  switch (data.status) {
+function handleValidation(response) {
+  const d = response.data || {};
+  
+  switch (response.status) {
     case 'not_registered':
-      showScreen('screenNotRegistered');
+      showScreen('screen-not-registered');
       break;
+      
     case 'wrong_date':
-      $('wrongScheduledDate').textContent = data.scheduledDate || '-';
-      showScreen('screenWrongDate');
+      const dd = new Date(response.scheduledDate);
+      $('wrongDateText').textContent = isNaN(dd) ? response.scheduledDate : formatShortDate(response.scheduledDate);
+      showScreen('screen-wrong-date');
       break;
+      
     case 'valid':
-      $('validCertNo').textContent = data.data?.certNo || '-';
-      $('validExpiry').textContent = data.data?.expiryDate || '-';
-      if (data.data?.certLink) $('validCertLink').href = data.data.certLink;
-      else $('validCertLink').style.display = 'none';
-      if (data.data?.fullName) state.fullName = data.data.fullName;
-      if (data.data?.company) state.company = data.data.company;
-      showScreen('screenHasValidCert');
+      // อัพเดท state จาก Flow 1
+      if (d.fullName) state.fullName = d.fullName;
+      if (d.company) state.company = d.company;
+      $('validCertNo').textContent = d.certNo || '-';
+      $('validExpiry').textContent = formatShortDate(d.expiryDate);
+      showScreen('screen-has-valid-cert');
       break;
+      
     case 'expired':
-      $('oldCertNo').textContent = data.data?.certNo || '-';
-      $('oldExpiry').textContent = data.data?.expiryDate || '-';
-      if (data.data?.fullName) state.fullName = data.data.fullName;
-      if (data.data?.company) state.company = data.data.company;
-      showScreen('screenExpiredWarning');
+      if (d.fullName) state.fullName = d.fullName;
+      if (d.company) state.company = d.company;
+      $('expCertNo').textContent = d.certNo || '-';
+      $('expExpiry').textContent = formatShortDate(d.expiryDate);
+      showScreen('screen-expired-notice');
       break;
+      
     case 'not_found':
-      proceedToExam();
+      // อัพเดทข้อมูลจาก Trainees ถ้า Flow 1 ส่งมา
+      if (d.fullName) state.fullName = d.fullName;
+      if (d.company) state.company = d.company;
+      showScreen('screen-intro');
       break;
+      
     default:
-      showError('เกิดข้อผิดพลาด', data.message || 'ไม่ทราบสาเหตุ');
+      $('errMsg').textContent = response.message || 'เกิดข้อผิดพลาดที่ไม่คาดคิด';
+      showScreen('screen-error');
   }
 }
 
-function proceedToExam() {
-  $('dispName').textContent = state.fullName || '(ไม่ระบุ)';
-  $('dispId').textContent = state.nationalId;
-  $('dispCompany').textContent = state.company || '(ไม่ระบุ)';
-  $('dispDivision').textContent = state.division;
-  state.selectedQuestions = shuffleArray(QUESTIONS).slice(0, EXAM_SIZE);
-  state.answers = new Array(EXAM_SIZE).fill(null);
-  $('qTotal').textContent = EXAM_SIZE;
-  showScreen('screenStart');
+function proceedToIntro() {
+  showScreen('screen-intro');
 }
 
-$('btnStart').addEventListener('click', () => {
-  $('progressWrap').style.display = 'block';
-  showScreen('screenExam');
+// ==================== EXAM LOGIC ====================
+function startExam() {
+  // สุ่ม 10 ข้อจาก 20
+  state.shuffledQuestions = [...QUESTIONS]
+    .map(q => ({ q, sort: Math.random() }))
+    .sort((a, b) => a.sort - b.sort)
+    .slice(0, EXAM_SIZE)
+    .map(x => x.q);
+  
+  // สุ่มลำดับตัวเลือก แต่จำคำตอบใหม่ไว้
+  state.shuffledQuestions = state.shuffledQuestions.map(q => {
+    const indexed = q.choices.map((c, i) => ({ text: c, originalIdx: i }));
+    const shuffled = indexed.sort(() => Math.random() - 0.5);
+    return {
+      q: q.q,
+      choices: shuffled.map(s => s.text),
+      answer: shuffled.findIndex(s => s.originalIdx === q.answer)
+    };
+  });
+  
+  state.answers = new Array(state.shuffledQuestions.length).fill(null);
+  state.currentIdx = 0;
   renderQuestion();
-});
+  showScreen('screen-exam');
+}
 
 function renderQuestion() {
   const idx = state.currentIdx;
-  const q = state.selectedQuestions[idx];
-  $('qNum').textContent = `QUESTION ${String(idx + 1).padStart(2, '0')}`;
+  const total = state.shuffledQuestions.length;
+  const q = state.shuffledQuestions[idx];
+  
+  $('qNumber').textContent = `ข้อ ${idx + 1} จาก ${total}`;
   $('qText').textContent = q.q;
-  const choicesEl = $('choices');
+  $('progFill').style.width = `${((idx + 1) / total) * 100}%`;
+  $('progText').textContent = `ข้อ ${idx + 1} / ${total}`;
+  
+  const choicesEl = $('qChoices');
   choicesEl.innerHTML = '';
   q.choices.forEach((choice, i) => {
-    const btn = document.createElement('button');
-    btn.className = 'choice';
-    if (state.answers[idx] === i) btn.classList.add('selected');
-    btn.innerHTML = `<span class="choice-letter">${String.fromCharCode(65 + i)}</span><span>${choice}</span>`;
-    btn.addEventListener('click', () => { state.answers[idx] = i; renderQuestion(); });
-    choicesEl.appendChild(btn);
+    const div = document.createElement('div');
+    div.className = 'choice' + (state.answers[idx] === i ? ' selected' : '');
+    div.innerHTML = `<span class="choice-letter">${String.fromCharCode(65 + i)}</span><span>${choice}</span>`;
+    div.addEventListener('click', () => selectChoice(i));
+    choicesEl.appendChild(div);
   });
-  $('qCurrent').textContent = idx + 1;
-  $('progressFill').style.width = (((idx + 1) / EXAM_SIZE) * 100) + '%';
-  $('qAnswered').textContent = state.answers.filter(a => a !== null).length;
-  $('btnPrev').style.display = idx > 0 ? 'flex' : 'none';
-  const isLast = idx === EXAM_SIZE - 1;
-  $('btnNext').textContent = isLast ? '✓ ส่งคำตอบ' : 'ถัดไป →';
+  
+  // Update buttons
+  $('btnPrev').disabled = idx === 0;
+  const isLast = idx === total - 1;
+  $('btnNext').textContent = isLast ? 'ส่งคำตอบ ✓' : 'ถัดไป →';
   $('btnNext').disabled = state.answers[idx] === null;
 }
 
-$('btnPrev').addEventListener('click', () => { if (state.currentIdx > 0) { state.currentIdx--; renderQuestion(); } });
-$('btnNext').addEventListener('click', () => {
-  if (state.currentIdx < EXAM_SIZE - 1) { state.currentIdx++; renderQuestion(); }
-  else { submitExam(); }
-});
+function selectChoice(i) {
+  state.answers[state.currentIdx] = i;
+  renderQuestion();
+}
 
-async function submitExam() {
-  let score = 0;
-  for (let i = 0; i < EXAM_SIZE; i++) {
-    if (state.answers[i] === state.selectedQuestions[i].answer) score++;
+function nextQuestion() {
+  if (state.currentIdx < state.shuffledQuestions.length - 1) {
+    state.currentIdx++;
+    renderQuestion();
+  } else {
+    submitExam();
   }
-  const isPassed = score >= PASS_THRESHOLD;
-  const examDate = new Date().toISOString().slice(0, 10);
-  showScreen('screenSubmitting');
+}
+
+function prevQuestion() {
+  if (state.currentIdx > 0) {
+    state.currentIdx--;
+    renderQuestion();
+  }
+}
+
+// ==================== SUBMIT ====================
+async function submitExam() {
+  showScreen('screen-submitting');
+  
+  // คำนวณคะแนน
+  let score = 0;
+  state.shuffledQuestions.forEach((q, i) => {
+    if (state.answers[i] === q.answer) score++;
+  });
+  const isPassed = score >= PASS_SCORE;
+  
+  const now = new Date();
+  const examDate = now.toISOString().slice(0, 10);
+  const expiry = new Date(now);
+  expiry.setFullYear(expiry.getFullYear() + CERT_VALIDITY_YEARS);
+  const expiryDate = expiry.toISOString().slice(0, 10);
+  
+  // สร้าง CertNo: PO7-YYMMDD-XXXX (XXXX = 4 ตัวสุดท้ายของบัตรปชช.)
+  const yy = String(now.getFullYear()).slice(-2);
+  const mm = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const last4 = state.nationalId.slice(-4);
+  const certNo = `${state.division}-${yy}${mm}${dd}-${last4}`;
+  state.certNo = certNo;
+  
+  // Build payload — Bug A FIX: isPassed เป็น boolean ไม่ใช่ string
+  const payload = {
+    apiKey: API_KEY,
+    nationalId: state.nationalId,
+    fullName: state.fullName,
+    company: state.company,
+    division: state.division,
+    score: score,
+    isPassed: isPassed,         // ← BOOLEAN (Flow 2 ใช้ equals @true)
+    examDate: examDate
+  };
+  
+  // ถ้าผ่าน → สร้าง PDF + ส่ง certNo/expiryDate (Bug B FIX)
+  if (isPassed) {
+    $('submitMsg').textContent = 'กำลังออกใบวุฒิบัตร...';
+    try {
+      const pdfBase64 = await generateCertPdf({
+        fullName: state.fullName,
+        examDate: formatThaiDate(now),
+        expiryDate: formatThaiDate(expiry),
+        certNo: certNo
+      });
+      state.certPdfBase64 = pdfBase64;
+      payload.pdfBase64 = pdfBase64;
+      payload.certNo = certNo;
+      payload.expiryDate = expiryDate;
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      $('errMsg').textContent = 'ไม่สามารถสร้างใบวุฒิบัตรได้ — ' + (err.message || 'กรุณาลองใหม่');
+      showScreen('screen-error');
+      return;
+    }
+  }
+  
+  $('submitMsg').textContent = 'กำลังบันทึกผลสอบ...';
+  
+  // ส่งไป Flow 2
   try {
     const res = await fetch(FLOW2_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        apiKey: API_KEY,
-        nationalId: state.nationalId,
-        fullName: state.fullName,
-        company: state.company,
-        score: score,
-        isPassed: isPassed ? 'yes' : 'no',
-        examDate: examDate,
-        division: state.division
-      })
+      body: JSON.stringify(payload)
     });
-    const data = await res.json();
-    showResult(score, isPassed, data);
-  } catch (err) {
-    showError('บันทึกผลไม่สำเร็จ', err.message || 'กรุณาลองใหม่อีกครั้ง');
-  }
-}
-
-function showResult(score, isPassed, apiData) {
-  const icon = $('resultIcon');
-  const title = $('resultTitle');
-  const sub = $('resultSub');
-  const scoreBig = $('scoreBig');
-  if (isPassed) {
-    icon.className = 'result-icon pass';
-    icon.textContent = '✓';
-    title.className = 'result-title pass';
-    title.textContent = 'ผ่านการทดสอบ';
-    sub.textContent = 'ยินดีด้วย — คุณได้รับใบวุฒิบัตรแล้ว';
-    scoreBig.className = 'score-big';
-    if (apiData && apiData.certNo) {
-      $('certCard').style.display = 'block';
-      $('certNo').textContent = apiData.certNo;
-      if (apiData.certLink) $('certLink').href = apiData.certLink;
-      else $('certLink').style.display = 'none';
+    if (!res.ok) throw new Error('Server error ' + res.status);
+    const result = await res.json();
+    
+    // ตรวจสอบ Flow 2 security guard response
+    if (result.status === 'not_authorized') {
+      $('errMsg').textContent = result.message || 'ไม่มีสิทธิ์เข้าสอบ';
+      showScreen('screen-error');
+      return;
     }
-  } else {
-    icon.className = 'result-icon fail';
-    icon.textContent = '✗';
-    title.className = 'result-title fail';
-    title.textContent = 'ไม่ผ่านการทดสอบ';
-    sub.textContent = `ต้องได้คะแนนอย่างน้อย ${PASS_THRESHOLD}/${EXAM_SIZE} — กรุณาทดสอบใหม่`;
-    scoreBig.className = 'score-big fail';
+    
+    showResult(score, isPassed, now, expiry);
+  } catch (err) {
+    $('errMsg').textContent = 'บันทึกผลสอบไม่สำเร็จ — ' + (err.message || 'กรุณาลองใหม่');
+    showScreen('screen-error');
   }
-  scoreBig.textContent = `${score}/${EXAM_SIZE}`;
-  showScreen('screenResult');
 }
 
-init();
+function showResult(score, isPassed, examDate, expiryDate) {
+  if (isPassed) {
+    $('passScore').textContent = score;
+    $('passCertNo').textContent = state.certNo;
+    $('passName').textContent = state.fullName || '-';
+    $('passExamDate').textContent = formatShortDate(examDate.toISOString());
+    $('passExpiry').textContent = formatShortDate(expiryDate.toISOString());
+    showScreen('screen-pass');
+  } else {
+    $('failScore').textContent = score;
+    showScreen('screen-fail');
+  }
+}
+
+function downloadCert() {
+  if (!state.certPdfBase64) {
+    alert('ไม่พบไฟล์ใบวุฒิบัตร');
+    return;
+  }
+  const link = document.createElement('a');
+  link.href = 'data:application/pdf;base64,' + state.certPdfBase64;
+  link.download = `${state.certNo}.pdf`;
+  link.click();
+}
+
+function retryExam() {
+  state.currentIdx = 0;
+  state.answers = [];
+  state.certPdfBase64 = null;
+  state.certNo = null;
+  startExam();
+}
+
+// ==================== START ====================
+validateAccess();
 </script>
 </body>
 </html>

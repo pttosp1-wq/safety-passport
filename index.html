@@ -2,643 +2,442 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ระบบอบรมความปลอดภัยผู้รับเหมา — PTT TSO</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ตรวจสอบสถานะการอบรม — PTT TSO</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ptt-navy: #003B7A;
-    --ptt-navy-dark: #002347;
-    --ptt-blue: #0066CC;
-    --ptt-red: #E60028;
-    --ptt-gold: #C9A961;
-    --bg: #F5F7FA;
-    --surface: #FFFFFF;
-    --ink: #0B1A2C;
-    --ink-soft: #5C6B7A;
-    --line: #E1E6EC;
-    --success: #1B8754;
-    --warning: #D97706;
-    --danger: #DC2626;
+    --navy: #003B7A; --navy-dark: #002752; --sky: #1E90FF;
+    --orange: #FF6B00; --green: #16A34A; --red: #DC2626; --amber: #D97706;
+    --gray-50: #F8FAFC; --gray-100: #F1F5F9; --gray-200: #E2E8F0;
+    --gray-400: #94A3B8; --gray-600: #475569; --gray-900: #0F172A;
   }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'IBM Plex Sans Thai', 'IBM Plex Sans', sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    min-height: 100vh;
-    line-height: 1.6;
-    -webkit-font-smoothing: antialiased;
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body {
+    font-family: 'IBM Plex Sans Thai', system-ui, sans-serif;
+    background: var(--gray-50); color: var(--gray-900);
+    min-height: 100vh; line-height: 1.5; -webkit-font-smoothing: antialiased;
   }
-
-  /* ===== Top Bar ===== */
-  .topbar {
-    background: var(--ptt-navy);
-    color: #fff;
-    padding: 14px 24px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    border-bottom: 3px solid var(--ptt-gold);
+  .app {
+    max-width: 600px; margin: 0 auto; min-height: 100vh;
+    display: flex; flex-direction: column; background: white;
+    box-shadow: 0 0 60px rgba(0, 59, 122, 0.06);
   }
-  .brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  .header {
+    background: linear-gradient(135deg, var(--navy), var(--navy-dark));
+    color: white; padding: 24px 20px; position: relative; overflow: hidden;
   }
-  .brand-mark {
-    width: 36px;
-    height: 36px;
-    background: #fff;
-    color: var(--ptt-navy);
-    border-radius: 6px;
-    display: grid;
-    place-items: center;
-    font-weight: 700;
-    font-size: 13px;
-    letter-spacing: 0.5px;
+  .header::before {
+    content: ''; position: absolute; top: -50%; right: -20%;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(255,107,0,0.15), transparent 70%);
+    border-radius: 50%;
   }
-  .brand-text {
-    font-size: 14px;
-    font-weight: 500;
-    letter-spacing: 0.3px;
+  .header-brand { font-family: 'Outfit', sans-serif; font-size: 10px; letter-spacing: 2.5px; color: rgba(255,255,255,0.6); margin-bottom: 6px; font-weight: 600; }
+  .header-title { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; position: relative; }
+  .header-sub { font-size: 12px; margin-top: 4px; color: rgba(255,255,255,0.7); position: relative; }
+  .content { flex: 1; padding: 28px 20px; }
+  .state { display: none; animation: fadeIn 0.4s ease; }
+  .state.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .center { text-align: center; }
+  .icon-circle {
+    width: 80px; height: 80px; border-radius: 24px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; color: white; margin: 20px auto 20px;
   }
-  .brand-text small {
-    display: block;
-    font-size: 11px;
-    opacity: 0.75;
-    font-weight: 300;
-  }
-  .division-tag {
-    font-size: 12px;
-    padding: 4px 10px;
-    background: rgba(255,255,255,0.12);
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-  }
-
-  /* ===== Hero ===== */
-  .hero {
-    background: linear-gradient(135deg, var(--ptt-navy) 0%, var(--ptt-navy-dark) 100%);
-    color: #fff;
-    padding: 48px 24px 100px;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background-image:
-      radial-gradient(circle at 20% 50%, rgba(201,169,97,0.08) 0%, transparent 40%),
-      radial-gradient(circle at 80% 30%, rgba(0,102,204,0.15) 0%, transparent 40%);
-    pointer-events: none;
-  }
-  .hero h1 {
-    font-size: clamp(24px, 4vw, 34px);
-    font-weight: 600;
-    margin-bottom: 8px;
-    position: relative;
-  }
-  .hero p {
-    font-size: 15px;
-    opacity: 0.85;
-    font-weight: 300;
-    position: relative;
-  }
-
-  /* ===== Card ===== */
-  .container {
-    max-width: 520px;
-    margin: -60px auto 48px;
-    padding: 0 20px;
-    position: relative;
-  }
-  .card {
-    background: var(--surface);
-    border-radius: 12px;
-    box-shadow: 0 12px 40px rgba(0,59,122,0.12), 0 2px 8px rgba(0,0,0,0.04);
-    overflow: hidden;
-    animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .card-header {
-    padding: 28px 28px 0;
-  }
-  .step-indicator {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 1.2px;
-    color: var(--ptt-blue);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-  .card-header h2 {
-    font-size: 22px;
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-  .card-header p {
-    font-size: 14px;
-    color: var(--ink-soft);
-  }
-
-  .card-body { padding: 24px 28px 28px; }
-
-  /* ===== Form ===== */
-  .field { margin-bottom: 18px; }
+  .icon-circle.navy { background: linear-gradient(135deg, var(--navy), var(--sky)); box-shadow: 0 12px 32px rgba(30,144,255,0.3); }
+  .icon-circle.green { background: linear-gradient(135deg, var(--green), #15803D); box-shadow: 0 12px 32px rgba(22,163,74,0.25); }
+  .icon-circle.red { background: linear-gradient(135deg, var(--red), #B91C1C); box-shadow: 0 12px 32px rgba(220,38,38,0.25); }
+  .icon-circle.amber { background: linear-gradient(135deg, var(--amber), #B45309); box-shadow: 0 12px 32px rgba(217,119,6,0.25); }
+  .state-title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 8px; letter-spacing: -0.5px; }
+  .state-sub { color: var(--gray-600); font-size: 14px; text-align: center; margin-bottom: 24px; }
+  .field { margin-bottom: 14px; }
   .field label {
-    display: block;
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 6px;
-    color: var(--ink);
+    display: block; font-size: 13px; font-weight: 600;
+    color: var(--gray-900); margin-bottom: 6px;
   }
-  .field label .required { color: var(--ptt-red); }
-  .field input {
-    width: 100%;
-    padding: 13px 14px;
-    border: 1.5px solid var(--line);
-    border-radius: 8px;
-    font-size: 16px;
-    font-family: inherit;
-    background: var(--surface);
-    transition: border-color 0.15s, box-shadow 0.15s;
-    letter-spacing: 0.5px;
+  .field input, .field select {
+    width: 100%; padding: 13px 14px;
+    border: 1.5px solid var(--gray-200); border-radius: 12px;
+    font-family: inherit; font-size: 15px; color: var(--gray-900);
+    background: white; transition: all 0.15s ease;
   }
-  .field input:focus {
-    outline: none;
-    border-color: var(--ptt-blue);
-    box-shadow: 0 0 0 3px rgba(0,102,204,0.12);
+  .field input:focus, .field select:focus {
+    outline: none; border-color: var(--sky);
+    box-shadow: 0 0 0 3px rgba(30,144,255,0.1);
   }
-  .field .hint {
-    font-size: 12px;
-    color: var(--ink-soft);
-    margin-top: 5px;
+  .nid-input {
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 18px !important; letter-spacing: 2px;
+    text-align: center;
   }
-
-  /* ===== Buttons ===== */
   .btn {
-    width: 100%;
-    padding: 14px 20px;
-    border: none;
-    border-radius: 8px;
-    font-size: 15px;
-    font-weight: 600;
-    font-family: inherit;
-    cursor: pointer;
-    transition: all 0.15s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
+    width: 100%; padding: 16px; border: none; border-radius: 14px;
+    font-family: inherit; font-size: 16px; font-weight: 600;
+    cursor: pointer; transition: all 0.2s ease;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
   }
   .btn-primary {
-    background: var(--ptt-navy);
-    color: #fff;
+    background: linear-gradient(135deg, var(--navy), var(--sky));
+    color: white; box-shadow: 0 6px 16px rgba(0,59,122,0.25);
   }
-  .btn-primary:hover {
-    background: var(--ptt-navy-dark);
-    transform: translateY(-1px);
-    box-shadow: 0 6px 16px rgba(0,59,122,0.25);
-  }
-  .btn-primary:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none;
-  }
-  .btn-secondary {
-    background: #fff;
-    color: var(--ptt-navy);
-    border: 1.5px solid var(--line);
+  .btn-primary:hover { box-shadow: 0 8px 20px rgba(0,59,122,0.35); transform: translateY(-1px); }
+  .btn-primary:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; box-shadow: none; transform: none; }
+  .btn-ghost {
+    background: var(--gray-100); color: var(--gray-600);
     margin-top: 10px;
   }
-  .btn-secondary:hover {
-    border-color: var(--ptt-navy);
-    background: #F8FAFC;
+  .btn-ghost:hover { background: var(--gray-200); }
+  .error-banner {
+    background: linear-gradient(135deg, #FEE2E2, #FECACA);
+    border-left: 4px solid var(--red); color: #7F1D1D;
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;
+    font-size: 13px; display: none;
   }
-  .btn-danger {
-    background: var(--ptt-red);
-    color: #fff;
+  .error-banner.show { display: block; }
+  .info-card {
+    background: var(--gray-50); border: 1px solid var(--gray-200);
+    border-radius: 16px; padding: 20px; margin-bottom: 16px;
   }
-  .btn-danger:hover {
-    background: #B8001F;
-    transform: translateY(-1px);
+  .info-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 0; font-size: 14px;
   }
-
-  /* ===== Loading ===== */
-  .spinner {
-    width: 18px;
-    height: 18px;
-    border: 2px solid rgba(255,255,255,0.3);
-    border-top-color: #fff;
+  .info-row + .info-row { border-top: 1px dashed var(--gray-200); }
+  .info-label { color: var(--gray-600); }
+  .info-value { font-weight: 600; color: var(--gray-900); }
+  .cert-card {
+    background: linear-gradient(135deg, #1E3A8A, var(--navy));
+    color: white; border-radius: 20px; padding: 22px;
+    margin-bottom: 16px; position: relative; overflow: hidden;
+  }
+  .cert-card::after {
+    content: ''; position: absolute; top: -50%; right: -20%;
+    width: 150px; height: 150px;
+    background: radial-gradient(circle, rgba(255,215,0,0.15), transparent 70%);
     border-radius: 50%;
-    animation: spin 0.7s linear infinite;
+  }
+  .cert-label { font-family: 'Outfit', sans-serif; font-size: 10px; letter-spacing: 2.5px; color: rgba(255,255,255,0.7); font-weight: 600; margin-bottom: 10px; position: relative; }
+  .cert-no { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: 1px; margin-bottom: 16px; position: relative; }
+  .cert-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: white; text-decoration: none;
+    background: rgba(255,255,255,0.18); padding: 10px 16px;
+    border-radius: 100px; font-size: 13px; font-weight: 600;
+    backdrop-filter: blur(10px); position: relative;
+  }
+  .cert-link:hover { background: rgba(255,255,255,0.25); }
+  .cert-meta { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 10px; position: relative; }
+  .warning-card {
+    background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+    border-left: 4px solid var(--amber); border-radius: 12px;
+    padding: 14px 16px; margin-bottom: 16px;
+    font-size: 13px; color: #78350F; line-height: 1.6;
+  }
+  .warning-card strong { color: #92400E; }
+  .error-detail {
+    background: var(--gray-50); border-radius: 12px;
+    padding: 16px; margin-bottom: 16px;
+    font-size: 14px; color: var(--gray-600); text-align: center;
+    line-height: 1.6;
+  }
+  .error-detail strong { color: var(--gray-900); }
+  .date-highlight {
+    font-family: 'Outfit', sans-serif;
+    font-size: 18px; font-weight: 800;
+    color: var(--amber); display: block; margin: 8px 0;
+  }
+  .spinner-wrap { text-align: center; padding: 40px 0; }
+  .spinner {
+    width: 48px; height: 48px;
+    border: 5px solid var(--gray-200); border-top-color: var(--navy);
+    border-radius: 50%; animation: spin 0.8s linear infinite;
+    margin: 0 auto 16px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ===== Results ===== */
-  .result {
-    display: none;
-    animation: fadeIn 0.4s ease-out;
-  }
-  .result.show { display: block; }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  .result-banner {
-    padding: 20px 24px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    border-bottom: 1px solid var(--line);
-  }
-  .result-icon {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    display: grid;
-    place-items: center;
-    flex-shrink: 0;
-    font-size: 24px;
-  }
-  .result-success .result-icon { background: rgba(27,135,84,0.12); color: var(--success); }
-  .result-warning .result-icon { background: rgba(217,119,6,0.12); color: var(--warning); }
-  .result-danger  .result-icon { background: rgba(220,38,38,0.12);  color: var(--danger); }
-
-  .result-title { font-size: 17px; font-weight: 600; margin-bottom: 2px; }
-  .result-subtitle { font-size: 13px; color: var(--ink-soft); }
-
-  .result-detail {
-    padding: 20px 28px;
-  }
-  .detail-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 10px 0;
-    border-bottom: 1px dashed var(--line);
-    font-size: 14px;
-  }
-  .detail-row:last-child { border-bottom: none; }
-  .detail-label { color: var(--ink-soft); }
-  .detail-value { font-weight: 500; }
-  .detail-value.expired { color: var(--danger); }
-
-  .result-actions { padding: 0 28px 28px; }
-
-  /* ===== Footer ===== */
-  .footer {
-    text-align: center;
-    padding: 24px;
-    color: var(--ink-soft);
-    font-size: 12px;
-    border-top: 1px solid var(--line);
-    background: #fff;
-  }
-  .footer strong { color: var(--ink); }
-
-  /* ===== Error Message ===== */
-  .error-msg {
-    display: none;
-    background: rgba(220,38,38,0.08);
-    color: var(--danger);
-    padding: 10px 14px;
-    border-radius: 6px;
-    font-size: 13px;
-    margin-top: 10px;
-    border-left: 3px solid var(--danger);
-  }
-  .error-msg.show { display: block; }
-
-  @media (max-width: 480px) {
-    .hero { padding: 36px 20px 80px; }
-    .card-header, .card-body { padding-left: 20px; padding-right: 20px; }
-    .result-banner, .result-detail, .result-actions { padding-left: 20px; padding-right: 20px; }
-
-    /* Topbar: ให้ brand-text มีพื้นที่พอ + ซ่อน division-tag (มีใน footer แล้ว) */
-    .topbar { padding: 12px 16px; }
-    .brand-text { font-size: 13px; line-height: 1.3; }
-    .brand-text small { font-size: 10px; }
-    .division-tag { display: none; }
-  }
+  .footer { padding: 18px 20px; text-align: center; font-size: 11px; color: var(--gray-400); line-height: 1.6; border-top: 1px solid var(--gray-100); }
 </style>
 </head>
 <body>
-
-  <!-- Top Bar -->
-  <div class="topbar">
-    <div class="brand">
-      <div class="brand-mark">PTT</div>
-      <div class="brand-text">
-        ระบบอบรมความปลอดภัยผู้รับเหมา
-        <small>PTT TSO — Safety Training System</small>
-      </div>
-    </div>
-    <div class="division-tag" id="divisionTag">ส่วนปฏิบัติการระบบท่อเขต 7</div>
+<div class="app">
+  <div class="header">
+    <div class="header-brand">PTT • TSO SAFETY TRAINING</div>
+    <div class="header-title">ตรวจสอบสถานะการอบรม</div>
+    <div class="header-sub">ผู้รับเหมา ปฏิบัติงานในแนวท่อก๊าซธรรมชาติ</div>
   </div>
 
-  <!-- Hero -->
-  <div class="hero">
-    <h1>ตรวจสอบสถานะการอบรม</h1>
-    <p>กรอกเลขบัตรประชาชนของท่านเพื่อเริ่มใช้งานระบบ</p>
-  </div>
+  <div class="content">
 
-  <!-- Main Card -->
-  <div class="container">
-    <div class="card">
-
-      <!-- STATE 1: Input Form -->
-      <div id="state-input">
-        <div class="card-header">
-          <span class="step-indicator">ขั้นตอนที่ 1 — ตรวจสอบ</span>
-          <h2>เลขบัตรประชาชน</h2>
-          <p>ระบบจะตรวจสอบว่าท่านเคยผ่านการอบรมหรือไม่</p>
-        </div>
-        <div class="card-body">
-          <div class="field">
-            <label>หมายเลขบัตรประชาชน <span class="required">*</span></label>
-            <input
-              type="text"
-              id="nationalId"
-              maxlength="13"
-              inputmode="numeric"
-              placeholder="1234567890123"
-              autocomplete="off">
-            <div class="hint">กรอกตัวเลข 13 หลัก ไม่ต้องเว้นวรรค</div>
-            <div class="error-msg" id="errorMsg"></div>
-          </div>
-          <button class="btn btn-primary" id="btnCheck" onclick="checkStatus()">
-            <span id="btnCheckText">ตรวจสอบสถานะ</span>
-          </button>
-        </div>
+    <!-- STATE 1: Input -->
+    <div class="state active" id="state-input">
+      <div class="state-title">ตรวจสอบสถานะ</div>
+      <div class="state-sub">กรอกเลขบัตรประชาชนของผู้เข้าอบรม</div>
+      
+      <div class="error-banner" id="errBanner"></div>
+      
+      <div class="field">
+        <label>เลขบัตรประชาชน / Passport</label>
+        <input type="text" id="natId" class="nid-input" maxlength="20" placeholder="เลขบัตร 13 หลัก หรือ Passport">
       </div>
-
-      <!-- STATE 2: Found + Valid (เคยผ่าน + ยังไม่หมดอายุ) -->
-      <div id="state-valid" class="result">
-        <div class="result-banner result-success">
-          <div class="result-icon">✓</div>
-          <div>
-            <div class="result-title">ท่านผ่านการอบรมแล้ว</div>
-            <div class="result-subtitle">ใบวุฒิบัตรยังมีอายุการใช้งาน</div>
-          </div>
-        </div>
-        <div class="result-detail">
-          <div class="detail-row">
-            <span class="detail-label">ชื่อ-นามสกุล</span>
-            <span class="detail-value" id="validName">—</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">บริษัท</span>
-            <span class="detail-value" id="validCompany">—</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">วันที่อบรม</span>
-            <span class="detail-value" id="validExamDate">—</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">หมดอายุ</span>
-            <span class="detail-value" id="validExpiry">—</span>
-          </div>
-        </div>
-        <div class="result-actions">
-          <button class="btn btn-primary" id="btnDownload" onclick="downloadCert()">
-            ดาวน์โหลดใบวุฒิบัตร (PDF)
-          </button>
-          <button class="btn btn-secondary" onclick="resetForm()">ตรวจสอบเลขบัตรอื่น</button>
-        </div>
+      <div class="field">
+        <label>เขตปฏิบัติการ</label>
+        <select id="division">
+          <option value="PO5">PO5 — ส่วนปฏิบัติการระบบท่อเขต 5</option>
+          <option value="PO6">PO6 — ส่วนปฏิบัติการระบบท่อเขต 6</option>
+          <option value="PO7" selected>PO7 — ส่วนปฏิบัติการระบบท่อเขต 7</option>
+          <option value="PO8">PO8 — ส่วนปฏิบัติการระบบท่อเขต 8</option>
+        </select>
       </div>
-
-      <!-- STATE 3: Found + Expired (เคยผ่านแต่หมดอายุ) -->
-      <div id="state-expired" class="result">
-        <div class="result-banner result-warning">
-          <div class="result-icon">!</div>
-          <div>
-            <div class="result-title">ใบวุฒิบัตรหมดอายุแล้ว</div>
-            <div class="result-subtitle">กรุณาทำการอบรมใหม่</div>
-          </div>
-        </div>
-        <div class="result-detail">
-          <div class="detail-row">
-            <span class="detail-label">ชื่อ-นามสกุล</span>
-            <span class="detail-value" id="expName">—</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">วันที่อบรมครั้งก่อน</span>
-            <span class="detail-value" id="expExamDate">—</span>
-          </div>
-          <div class="detail-row">
-            <span class="detail-label">หมดอายุเมื่อ</span>
-            <span class="detail-value expired" id="expExpiry">—</span>
-          </div>
-        </div>
-        <div class="result-actions">
-          <button class="btn btn-primary" onclick="goToExam()">เริ่มทำข้อสอบใหม่</button>
-          <button class="btn btn-secondary" onclick="resetForm()">ย้อนกลับ</button>
-        </div>
-      </div>
-
-      <!-- STATE 4: Not Found (ยังไม่เคยอบรม) -->
-      <div id="state-new" class="result">
-        <div class="result-banner result-success">
-          <div class="result-icon">+</div>
-          <div>
-            <div class="result-title">ผู้รับเหมาใหม่</div>
-            <div class="result-subtitle">ท่านยังไม่เคยเข้ารับการอบรม</div>
-          </div>
-        </div>
-        <div class="result-detail">
-          <p style="font-size: 14px; color: var(--ink-soft); line-height: 1.7;">
-            กรุณากดปุ่มด้านล่างเพื่อเริ่มทำแบบทดสอบความปลอดภัย
-            <br>เกณฑ์ผ่านการอบรม: <strong style="color: var(--ink);">8 คะแนน จาก 10 ข้อ</strong>
-          </p>
-        </div>
-        <div class="result-actions">
-          <button class="btn btn-primary" onclick="goToExam()">เริ่มทำข้อสอบ</button>
-          <button class="btn btn-secondary" onclick="resetForm()">ย้อนกลับ</button>
-        </div>
-      </div>
-
+      <button class="btn btn-primary" id="btnCheck" onclick="checkStatus()" disabled>ตรวจสอบ</button>
     </div>
 
-    <!-- Footer -->
-    <div class="footer">
-      © PTT Public Company Limited<br>
-      สายงานระบบท่อส่งก๊าซธรรมชาติ<br>
-      <strong>ฝ่ายปฏิบัติการระบบท่อส่งก๊าซธรรมชาติ ภาค 2 (ปกต.2)</strong><br>
-      <span id="footerDept">ส่วนปฏิบัติการระบบท่อเขต 7 (ปท.7)</span>
+    <!-- STATE 1.5: Loading -->
+    <div class="state" id="state-loading">
+      <div class="spinner-wrap">
+        <div class="spinner"></div>
+        <div style="color: var(--gray-600); font-size: 14px;">กำลังตรวจสอบสิทธิ์...</div>
+      </div>
     </div>
+
+    <!-- STATE 2: Valid (มี cert อยู่แล้ว) -->
+    <div class="state" id="state-valid">
+      <div class="icon-circle green">✓</div>
+      <div class="state-title">ใบวุฒิบัตรของท่านยังใช้ได้</div>
+      <div class="state-sub">ไม่ต้องทดสอบใหม่ — สามารถใช้ใบเดิมต่อได้</div>
+      <div class="info-card">
+        <div class="info-row"><span class="info-label">ชื่อ-นามสกุล</span><span class="info-value" id="validName">-</span></div>
+        <div class="info-row"><span class="info-label">บริษัท</span><span class="info-value" id="validCompany">-</span></div>
+        <div class="info-row"><span class="info-label">วันที่สอบ</span><span class="info-value" id="validExam">-</span></div>
+        <div class="info-row"><span class="info-label">วันหมดอายุ</span><span class="info-value" id="validExpiry">-</span></div>
+      </div>
+      <div class="cert-card">
+        <div class="cert-label">VALID CERTIFICATE</div>
+        <div class="cert-no" id="validCertNo">-</div>
+        <a class="cert-link" id="validCertLink" href="#" target="_blank">📄 เปิดดูใบวุฒิบัตร</a>
+      </div>
+      <button class="btn btn-ghost" onclick="resetForm()">ตรวจสอบเลขบัตรอื่น</button>
+    </div>
+
+    <!-- STATE 3: Expired (cert หมดอายุ — สอบใหม่ได้) -->
+    <div class="state" id="state-expired">
+      <div class="icon-circle amber">!</div>
+      <div class="state-title">ใบวุฒิบัตรหมดอายุแล้ว</div>
+      <div class="state-sub">กรุณาทดสอบใหม่เพื่อรับใบวุฒิบัตรชุดใหม่</div>
+      <div class="warning-card">
+        <strong>หมายเหตุ:</strong> ใบวุฒิบัตรเดิม (<span id="expCertNo">-</span>) หมดอายุเมื่อ <span id="expExpiry">-</span>
+      </div>
+      <div class="info-card">
+        <div class="info-row"><span class="info-label">ชื่อ-นามสกุล</span><span class="info-value" id="expName">-</span></div>
+        <div class="info-row"><span class="info-label">วันที่สอบครั้งก่อน</span><span class="info-value" id="expExam">-</span></div>
+      </div>
+      <button class="btn btn-primary" onclick="goToExam()">เริ่มทดสอบใหม่ →</button>
+      <button class="btn btn-ghost" onclick="resetForm()">ตรวจสอบเลขบัตรอื่น</button>
+    </div>
+
+    <!-- STATE 4: Not Found (ยังไม่เคยสอบ — สอบครั้งแรก) -->
+    <div class="state" id="state-new">
+      <div class="icon-circle navy">→</div>
+      <div class="state-title">พร้อมเริ่มทดสอบ</div>
+      <div class="state-sub">ระบบยืนยันสิทธิ์เข้าอบรมแล้ว กรุณาเริ่มทำแบบทดสอบ</div>
+      <div class="info-card">
+        <div class="info-row"><span class="info-label">เลขบัตรประชาชน</span><span class="info-value" id="newNid">-</span></div>
+        <div class="info-row"><span class="info-label">เขตปฏิบัติการ</span><span class="info-value" id="newDiv">-</span></div>
+      </div>
+      <button class="btn btn-primary" onclick="goToExam()">เริ่มทำแบบทดสอบ →</button>
+      <button class="btn btn-ghost" onclick="resetForm()">ตรวจสอบเลขบัตรอื่น</button>
+    </div>
+
+    <!-- STATE 5: Not Registered (ไม่ได้ลงทะเบียน) -->
+    <div class="state" id="state-not-registered">
+      <div class="icon-circle red">✗</div>
+      <div class="state-title">ไม่พบรายชื่อ</div>
+      <div class="state-sub">เลขประจำตัวประชาชนนี้ไม่ได้ลงทะเบียนอบรม</div>
+      <div class="error-detail">
+        กรุณาติดต่อบริษัทต้นสังกัด<br>
+        เพื่อ<strong>ส่งคำขออบรม</strong>กับ ปตท. ก่อนล่วงหน้า
+      </div>
+      <button class="btn btn-ghost" onclick="resetForm()">ตรวจสอบเลขบัตรอื่น</button>
+    </div>
+
+    <!-- STATE 6: Wrong Date (วันนี้ไม่ใช่วันอบรม) -->
+    <div class="state" id="state-wrong-date">
+      <div class="icon-circle amber">📅</div>
+      <div class="state-title">วันนี้ไม่ใช่วันอบรม</div>
+      <div class="state-sub">ท่านลงทะเบียนสำหรับวันอื่น</div>
+      <div class="error-detail">
+        วันอบรมของท่านคือ
+        <span class="date-highlight" id="wrongDateText">-</span>
+        กรุณามาตรงตามวันที่กำหนด
+      </div>
+      <button class="btn btn-ghost" onclick="resetForm()">ตรวจสอบเลขบัตรอื่น</button>
+    </div>
+
   </div>
+
+  <div class="footer">
+    สายงานระบบท่อส่งก๊าซธรรมชาติ<br>
+    ฝ่ายปฏิบัติการระบบท่อส่งก๊าซธรรมชาติ ภาค 2 (ปกต.2)
+  </div>
+</div>
 
 <script>
-  // ========================================================
-  // CONFIG
-  // ========================================================
-  const FLOW_URL = 'https://defaultf2fda5e72ea1450d9fc12af5f86300.95.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3e39b39e312e458087586fb0752dccf4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uewTLw5vaCzlY3HVcX-ABR_qLTGz1ZGWyYHwWNcCXiM';
-  const API_KEY  = 'PTT-PO7-2026-SECRET';
-  const EXAM_URL = 'exam.html'; // หน้าข้อสอบ (อยู่โฟลเดอร์เดียวกัน)
+const FLOW1_URL = 'https://defaultf2fda5e72ea1450d9fc12af5f86300.95.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3e39b39e312e458087586fb0752dccf4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uewTLw5vaCzlY3HVcX-ABR_qLTGz1ZGWyYHwWNcCXiM';
+const API_KEY = 'PTT-PO7-2026-SECRET';
 
-  // ========== Multi-Division Support ==========
-  const DIVISIONS = {
-    PO5: 'ส่วนปฏิบัติการระบบท่อเขต 5',
-    PO6: 'ส่วนปฏิบัติการระบบท่อเขต 6',
-    PO7: 'ส่วนปฏิบัติการระบบท่อเขต 7',
-    PO8: 'ส่วนปฏิบัติการระบบท่อเขต 8'
-  };
-  const params = new URLSearchParams(window.location.search);
-  const DIVISION = params.get('division') || 'PO7';
-  const DIVISION_FULL = DIVISIONS[DIVISION] || DIVISIONS.PO7;
+const THAI_MONTHS_SHORT = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.',
+                           'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+const THAI_DAYS = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
 
-  // อัปเดต UI
-  document.getElementById('divisionTag').textContent = DIVISION_FULL;
-  document.getElementById('footerDept').textContent =
-    DIVISION_FULL + ' (' + DIVISION.replace('PO', 'ปท.') + ')';
-  // ========================================================
+let state = { nationalId: '', division: 'PO7', fullName: '', company: '' };
 
-  const $ = id => document.getElementById(id);
-  let currentNationalId = '';
-  let currentPdfLink    = '';
+// pre-fill division from localStorage (ถ้าผู้ใช้เคยเลือก PO ไหน)
+const savedDivision = localStorage.getItem('ptt_division');
+if (savedDivision) document.getElementById('division').value = savedDivision;
 
-  // จำกัดให้กรอกได้เฉพาะตัวเลข 13 หลัก
-  $('nationalId').addEventListener('input', e => {
-    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 13);
-    $('errorMsg').classList.remove('show');
-  });
-  $('nationalId').addEventListener('keydown', e => {
-    if (e.key === 'Enter') checkStatus();
-  });
+// NID input — Thai ID 13 หลัก หรือ Passport 6+ ตัว (alphanumeric)
+const natIdEl = document.getElementById('natId');
+const btnCheck = document.getElementById('btnCheck');
+function isValidId(v) {
+  return /^\d{13}$/.test(v) || /^[A-Za-z0-9]{6,}$/.test(v);
+}
+natIdEl.addEventListener('input', () => {
+  // อนุญาตเฉพาะ alphanumeric (ตัวเลข + ตัวอักษร), uppercase อัตโนมัติ
+  natIdEl.value = natIdEl.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 20);
+  btnCheck.disabled = !isValidId(natIdEl.value);
+});
+natIdEl.addEventListener('keypress', (e) => {
+  if (e.key === 'Enter' && !btnCheck.disabled) checkStatus();
+});
 
-  function showError(msg) {
-    const el = $('errorMsg');
-    el.textContent = msg;
-    el.classList.add('show');
+function $(id) { return document.getElementById(id); }
+function showState(id) {
+  document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+  $(id).classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function showError(msg) {
+  const el = $('errBanner');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function hideError() { $('errBanner').classList.remove('show'); }
+
+function formatThaiDate(isoDate) {
+  if (!isoDate) return '-';
+  const d = new Date(isoDate);
+  if (isNaN(d)) return isoDate;
+  return `${THAI_DAYS[d.getDay()]} ${d.getDate()} ${THAI_MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()+543}`;
+}
+function formatShortDate(isoDate) {
+  if (!isoDate) return '-';
+  const d = new Date(isoDate);
+  if (isNaN(d)) return isoDate;
+  return `${d.getDate()} ${THAI_MONTHS_SHORT[d.getMonth()]} ${d.getFullYear()+543}`;
+}
+
+async function checkStatus() {
+  hideError();
+  const nid = natIdEl.value.trim();
+  const division = $('division').value;
+  if (!isValidId(nid)) {
+    showError('กรุณากรอกเลขบัตรประชาชน 13 หลัก หรือ Passport (6 ตัวอักษรขึ้นไป)');
+    return;
   }
-
-  function setLoading(loading) {
-    const btn = $('btnCheck');
-    const txt = $('btnCheckText');
-    btn.disabled = loading;
-    txt.innerHTML = loading
-      ? '<span class="spinner"></span> กำลังตรวจสอบ...'
-      : 'ตรวจสอบสถานะ';
-  }
-
-  function hideAllStates() {
-    $('state-input').style.display = 'none';
-    $('state-valid').classList.remove('show');
-    $('state-expired').classList.remove('show');
-    $('state-new').classList.remove('show');
-  }
-
-  function resetForm() {
-    hideAllStates();
-    $('state-input').style.display = 'block';
-    $('nationalId').value = '';
-    $('errorMsg').classList.remove('show');
-    $('nationalId').focus();
-  }
-
-  async function checkStatus() {
-    const id = $('nationalId').value.trim();
-
-    if (id.length !== 13) {
-      showError('กรุณากรอกเลขบัตรประชาชน 13 หลักให้ครบ');
-      return;
-    }
-
-    currentNationalId = id;
-    setLoading(true);
-
-    try {
-      const res = await fetch(FLOW_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nationalId: id, division: DIVISION, apiKey: API_KEY })
-      });
-      if (!res.ok) throw new Error('Server error: ' + res.status);
-      const data = await res.json();
-      handleResponse(data);
-    } catch (err) {
-      showError('เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  function handleResponse(response) {
-    // Response จาก Flow: { status, message, data: { FullName, Company, ExamDate, ExpiryDate, CertLink, ... } }
-    hideAllStates();
-    const d = response.data || {};
-
-    if (response.status === 'valid') {
-      $('validName').textContent     = d.FullName || '—';
-      $('validCompany').textContent  = d.Company  || '—';
-      $('validExamDate').textContent = formatDate(d.ExamDate);
-      $('validExpiry').textContent   = formatDate(d.ExpiryDate);
-      currentPdfLink = d.CertLink || '';
-      $('state-valid').classList.add('show');
-    }
-    else if (response.status === 'expired') {
-      $('expName').textContent     = d.FullName || '—';
-      $('expExamDate').textContent = formatDate(d.ExamDate);
-      $('expExpiry').textContent   = formatDate(d.ExpiryDate);
-      $('state-expired').classList.add('show');
-    }
-    else {
-      // not_found
-      $('state-new').classList.add('show');
-    }
-  }
-
-  // แปลง Excel Serial Number → JS Date
-  // Excel epoch = 1899-12-30, แต่ JS เริ่มที่ 1970-01-01 (ห่างกัน 25569 วัน)
-  function excelSerialToDate(serial) {
-    const days = parseInt(serial, 10);
-    if (isNaN(days)) return null;
-    const ms = (days - 25569) * 86400 * 1000;
-    return new Date(ms);
-  }
-
-  // รับได้ทั้ง Excel Serial (เช่น "46402") และ ISO date (เช่น "2027-01-15")
-  function formatDate(val) {
-    if (!val) return '—';
-    let date;
-    // ถ้าเป็นตัวเลขล้วน → ถือเป็น Excel Serial
-    if (/^\d+$/.test(String(val).trim())) {
-      date = excelSerialToDate(val);
-    } else {
-      date = new Date(val);
-    }
-    if (!date || isNaN(date.getTime())) return String(val);
-    return date.toLocaleDateString('th-TH', {
-      year: 'numeric', month: 'long', day: 'numeric'
+  state.nationalId = nid;
+  state.division = division;
+  localStorage.setItem('ptt_division', division);
+  
+  showState('state-loading');
+  
+  try {
+    const res = await fetch(FLOW1_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({apiKey: API_KEY, nationalId: nid, division: division})
     });
+    if (!res.ok) throw new Error('Server error ' + res.status);
+    const data = await res.json();
+    handleResponse(data);
+  } catch (err) {
+    showState('state-input');
+    showError('เชื่อมต่อระบบไม่สำเร็จ — ' + (err.message || 'กรุณาลองใหม่'));
   }
+}
 
-  function downloadCert() {
-    if (currentPdfLink) {
-      window.open(currentPdfLink, '_blank');
-    } else {
-      alert('ไม่พบลิงก์ไฟล์ใบวุฒิบัตร');
-    }
+function handleResponse(response) {
+  const d = response.data || {};
+  
+  switch (response.status) {
+    case 'valid':
+      $('validName').textContent = d.fullName || '-';
+      $('validCompany').textContent = d.company || '-';
+      $('validExam').textContent = formatShortDate(d.examDate);
+      $('validExpiry').textContent = formatShortDate(d.expiryDate);
+      $('validCertNo').textContent = d.certNo || '-';
+      if (d.certLink) $('validCertLink').href = d.certLink;
+      else $('validCertLink').style.display = 'none';
+      state.fullName = d.fullName || '';
+      state.company = d.company || '';
+      showState('state-valid');
+      break;
+      
+    case 'expired':
+      $('expName').textContent = d.fullName || '-';
+      $('expExam').textContent = formatShortDate(d.examDate);
+      $('expCertNo').textContent = d.certNo || '-';
+      $('expExpiry').textContent = formatShortDate(d.expiryDate);
+      state.fullName = d.fullName || '';
+      state.company = d.company || '';
+      showState('state-expired');
+      break;
+      
+    case 'not_found':
+      $('newNid').textContent = state.nationalId;
+      $('newDiv').textContent = state.division;
+      showState('state-new');
+      break;
+      
+    case 'not_registered':
+      showState('state-not-registered');
+      break;
+      
+    case 'wrong_date':
+      $('wrongDateText').textContent = formatThaiDate(response.scheduledDate);
+      showState('state-wrong-date');
+      break;
+      
+    default:
+      showState('state-input');
+      showError(response.message || 'เกิดข้อผิดพลาดที่ไม่คาดคิด');
   }
+}
 
-  function goToExam() {
-    sessionStorage.setItem('ptt_nationalId', currentNationalId);
-    window.location.href = EXAM_URL + '?division=' + DIVISION;
-  }
+function goToExam() {
+  // ส่งข้อมูลผ่าน URL params + localStorage (exam.html v2 อ่านทั้ง 2 ที่)
+  if (state.fullName) localStorage.setItem('ptt_fullName', state.fullName);
+  if (state.company) localStorage.setItem('ptt_company', state.company);
+  localStorage.setItem('ptt_nationalId', state.nationalId);
+  localStorage.setItem('ptt_division', state.division);
+  
+  const params = new URLSearchParams({
+    nationalId: state.nationalId,
+    division: state.division
+  });
+  if (state.fullName) params.set('fullName', state.fullName);
+  if (state.company) params.set('company', state.company);
+  
+  window.location.href = `exam.html?${params}`;
+}
+
+function resetForm() {
+  natIdEl.value = '';
+  btnCheck.disabled = true;
+  state = { nationalId: '', division: state.division, fullName: '', company: '' };
+  hideError();
+  showState('state-input');
+}
 </script>
 </body>
 </html>

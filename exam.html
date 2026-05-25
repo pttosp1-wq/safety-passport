@@ -7,579 +7,121 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --navy: #003B7A;
-    --navy-dark: #002752;
-    --sky: #1E90FF;
-    --orange: #FF6B00;
-    --green: #16A34A;
-    --red: #DC2626;
-    --gray-50: #F8FAFC;
-    --gray-100: #F1F5F9;
-    --gray-200: #E2E8F0;
-    --gray-400: #94A3B8;
-    --gray-600: #475569;
-    --gray-800: #1E293B;
-    --gray-900: #0F172A;
+    --navy: #003B7A; --navy-dark: #002752; --sky: #1E90FF;
+    --orange: #FF6B00; --green: #16A34A; --red: #DC2626; --amber: #D97706;
+    --gray-50: #F8FAFC; --gray-100: #F1F5F9; --gray-200: #E2E8F0;
+    --gray-400: #94A3B8; --gray-600: #475569; --gray-900: #0F172A;
   }
-  
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  
   html, body {
     font-family: 'IBM Plex Sans Thai', system-ui, sans-serif;
-    background: var(--gray-50);
-    color: var(--gray-900);
-    min-height: 100vh;
-    line-height: 1.5;
-    -webkit-font-smoothing: antialiased;
+    background: var(--gray-50); color: var(--gray-900);
+    min-height: 100vh; line-height: 1.5; -webkit-font-smoothing: antialiased;
   }
-  
   .app {
-    max-width: 600px;
-    margin: 0 auto;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: white;
+    max-width: 600px; margin: 0 auto; min-height: 100vh;
+    display: flex; flex-direction: column; background: white;
     box-shadow: 0 0 60px rgba(0, 59, 122, 0.06);
   }
-  
-  /* ========== HEADER ========== */
   .header {
-    background: linear-gradient(135deg, var(--navy) 0%, var(--navy-dark) 100%);
-    color: white;
-    padding: 20px;
-    position: relative;
-    overflow: hidden;
+    background: linear-gradient(135deg, var(--navy), var(--navy-dark));
+    color: white; padding: 20px; position: relative; overflow: hidden;
   }
-  
   .header::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 200px;
-    height: 200px;
-    background: radial-gradient(circle, rgba(255, 107, 0, 0.15) 0%, transparent 70%);
+    content: ''; position: absolute; top: -50%; right: -20%;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(255,107,0,0.15), transparent 70%);
     border-radius: 50%;
   }
-  
-  .header-brand {
-    font-family: 'Outfit', sans-serif;
-    font-size: 10px;
-    letter-spacing: 2.5px;
-    color: rgba(255, 255, 255, 0.6);
-    margin-bottom: 6px;
-    font-weight: 600;
-  }
-  
-  .header-title {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-    position: relative;
-  }
-  
-  .header-sub {
-    font-size: 12px;
-    margin-top: 4px;
-    color: rgba(255, 255, 255, 0.7);
-  }
-  
-  /* ========== PROGRESS BAR ========== */
-  .progress-wrap {
-    padding: 16px 20px 0;
-    background: white;
-  }
-  
-  .progress-bar {
-    height: 6px;
-    background: var(--gray-200);
-    border-radius: 100px;
-    overflow: hidden;
-    position: relative;
-  }
-  
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--sky), var(--navy));
-    border-radius: 100px;
-    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-    width: 0%;
-  }
-  
-  .progress-text {
-    margin-top: 8px;
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-    color: var(--gray-600);
-  }
-  
-  .progress-current {
-    font-weight: 700;
-    color: var(--navy);
-  }
-  
-  /* ========== SCREENS ========== */
-  .screen {
-    flex: 1;
-    padding: 24px 20px;
-    display: none;
-    animation: fadeIn 0.4s ease;
-  }
-  
+  .header-brand { font-family: 'Outfit', sans-serif; font-size: 10px; letter-spacing: 2.5px; color: rgba(255,255,255,0.6); margin-bottom: 6px; font-weight: 600; }
+  .header-title { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; position: relative; }
+  .header-sub { font-size: 12px; margin-top: 4px; color: rgba(255,255,255,0.7); }
+  .progress-wrap { padding: 16px 20px 0; background: white; }
+  .progress-bar { height: 6px; background: var(--gray-200); border-radius: 100px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--sky), var(--navy)); border-radius: 100px; transition: width 0.5s cubic-bezier(0.4,0,0.2,1); width: 0%; }
+  .progress-text { margin-top: 8px; display: flex; justify-content: space-between; font-size: 12px; color: var(--gray-600); }
+  .progress-current { font-weight: 700; color: var(--navy); }
+  .screen { flex: 1; padding: 24px 20px; display: none; animation: fadeIn 0.4s ease; }
   .screen.active { display: flex; flex-direction: column; }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  .icon-circle {
+    width: 80px; height: 80px; border-radius: 24px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px; margin: 30px auto 24px; color: white;
+    box-shadow: 0 12px 32px rgba(30,144,255,0.3);
   }
-  
-  /* ========== START SCREEN ========== */
-  .start-icon {
-    width: 80px;
-    height: 80px;
-    background: linear-gradient(135deg, var(--navy), var(--sky));
-    border-radius: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 36px;
-    margin: 30px auto 24px;
-    color: white;
-    box-shadow: 0 12px 32px rgba(30, 144, 255, 0.3);
-  }
-  
-  .start-title {
-    font-size: 22px;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 8px;
-    letter-spacing: -0.5px;
-  }
-  
-  .start-sub {
-    text-align: center;
-    color: var(--gray-600);
-    margin-bottom: 28px;
-    font-size: 14px;
-  }
-  
-  .info-card {
-    background: var(--gray-50);
-    border-radius: 16px;
-    padding: 20px;
-    margin-bottom: 16px;
-    border: 1px solid var(--gray-200);
-  }
-  
-  .info-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    font-size: 14px;
-  }
-  
+  .icon-circle.navy { background: linear-gradient(135deg, var(--navy), var(--sky)); }
+  .icon-circle.green { background: linear-gradient(135deg, var(--green), #15803D); }
+  .icon-circle.red { background: linear-gradient(135deg, var(--red), #B91C1C); box-shadow: 0 12px 32px rgba(220,38,38,0.25); }
+  .icon-circle.amber { background: linear-gradient(135deg, var(--amber), #B45309); box-shadow: 0 12px 32px rgba(217,119,6,0.25); }
+  .center-title { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 8px; letter-spacing: -0.5px; }
+  .center-sub { text-align: center; color: var(--gray-600); margin-bottom: 28px; font-size: 14px; }
+  .info-card { background: var(--gray-50); border-radius: 16px; padding: 20px; margin-bottom: 16px; border: 1px solid var(--gray-200); }
+  .info-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; font-size: 14px; }
   .info-row + .info-row { border-top: 1px dashed var(--gray-200); }
-  
   .info-label { color: var(--gray-600); }
   .info-value { font-weight: 600; color: var(--gray-900); }
-  
-  .info-value.division {
-    background: var(--navy);
-    color: white;
-    padding: 3px 12px;
-    border-radius: 100px;
-    font-family: 'Outfit', sans-serif;
-    font-size: 12px;
-    letter-spacing: 1px;
-  }
-  
-  .exam-rules {
-    background: linear-gradient(135deg, #FFF7ED, #FFEDD5);
-    border-radius: 16px;
-    padding: 18px 20px;
-    border-left: 4px solid var(--orange);
-    margin-bottom: 24px;
-  }
-  
-  .rules-title {
-    font-weight: 700;
-    color: #92400E;
-    margin-bottom: 8px;
-    font-size: 14px;
-  }
-  
-  .rules-list {
-    list-style: none;
-    font-size: 13px;
-    color: #78350F;
-  }
-  
-  .rules-list li {
-    padding: 3px 0;
-    padding-left: 20px;
-    position: relative;
-  }
-  
-  .rules-list li::before {
-    content: '•';
-    position: absolute;
-    left: 8px;
-    color: var(--orange);
-    font-weight: 700;
-  }
-  
-  /* ========== QUESTION SCREEN ========== */
-  .question-num {
-    font-family: 'Outfit', sans-serif;
-    font-size: 11px;
-    letter-spacing: 2px;
-    color: var(--gray-400);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-    font-weight: 600;
-  }
-  
-  .question-text {
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 1.45;
-    color: var(--gray-900);
-    margin-bottom: 24px;
-    letter-spacing: -0.3px;
-  }
-  
-  .choices {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-  
-  .choice {
-    background: white;
-    border: 2px solid var(--gray-200);
-    border-radius: 14px;
-    padding: 16px 18px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    transition: all 0.2s ease;
-    text-align: left;
-    width: 100%;
-    font-family: inherit;
-    font-size: 15px;
-    color: var(--gray-900);
-    line-height: 1.4;
-  }
-  
-  .choice:hover {
-    border-color: var(--sky);
-    background: #F0F9FF;
-  }
-  
+  .info-value.division { background: var(--navy); color: white; padding: 3px 12px; border-radius: 100px; font-family: 'Outfit', sans-serif; font-size: 12px; letter-spacing: 1px; }
+  .exam-rules { background: linear-gradient(135deg, #FFF7ED, #FFEDD5); border-radius: 16px; padding: 18px 20px; border-left: 4px solid var(--orange); margin-bottom: 24px; }
+  .rules-title { font-weight: 700; color: #92400E; margin-bottom: 8px; font-size: 14px; }
+  .rules-list { list-style: none; font-size: 13px; color: #78350F; }
+  .rules-list li { padding: 3px 0; padding-left: 20px; position: relative; }
+  .rules-list li::before { content: '•'; position: absolute; left: 8px; color: var(--orange); font-weight: 700; }
+  .question-num { font-family: 'Outfit', sans-serif; font-size: 11px; letter-spacing: 2px; color: var(--gray-400); text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+  .question-text { font-size: 18px; font-weight: 600; line-height: 1.45; color: var(--gray-900); margin-bottom: 24px; letter-spacing: -0.3px; }
+  .choices { display: flex; flex-direction: column; gap: 12px; }
+  .choice { background: white; border: 2px solid var(--gray-200); border-radius: 14px; padding: 16px 18px; cursor: pointer; display: flex; align-items: center; gap: 14px; transition: all 0.2s ease; text-align: left; width: 100%; font-family: inherit; font-size: 15px; color: var(--gray-900); line-height: 1.4; }
+  .choice:hover { border-color: var(--sky); background: #F0F9FF; }
   .choice:active { transform: scale(0.98); }
-  
-  .choice.selected {
-    border-color: var(--navy);
-    background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
-  }
-  
-  .choice-letter {
-    width: 32px;
-    height: 32px;
-    background: var(--gray-100);
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'Outfit', sans-serif;
-    font-weight: 700;
-    color: var(--gray-600);
-    flex-shrink: 0;
-    font-size: 14px;
-    transition: all 0.2s ease;
-  }
-  
-  .choice.selected .choice-letter {
-    background: var(--navy);
-    color: white;
-  }
-  
-  /* ========== NAVIGATION ========== */
-  .nav-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 24px;
-  }
-  
-  .btn {
-    flex: 1;
-    padding: 14px;
-    border-radius: 12px;
-    font-family: inherit;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-  }
-  
+  .choice.selected { border-color: var(--navy); background: linear-gradient(135deg, #EFF6FF, #DBEAFE); }
+  .choice-letter { width: 32px; height: 32px; background: var(--gray-100); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Outfit', sans-serif; font-weight: 700; color: var(--gray-600); flex-shrink: 0; font-size: 14px; transition: all 0.2s ease; }
+  .choice.selected .choice-letter { background: var(--navy); color: white; }
+  .nav-buttons { display: flex; gap: 10px; margin-top: 24px; }
+  .btn { flex: 1; padding: 14px; border-radius: 12px; font-family: inherit; font-size: 15px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; gap: 6px; }
   .btn:active { transform: scale(0.97); }
-  
-  .btn-primary {
-    background: linear-gradient(135deg, var(--navy), var(--sky));
-    color: white;
-    box-shadow: 0 4px 12px rgba(0, 59, 122, 0.25);
-  }
-  
-  .btn-primary:disabled {
-    background: var(--gray-200);
-    color: var(--gray-400);
-    cursor: not-allowed;
-    box-shadow: none;
-  }
-  
-  .btn-ghost {
-    background: var(--gray-100);
-    color: var(--gray-600);
-  }
-  
-  .btn-large {
-    width: 100%;
-    padding: 16px;
-    font-size: 16px;
-  }
-  
-  /* ========== LOADING SCREEN ========== */
-  .loading-content {
-    text-align: center;
-    margin: auto;
-    padding: 40px 20px;
-  }
-  
-  .spinner {
-    width: 56px;
-    height: 56px;
-    border: 4px solid var(--gray-200);
-    border-top-color: var(--navy);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 20px;
-  }
-  
+  .btn-primary { background: linear-gradient(135deg, var(--navy), var(--sky)); color: white; box-shadow: 0 4px 12px rgba(0,59,122,0.25); }
+  .btn-primary:disabled { background: var(--gray-200); color: var(--gray-400); cursor: not-allowed; box-shadow: none; }
+  .btn-ghost { background: var(--gray-100); color: var(--gray-600); }
+  .btn-large { width: 100%; padding: 16px; font-size: 16px; }
+  .loading-content { text-align: center; margin: auto; padding: 40px 20px; }
+  .spinner { width: 56px; height: 56px; border: 4px solid var(--gray-200); border-top-color: var(--navy); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 20px; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  
-  .loading-text {
-    font-size: 16px;
-    color: var(--gray-600);
-    font-weight: 500;
-  }
-  
-  /* ========== RESULT SCREEN ========== */
-  .result-icon {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 20px auto 24px;
-    font-size: 56px;
-    animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  
-  @keyframes popIn {
-    from { transform: scale(0); }
-    to { transform: scale(1); }
-  }
-  
-  .result-icon.pass {
-    background: linear-gradient(135deg, #DCFCE7, #BBF7D0);
-    color: var(--green);
-    box-shadow: 0 12px 32px rgba(22, 163, 74, 0.2);
-  }
-  
-  .result-icon.fail {
-    background: linear-gradient(135deg, #FEE2E2, #FECACA);
-    color: var(--red);
-    box-shadow: 0 12px 32px rgba(220, 38, 38, 0.15);
-  }
-  
-  .result-title {
-    text-align: center;
-    font-size: 24px;
-    font-weight: 700;
-    margin-bottom: 8px;
-    letter-spacing: -0.5px;
-  }
-  
+  .loading-text { font-size: 16px; color: var(--gray-600); font-weight: 500; }
+  .result-icon { width: 100px; height: 100px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 20px auto 24px; font-size: 56px; animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
+  .result-icon.pass { background: linear-gradient(135deg, #DCFCE7, #BBF7D0); color: var(--green); box-shadow: 0 12px 32px rgba(22,163,74,0.2); }
+  .result-icon.fail { background: linear-gradient(135deg, #FEE2E2, #FECACA); color: var(--red); box-shadow: 0 12px 32px rgba(220,38,38,0.15); }
+  .result-title { text-align: center; font-size: 24px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
   .result-title.pass { color: var(--green); }
   .result-title.fail { color: var(--red); }
-  
-  .result-sub {
-    text-align: center;
-    color: var(--gray-600);
-    font-size: 14px;
-    margin-bottom: 24px;
-  }
-  
-  .score-card {
-    background: var(--gray-50);
-    border-radius: 20px;
-    padding: 24px;
-    text-align: center;
-    margin-bottom: 16px;
-    border: 1px solid var(--gray-200);
-  }
-  
-  .score-big {
-    font-family: 'Outfit', sans-serif;
-    font-size: 64px;
-    font-weight: 800;
-    line-height: 1;
-    margin-bottom: 4px;
-    background: linear-gradient(135deg, var(--navy), var(--sky));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    letter-spacing: -2px;
-  }
-  
-  .score-big.fail {
-    background: linear-gradient(135deg, var(--red), #EF4444);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  
-  .score-label {
-    font-size: 13px;
-    color: var(--gray-600);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-weight: 600;
-    font-family: 'Outfit', sans-serif;
-  }
-  
-  .cert-card {
-    background: linear-gradient(135deg, #1E3A8A, var(--navy));
-    color: white;
-    border-radius: 20px;
-    padding: 22px;
-    margin-bottom: 16px;
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .cert-card::after {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -20%;
-    width: 150px;
-    height: 150px;
-    background: radial-gradient(circle, rgba(255, 215, 0, 0.15) 0%, transparent 70%);
-    border-radius: 50%;
-  }
-  
-  .cert-label {
-    font-family: 'Outfit', sans-serif;
-    font-size: 10px;
-    letter-spacing: 2.5px;
-    color: rgba(255, 255, 255, 0.7);
-    font-weight: 600;
-    margin-bottom: 10px;
-    position: relative;
-  }
-  
-  .cert-no {
-    font-family: 'Outfit', sans-serif;
-    font-size: 22px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    margin-bottom: 16px;
-    position: relative;
-  }
-  
-  .cert-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    color: white;
-    text-decoration: none;
-    background: rgba(255, 255, 255, 0.18);
-    padding: 9px 16px;
-    border-radius: 100px;
-    font-size: 13px;
-    font-weight: 600;
-    backdrop-filter: blur(10px);
-    position: relative;
-  }
-  
-  .cert-link:hover { background: rgba(255, 255, 255, 0.25); }
-  
-  /* ========== FOOTER ========== */
-  .footer {
-    padding: 14px 20px;
-    text-align: center;
-    font-size: 10.5px;
-    color: var(--gray-400);
-    line-height: 1.5;
-    border-top: 1px solid var(--gray-100);
-  }
-  
-  /* ========== ERROR STATES ========== */
-  .error-screen {
-    margin: auto;
-    text-align: center;
-    padding: 40px 20px;
-  }
-  
-  .error-icon {
-    width: 80px; height: 80px;
-    background: #FEE2E2;
-    color: var(--red);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 40px;
-    margin: 0 auto 20px;
-  }
-  
-  .error-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--red);
-    margin-bottom: 8px;
-  }
-  
-  .error-msg {
-    color: var(--gray-600);
-    font-size: 14px;
-    margin-bottom: 24px;
-  }
+  .result-sub { text-align: center; color: var(--gray-600); font-size: 14px; margin-bottom: 24px; }
+  .score-card { background: var(--gray-50); border-radius: 20px; padding: 24px; text-align: center; margin-bottom: 16px; border: 1px solid var(--gray-200); }
+  .score-big { font-family: 'Outfit', sans-serif; font-size: 64px; font-weight: 800; line-height: 1; margin-bottom: 4px; background: linear-gradient(135deg, var(--navy), var(--sky)); -webkit-background-clip: text; background-clip: text; color: transparent; letter-spacing: -2px; }
+  .score-big.fail { background: linear-gradient(135deg, var(--red), #EF4444); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .score-label { font-size: 13px; color: var(--gray-600); text-transform: uppercase; letter-spacing: 2px; font-weight: 600; font-family: 'Outfit', sans-serif; }
+  .cert-card { background: linear-gradient(135deg, #1E3A8A, var(--navy)); color: white; border-radius: 20px; padding: 22px; margin-bottom: 16px; position: relative; overflow: hidden; }
+  .cert-card::after { content: ''; position: absolute; top: -50%; right: -20%; width: 150px; height: 150px; background: radial-gradient(circle, rgba(255,215,0,0.15), transparent 70%); border-radius: 50%; }
+  .cert-label { font-family: 'Outfit', sans-serif; font-size: 10px; letter-spacing: 2.5px; color: rgba(255,255,255,0.7); font-weight: 600; margin-bottom: 10px; position: relative; }
+  .cert-no { font-family: 'Outfit', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: 1px; margin-bottom: 16px; position: relative; }
+  .cert-link { display: inline-flex; align-items: center; gap: 6px; color: white; text-decoration: none; background: rgba(255,255,255,0.18); padding: 9px 16px; border-radius: 100px; font-size: 13px; font-weight: 600; backdrop-filter: blur(10px); position: relative; }
+  .cert-link:hover { background: rgba(255,255,255,0.25); }
+  .cert-meta { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 10px; position: relative; }
+  .warning-card { background: linear-gradient(135deg, #FEF3C7, #FDE68A); border-left: 4px solid var(--amber); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; font-size: 13px; color: #78350F; line-height: 1.6; }
+  .warning-card strong { color: #92400E; }
+  .footer { padding: 14px 20px; text-align: center; font-size: 10.5px; color: var(--gray-400); line-height: 1.5; border-top: 1px solid var(--gray-100); }
+  .error-msg { color: var(--gray-600); font-size: 14px; margin-bottom: 24px; text-align: center; }
+  .error-detail { background: var(--gray-50); border-radius: 12px; padding: 14px 16px; margin-bottom: 16px; font-size: 13px; color: var(--gray-600); text-align: center; }
+  .error-detail strong { color: var(--gray-900); font-weight: 700; }
 </style>
 </head>
 <body>
-
 <div class="app">
-  
-  <!-- Header -->
   <div class="header">
     <div class="header-brand">PTT • TSO SAFETY EXAM</div>
     <div class="header-title">แบบทดสอบความปลอดภัย</div>
     <div class="header-sub">ผู้รับเหมา ปฏิบัติงานในแนวท่อก๊าซธรรมชาติ</div>
   </div>
   
-  <!-- Progress (hidden until exam starts) -->
   <div class="progress-wrap" id="progressWrap" style="display: none;">
     <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
     <div class="progress-text">
@@ -588,31 +130,66 @@
     </div>
   </div>
 
-  <!-- ============== START SCREEN ============== -->
-  <div class="screen active" id="screenStart">
-    <div class="start-icon">📋</div>
-    <div class="start-title">พร้อมเริ่มทดสอบ?</div>
-    <div class="start-sub">กรุณาตรวจสอบข้อมูลก่อนเริ่มทดสอบ</div>
-    
-    <div class="info-card" id="userInfoCard">
-      <div class="info-row">
-        <span class="info-label">ชื่อ-นามสกุล</span>
-        <span class="info-value" id="dispName">-</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">เลขประจำตัว</span>
-        <span class="info-value" id="dispId">-</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">บริษัท</span>
-        <span class="info-value" id="dispCompany">-</span>
-      </div>
-      <div class="info-row">
-        <span class="info-label">ส่วนงาน</span>
-        <span class="info-value division" id="dispDivision">-</span>
-      </div>
+  <div class="screen active" id="screenValidating">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <div class="loading-text">กำลังตรวจสอบสิทธิ์...</div>
     </div>
-    
+  </div>
+
+  <div class="screen" id="screenNotRegistered">
+    <div class="icon-circle red">⛔</div>
+    <div class="center-title">ไม่พบรายชื่อ</div>
+    <div class="center-sub">เลขประจำตัวประชาชนนี้ไม่ได้ลงทะเบียนอบรม</div>
+    <div class="error-detail">กรุณาติดต่อบริษัทต้นสังกัด<br>เพื่อ<strong>ส่งคำขออบรม</strong>กับ ปตท. ก่อนล่วงหน้า</div>
+    <button class="btn btn-ghost btn-large" onclick="window.location.href='index.html'">← กลับหน้าหลัก</button>
+  </div>
+
+  <div class="screen" id="screenWrongDate">
+    <div class="icon-circle amber">📅</div>
+    <div class="center-title">วันนี้ไม่ใช่วันอบรม</div>
+    <div class="center-sub">คุณลงทะเบียนสำหรับวันอื่น</div>
+    <div class="error-detail">
+      วันอบรมของคุณคือ<br>
+      <strong style="font-size: 18px; color: var(--amber);" id="wrongScheduledDate">-</strong><br>
+      <span style="font-size: 11px;">กรุณามาตรงตามวันที่กำหนด</span>
+    </div>
+    <button class="btn btn-ghost btn-large" onclick="window.location.href='index.html'">← กลับหน้าหลัก</button>
+  </div>
+
+  <div class="screen" id="screenHasValidCert">
+    <div class="icon-circle green">✓</div>
+    <div class="center-title">คุณมีใบวุฒิบัตรอยู่แล้ว</div>
+    <div class="center-sub">ยังไม่หมดอายุ — ไม่ต้องทดสอบใหม่</div>
+    <div class="cert-card">
+      <div class="cert-label">VALID CERTIFICATE</div>
+      <div class="cert-no" id="validCertNo">-</div>
+      <a class="cert-link" id="validCertLink" href="#" target="_blank">📄 เปิดดูใบวุฒิบัตร</a>
+      <div class="cert-meta">วันหมดอายุ: <strong id="validExpiry">-</strong></div>
+    </div>
+  </div>
+
+  <div class="screen" id="screenExpiredWarning">
+    <div class="icon-circle amber">⚠️</div>
+    <div class="center-title">ใบวุฒิบัตรหมดอายุแล้ว</div>
+    <div class="center-sub">กรุณาทำการอบรมและทดสอบใหม่</div>
+    <div class="warning-card">
+      <strong>หมายเหตุ:</strong> ใบวุฒิบัตรเดิม (<span id="oldCertNo">-</span>) หมดอายุเมื่อ <span id="oldExpiry">-</span><br>
+      คุณต้องทดสอบใหม่เพื่อรับใบวุฒิบัตรชุดใหม่
+    </div>
+    <button class="btn btn-primary btn-large" onclick="proceedToExam()">เริ่มทดสอบใหม่ →</button>
+  </div>
+
+  <div class="screen" id="screenStart">
+    <div class="icon-circle navy">📋</div>
+    <div class="center-title">พร้อมเริ่มทดสอบ?</div>
+    <div class="center-sub">กรุณาตรวจสอบข้อมูลก่อนเริ่มทดสอบ</div>
+    <div class="info-card">
+      <div class="info-row"><span class="info-label">ชื่อ-นามสกุล</span><span class="info-value" id="dispName">-</span></div>
+      <div class="info-row"><span class="info-label">เลขประจำตัว</span><span class="info-value" id="dispId">-</span></div>
+      <div class="info-row"><span class="info-label">บริษัท</span><span class="info-value" id="dispCompany">-</span></div>
+      <div class="info-row"><span class="info-label">ส่วนงาน</span><span class="info-value division" id="dispDivision">-</span></div>
+    </div>
     <div class="exam-rules">
       <div class="rules-title">⚡ กติกาการทดสอบ</div>
       <ul class="rules-list">
@@ -622,25 +199,19 @@
         <li>หากผ่าน จะได้รับใบวุฒิบัตรอัตโนมัติ</li>
       </ul>
     </div>
-    
-    <button class="btn btn-primary btn-large" id="btnStart">
-      เริ่มทำแบบทดสอบ →
-    </button>
+    <button class="btn btn-primary btn-large" id="btnStart">เริ่มทำแบบทดสอบ →</button>
   </div>
 
-  <!-- ============== QUESTION SCREEN ============== -->
   <div class="screen" id="screenExam">
     <div class="question-num" id="qNum">QUESTION 1</div>
     <div class="question-text" id="qText">-</div>
     <div class="choices" id="choices"></div>
-    
     <div class="nav-buttons">
       <button class="btn btn-ghost" id="btnPrev" style="display: none;">← ก่อนหน้า</button>
       <button class="btn btn-primary" id="btnNext" disabled>ถัดไป →</button>
     </div>
   </div>
 
-  <!-- ============== SUBMITTING SCREEN ============== -->
   <div class="screen" id="screenSubmitting">
     <div class="loading-content">
       <div class="spinner"></div>
@@ -648,41 +219,29 @@
     </div>
   </div>
 
-  <!-- ============== RESULT SCREEN ============== -->
   <div class="screen" id="screenResult">
     <div class="result-icon" id="resultIcon">✓</div>
     <div class="result-title" id="resultTitle">ผ่านการทดสอบ</div>
     <div class="result-sub" id="resultSub">ยินดีด้วย — คุณได้รับใบวุฒิบัตรแล้ว</div>
-    
     <div class="score-card">
       <div class="score-big" id="scoreBig">0/10</div>
       <div class="score-label" id="scoreLabel">YOUR SCORE</div>
     </div>
-    
     <div class="cert-card" id="certCard" style="display: none;">
       <div class="cert-label">CERTIFICATE NO.</div>
       <div class="cert-no" id="certNo">-</div>
-      <a class="cert-link" id="certLink" href="#" target="_blank">
-        📄 เปิดดูใบวุฒิบัตร
-      </a>
+      <a class="cert-link" id="certLink" href="#" target="_blank">📄 เปิดดูใบวุฒิบัตร</a>
     </div>
-    
-    <button class="btn btn-primary btn-large" onclick="window.close()" style="margin-top: 8px;">
-      ปิดหน้านี้
-    </button>
+    <button class="btn btn-primary btn-large" onclick="window.close()" style="margin-top: 8px;">ปิดหน้านี้</button>
   </div>
 
-  <!-- ============== ERROR SCREEN ============== -->
   <div class="screen" id="screenError">
-    <div class="error-screen">
-      <div class="error-icon">⚠️</div>
-      <div class="error-title" id="errorTitle">เกิดข้อผิดพลาด</div>
-      <div class="error-msg" id="errorMsg">-</div>
-      <button class="btn btn-primary btn-large" onclick="location.reload()">ลองใหม่</button>
-    </div>
+    <div class="icon-circle red">⚠️</div>
+    <div class="center-title" id="errorTitle">เกิดข้อผิดพลาด</div>
+    <div class="error-msg" id="errorMsg">-</div>
+    <button class="btn btn-primary btn-large" onclick="location.reload()">ลองใหม่</button>
   </div>
   
-  <!-- Footer -->
   <div class="footer">
     สายงานระบบท่อส่งก๊าซธรรมชาติ<br>
     ฝ่ายปฏิบัติการระบบท่อส่งก๊าซธรรมชาติ ภาค 2 (ปกต.2)<br>
@@ -691,17 +250,12 @@
 </div>
 
 <script>
-// ========================================================
-// CONFIG
-// ========================================================
+const FLOW1_URL = 'https://defaultf2fda5e72ea1450d9fc12af5f86300.95.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/3e39b39e312e458087586fb0752dccf4/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uewTLw5vaCzlY3HVcX-ABR_qLTGz1ZGWyYHwWNcCXiM';
 const FLOW2_URL = 'https://defaultf2fda5e72ea1450d9fc12af5f86300.95.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/8394a34120814821add245c7376e40f5/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=UORTFcL-JLw_zlRE0Kv8TN8Yq4nxPYsC2ugT05PxAxk';
 const API_KEY = 'PTT-PO7-2026-SECRET';
 const EXAM_SIZE = 10;
 const PASS_THRESHOLD = 7;
 
-// ========================================================
-// QUESTION BANK — 20 ข้อ
-// ========================================================
 const QUESTIONS = [
   {q:"คุณจะรู้ได้อย่างไรว่าในพื้นที่ทำงานมีก๊าซธรรมชาติรั่ว?",choices:["ดมกลิ่นในอากาศ","ใช้เครื่องตรวจวัดก๊าซ","มองด้วยตาเปล่า","รอจนรู้สึกผิดปกติทางร่างกาย"],answer:1},
   {q:"เมื่อเครื่องตรวจวัดก๊าซส่งเสียงเตือนระหว่างทำงาน ควรทำอย่างไรเป็นอันดับแรก?",choices:["ปิดเครื่องเพราะเสียงรบกวน","หยุดงานทันที อพยพออกจากพื้นที่ และแจ้งหัวหน้างาน","ทำงานต่อให้เสร็จก่อนแล้วค่อยแจ้ง","ตรวจสอบว่าเครื่องเสียหรือไม่"],answer:1},
@@ -725,209 +279,160 @@ const QUESTIONS = [
   {q:"พบป้ายเตือนสีเหลือง \"แนวท่อก๊าซธรรมชาติ\" บนพื้นดิน หมายถึงอะไร?",choices:["เป็นที่จอดรถสำหรับเจ้าหน้าที่","มีท่อก๊าซอยู่ใต้ดิน — ห้ามขุดโดยไม่ได้รับอนุญาต","เป็นพื้นที่เก็บอุปกรณ์","เป็นทางเดินสำหรับพนักงาน"],answer:1}
 ];
 
-// ========================================================
-// STATE
-// ========================================================
-let state = {
-  nationalId: '',
-  fullName: '',
-  company: '',
-  division: 'PO7',
-  selectedQuestions: [],
-  answers: [],
-  currentIdx: 0
-};
-
-// ========================================================
-// HELPERS
-// ========================================================
+let state = { nationalId: '', fullName: '', company: '', division: 'PO7', selectedQuestions: [], answers: [], currentIdx: 0 };
 const $ = (id) => document.getElementById(id);
-
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   $(id).classList.add('active');
 }
-
 function shuffleArray(arr) {
   const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
+  for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; }
   return a;
 }
+function showError(title, msg) { $('errorTitle').textContent = title; $('errorMsg').textContent = msg; showScreen('screenError'); }
 
-// ========================================================
-// INIT — Load user info from URL params or localStorage
-// ========================================================
-function init() {
-  // จาก URL params (จาก index.html ส่งมา)
+async function init() {
   const params = new URLSearchParams(window.location.search);
-  
   state.nationalId = params.get('nationalId') || localStorage.getItem('ptt_nationalId') || '';
   state.fullName = params.get('fullName') || localStorage.getItem('ptt_fullName') || '';
   state.company = params.get('company') || localStorage.getItem('ptt_company') || '';
   state.division = params.get('division') || localStorage.getItem('ptt_division') || 'PO7';
+  $('ftDivision').textContent = state.division;
   
-  // Validate
   if (!state.nationalId || !state.division) {
     showError('ข้อมูลผู้สอบไม่ครบ', 'กรุณากลับไปเริ่มจากหน้าหลัก');
     return;
   }
   
-  // Display
+  try {
+    const res = await fetch(FLOW1_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ apiKey: API_KEY, nationalId: state.nationalId, division: state.division })
+    });
+    const data = await res.json();
+    handleValidation(data);
+  } catch (err) {
+    showError('ตรวจสอบสิทธิ์ไม่สำเร็จ', err.message || 'กรุณาลองใหม่');
+  }
+}
+
+function handleValidation(data) {
+  switch (data.status) {
+    case 'not_registered':
+      showScreen('screenNotRegistered');
+      break;
+    case 'wrong_date':
+      $('wrongScheduledDate').textContent = data.scheduledDate || '-';
+      showScreen('screenWrongDate');
+      break;
+    case 'valid':
+      $('validCertNo').textContent = data.data?.certNo || '-';
+      $('validExpiry').textContent = data.data?.expiryDate || '-';
+      if (data.data?.certLink) $('validCertLink').href = data.data.certLink;
+      else $('validCertLink').style.display = 'none';
+      if (data.data?.fullName) state.fullName = data.data.fullName;
+      if (data.data?.company) state.company = data.data.company;
+      showScreen('screenHasValidCert');
+      break;
+    case 'expired':
+      $('oldCertNo').textContent = data.data?.certNo || '-';
+      $('oldExpiry').textContent = data.data?.expiryDate || '-';
+      if (data.data?.fullName) state.fullName = data.data.fullName;
+      if (data.data?.company) state.company = data.data.company;
+      showScreen('screenExpiredWarning');
+      break;
+    case 'not_found':
+      proceedToExam();
+      break;
+    default:
+      showError('เกิดข้อผิดพลาด', data.message || 'ไม่ทราบสาเหตุ');
+  }
+}
+
+function proceedToExam() {
   $('dispName').textContent = state.fullName || '(ไม่ระบุ)';
   $('dispId').textContent = state.nationalId;
   $('dispCompany').textContent = state.company || '(ไม่ระบุ)';
   $('dispDivision').textContent = state.division;
-  $('ftDivision').textContent = state.division;
-  
-  // Random select 10 questions
   state.selectedQuestions = shuffleArray(QUESTIONS).slice(0, EXAM_SIZE);
   state.answers = new Array(EXAM_SIZE).fill(null);
-  
   $('qTotal').textContent = EXAM_SIZE;
+  showScreen('screenStart');
 }
 
-function showError(title, msg) {
-  $('errorTitle').textContent = title;
-  $('errorMsg').textContent = msg;
-  showScreen('screenError');
-}
-
-// ========================================================
-// START EXAM
-// ========================================================
 $('btnStart').addEventListener('click', () => {
   $('progressWrap').style.display = 'block';
   showScreen('screenExam');
   renderQuestion();
 });
 
-// ========================================================
-// RENDER QUESTION
-// ========================================================
 function renderQuestion() {
   const idx = state.currentIdx;
   const q = state.selectedQuestions[idx];
-  
   $('qNum').textContent = `QUESTION ${String(idx + 1).padStart(2, '0')}`;
   $('qText').textContent = q.q;
-  
   const choicesEl = $('choices');
   choicesEl.innerHTML = '';
-  
   q.choices.forEach((choice, i) => {
     const btn = document.createElement('button');
     btn.className = 'choice';
     if (state.answers[idx] === i) btn.classList.add('selected');
-    
-    btn.innerHTML = `
-      <span class="choice-letter">${String.fromCharCode(65 + i)}</span>
-      <span>${choice}</span>
-    `;
-    
-    btn.addEventListener('click', () => {
-      state.answers[idx] = i;
-      renderQuestion();
-      updateUI();
-    });
-    
+    btn.innerHTML = `<span class="choice-letter">${String.fromCharCode(65 + i)}</span><span>${choice}</span>`;
+    btn.addEventListener('click', () => { state.answers[idx] = i; renderQuestion(); });
     choicesEl.appendChild(btn);
   });
-  
-  // Update progress
   $('qCurrent').textContent = idx + 1;
-  const pct = ((idx + 1) / EXAM_SIZE) * 100;
-  $('progressFill').style.width = pct + '%';
-  
-  const answered = state.answers.filter(a => a !== null).length;
-  $('qAnswered').textContent = answered;
-  
-  // Nav buttons
+  $('progressFill').style.width = (((idx + 1) / EXAM_SIZE) * 100) + '%';
+  $('qAnswered').textContent = state.answers.filter(a => a !== null).length;
   $('btnPrev').style.display = idx > 0 ? 'flex' : 'none';
-  
   const isLast = idx === EXAM_SIZE - 1;
-  const btnNext = $('btnNext');
-  btnNext.textContent = isLast ? '✓ ส่งคำตอบ' : 'ถัดไป →';
-  btnNext.disabled = state.answers[idx] === null;
+  $('btnNext').textContent = isLast ? '✓ ส่งคำตอบ' : 'ถัดไป →';
+  $('btnNext').disabled = state.answers[idx] === null;
 }
 
-function updateUI() {
-  $('btnNext').disabled = state.answers[state.currentIdx] === null;
-}
-
-// ========================================================
-// NAVIGATION
-// ========================================================
-$('btnPrev').addEventListener('click', () => {
-  if (state.currentIdx > 0) {
-    state.currentIdx--;
-    renderQuestion();
-  }
-});
-
+$('btnPrev').addEventListener('click', () => { if (state.currentIdx > 0) { state.currentIdx--; renderQuestion(); } });
 $('btnNext').addEventListener('click', () => {
-  if (state.currentIdx < EXAM_SIZE - 1) {
-    state.currentIdx++;
-    renderQuestion();
-  } else {
-    submitExam();
-  }
+  if (state.currentIdx < EXAM_SIZE - 1) { state.currentIdx++; renderQuestion(); }
+  else { submitExam(); }
 });
 
-// ========================================================
-// SUBMIT
-// ========================================================
 async function submitExam() {
-  // Calculate score
   let score = 0;
   for (let i = 0; i < EXAM_SIZE; i++) {
     if (state.answers[i] === state.selectedQuestions[i].answer) score++;
   }
-  
   const isPassed = score >= PASS_THRESHOLD;
-  const examDate = new Date().toISOString().slice(0, 10); // yyyy-MM-dd
-  
+  const examDate = new Date().toISOString().slice(0, 10);
   showScreen('screenSubmitting');
-  
-  // POST to Flow 2
   try {
-    const payload = {
-      apiKey: API_KEY,
-      nationalId: state.nationalId,
-      fullName: state.fullName,
-      company: state.company,
-      score: score,
-      isPassed: isPassed ? 'yes' : 'no',
-      examDate: examDate,
-      division: state.division
-    };
-    
     const res = await fetch(FLOW2_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        apiKey: API_KEY,
+        nationalId: state.nationalId,
+        fullName: state.fullName,
+        company: state.company,
+        score: score,
+        isPassed: isPassed ? 'yes' : 'no',
+        examDate: examDate,
+        division: state.division
+      })
     });
-    
     const data = await res.json();
-    
     showResult(score, isPassed, data);
-    
   } catch (err) {
     showError('บันทึกผลไม่สำเร็จ', err.message || 'กรุณาลองใหม่อีกครั้ง');
   }
 }
 
-// ========================================================
-// SHOW RESULT
-// ========================================================
 function showResult(score, isPassed, apiData) {
   const icon = $('resultIcon');
   const title = $('resultTitle');
   const sub = $('resultSub');
   const scoreBig = $('scoreBig');
-  
   if (isPassed) {
     icon.className = 'result-icon pass';
     icon.textContent = '✓';
@@ -935,16 +440,11 @@ function showResult(score, isPassed, apiData) {
     title.textContent = 'ผ่านการทดสอบ';
     sub.textContent = 'ยินดีด้วย — คุณได้รับใบวุฒิบัตรแล้ว';
     scoreBig.className = 'score-big';
-    
-    // Show cert card
     if (apiData && apiData.certNo) {
       $('certCard').style.display = 'block';
       $('certNo').textContent = apiData.certNo;
-      if (apiData.certLink) {
-        $('certLink').href = apiData.certLink;
-      } else {
-        $('certLink').style.display = 'none';
-      }
+      if (apiData.certLink) $('certLink').href = apiData.certLink;
+      else $('certLink').style.display = 'none';
     }
   } else {
     icon.className = 'result-icon fail';
@@ -954,16 +454,11 @@ function showResult(score, isPassed, apiData) {
     sub.textContent = `ต้องได้คะแนนอย่างน้อย ${PASS_THRESHOLD}/${EXAM_SIZE} — กรุณาทดสอบใหม่`;
     scoreBig.className = 'score-big fail';
   }
-  
   scoreBig.textContent = `${score}/${EXAM_SIZE}`;
   showScreen('screenResult');
 }
 
-// ========================================================
-// BOOT
-// ========================================================
 init();
 </script>
-
 </body>
 </html>

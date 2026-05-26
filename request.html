@@ -585,7 +585,7 @@ function addTrainee() {
       </select>
       <input type="text" class="t-name" placeholder="ชื่อ-นามสกุล">
     </div>
-    <input type="text" class="t-id" placeholder="เลขบัตรประชาชน 13 หลัก หรือ Passport" maxlength="20">
+    <input type="text" class="t-id" placeholder="เลขบัตร 13 หลัก หรือ Passport (เช่น AB123456)" maxlength="13">
     <input type="text" class="t-position" placeholder="ตำแหน่ง เช่น ช่างเชื่อม, วิศวกร">
   `;
   document.getElementById('trainees').appendChild(row);
@@ -639,10 +639,10 @@ async function submitForm() {
     if (/[A-Za-z]/.test(id)) id = id.toUpperCase();
     
     const isThaiId = /^\d{13}$/.test(id);
-    const isPassport = /^[A-Za-z0-9]{6,}$/.test(id);
+    const isPassport = /^(?=.*[A-Za-z])[A-Za-z0-9]{6,12}$/.test(id);
     
     if (!fullName) { traineeOk = false; traineeErr = 'ชื่อ-นามสกุล'; }
-    else if (!id || (!isThaiId && !isPassport)) { traineeOk = false; traineeErr = 'เลขบัตรประชาชน 13 หลัก หรือ Passport (6+ ตัวอักษร)'; }
+    else if (!id || (!isThaiId && !isPassport)) { traineeOk = false; traineeErr = 'เลขบัตรประชาชน 13 หลัก หรือ Passport (6-12 ตัว ต้องมีตัวอักษร)'; }
     else if (!position) { traineeOk = false; traineeErr = 'ตำแหน่ง'; }
     
     trainees.push({

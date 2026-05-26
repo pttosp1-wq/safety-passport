@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>แบบทดสอบความปลอดภัย — PTT TSO</title>
+<title>แบบทดสอบความปลอดภัยหลักสูตรสำหรับลูกจ้างทั่วไปและลูกจ้างเข้าใหม่ — PTT TSO</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
@@ -217,7 +217,7 @@
 <div class="app">
   <div class="header">
     <div class="header-brand">PTT • TSO SAFETY EXAM</div>
-    <div class="header-title">แบบทดสอบความปลอดภัย</div>
+    <div class="header-title">แบบทดสอบความปลอดภัยหลักสูตรสำหรับลูกจ้างทั่วไปและลูกจ้างเข้าใหม่</div>
     <div class="progress-bar" id="progBar" style="display:none;"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
     <div class="progress-text" id="progText" style="display:none;">ข้อ 1 / 10</div>
   </div>
@@ -290,10 +290,9 @@
       <div class="screen-title">พร้อมเริ่มทดสอบ</div>
       <div class="screen-sub">กรุณาอ่านกติกาก่อนเริ่มทำแบบทดสอบ</div>
       <ol class="intro-list">
-        <li><strong>10 ข้อ</strong> สุ่มจากคลังคำถาม 20 ข้อ</li>
-        <li>ต้องตอบถูก <strong>8 ข้อขึ้นไป</strong> จึงจะผ่านเกณฑ์</li>
+        <li>ต้องตอบถูก <strong>8 ข้อจาก 10 ข้อ</strong> จึงจะผ่านเกณฑ์</li>
         <li>ไม่จำกัดเวลา — ทำได้ตามสะดวก</li>
-        <li>ใบวุฒิบัตรมีอายุ <strong>1 ปี</strong> นับจากวันที่สอบ</li>
+        <li>ใบวุฒิบัตรมีอายุ <strong>6 เดือน</strong> นับจากวันที่สอบ</li>
         <li>ผ่านแล้วจะได้รับใบวุฒิบัตร PDF ทันที</li>
       </ol>
       <button class="btn btn-primary btn-full" onclick="startExam()">เริ่มทำแบบทดสอบ →</button>
@@ -380,7 +379,7 @@ const API_KEY = 'PTT-PO7-2026-SECRET';
 
 const EXAM_SIZE = 10;
 const PASS_SCORE = 8;
-const CERT_VALIDITY_YEARS = 1;
+const CERT_VALIDITY_MONTHS = 6;
 
 // ==================== STATE ====================
 const params = new URLSearchParams(window.location.search);
@@ -534,7 +533,7 @@ function goHome() {
 
 // ==================== PRE-VALIDATION ====================
 function isValidId(v) {
-  return /^\d{13}$/.test(v) || /^[A-Za-z0-9]{6,}$/.test(v);
+  return /^\d{13}$/.test(v) || /^(?=.*[A-Za-z])[A-Za-z0-9]{6,12}$/.test(v);
 }
 
 async function validateAccess() {
@@ -695,7 +694,7 @@ async function submitExam() {
   const now = new Date();
   const examDate = now.toISOString().slice(0, 10);
   const expiry = new Date(now);
-  expiry.setFullYear(expiry.getFullYear() + CERT_VALIDITY_YEARS);
+  expiry.setMonth(expiry.getMonth() + CERT_VALIDITY_MONTHS);
   const expiryDate = expiry.toISOString().slice(0, 10);
   
   // สร้าง CertNo: PO7-YYMMDD-XXXX (XXXX = 4 ตัวสุดท้ายของบัตรปชช.)

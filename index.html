@@ -178,7 +178,7 @@
       
       <div class="field">
         <label>เลขบัตรประชาชน / Passport</label>
-        <input type="text" id="natId" class="nid-input" maxlength="20" placeholder="เลขบัตร 13 หลัก หรือ Passport">
+        <input type="text" id="natId" class="nid-input" maxlength="13" placeholder="เลขบัตร 13 หลัก หรือ Passport">
       </div>
       <div class="field">
         <label>เขตปฏิบัติการ</label>
@@ -204,7 +204,7 @@
     <div class="state" id="state-valid">
       <div class="icon-circle green">✓</div>
       <div class="state-title">ใบวุฒิบัตรของท่านยังใช้ได้</div>
-      <div class="state-sub">ไม่ต้องทดสอบใหม่ — สามารถใช้ใบเดิมต่อได้</div>
+      <div class="state-sub">ใช้ใบเดิมต่อได้ หรือสอบใหม่เพื่อต่ออายุ</div>
       <div class="info-card">
         <div class="info-row"><span class="info-label">ชื่อ-นามสกุล</span><span class="info-value" id="validName">-</span></div>
         <div class="info-row"><span class="info-label">บริษัท</span><span class="info-value" id="validCompany">-</span></div>
@@ -217,6 +217,7 @@
         <a class="cert-link" id="validCertLink" href="#" target="_blank">📄 เปิดดูใบวุฒิบัตร</a>
       </div>
       <button class="btn btn-ghost" onclick="resetForm()">ตรวจสอบเลขบัตรอื่น</button>
+      <button class="btn btn-primary" style="margin-top:10px;" onclick="goToExam()">🔄 สอบใหม่เพื่อต่ออายุ →</button>
     </div>
 
     <!-- STATE 3: Expired (cert หมดอายุ — สอบใหม่ได้) -->
@@ -299,11 +300,11 @@ if (savedDivision) document.getElementById('division').value = savedDivision;
 const natIdEl = document.getElementById('natId');
 const btnCheck = document.getElementById('btnCheck');
 function isValidId(v) {
-  return /^\d{13}$/.test(v) || /^[A-Za-z0-9]{6,}$/.test(v);
+  return /^\d{13}$/.test(v) || /^(?=.*[A-Za-z])[A-Za-z0-9]{6,12}$/.test(v);
 }
 natIdEl.addEventListener('input', () => {
   // อนุญาตเฉพาะ alphanumeric (ตัวเลข + ตัวอักษร), uppercase อัตโนมัติ
-  natIdEl.value = natIdEl.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 20);
+  natIdEl.value = natIdEl.value.replace(/[^A-Za-z0-9]/g, '').toUpperCase().slice(0, 13);
   btnCheck.disabled = !isValidId(natIdEl.value);
 });
 natIdEl.addEventListener('keypress', (e) => {
@@ -342,7 +343,7 @@ async function checkStatus() {
   const nid = natIdEl.value.trim();
   const division = $('division').value;
   if (!isValidId(nid)) {
-    showError('กรุณากรอกเลขบัตรประชาชน 13 หลัก หรือ Passport (6 ตัวอักษรขึ้นไป)');
+    showError('กรุณากรอกเลขบัตรประชาชน 13 หลัก หรือ Passport (6-12 ตัว ต้องมีตัวอักษร)');
     return;
   }
   state.nationalId = nid;

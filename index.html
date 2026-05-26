@@ -423,6 +423,9 @@ function goToExam() {
   localStorage.setItem('ptt_nationalId', state.nationalId);
   localStorage.setItem('ptt_division', state.division);
   
+  // flag ตั้งใจสอบใหม่ — ใช้ครั้งเดียว (refresh จะหาย)
+  sessionStorage.setItem('ptt_intentRenew', '1');
+  
   const params = new URLSearchParams({
     nationalId: state.nationalId,
     division: state.division

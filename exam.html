@@ -590,10 +590,20 @@ function handleValidation(response) {
       break;
       
     case 'valid':
-      // ข้าม screen-has-valid-cert → ไป intro โดยตรง (user ตั้งใจสอบใหม่อยู่แล้ว)
+      // อัพเดท state จาก Flow 1
       if (d.fullName) state.fullName = d.fullName;
       if (d.company) state.company = d.company;
-      showScreen('screen-intro');
+      
+      // เช็คว่าตั้งใจมาสอบใหม่จาก index.html ไหม
+      if (sessionStorage.getItem('ptt_intentRenew') === '1') {
+        sessionStorage.removeItem('ptt_intentRenew'); // ใช้ครั้งเดียว
+        showScreen('screen-intro');
+      } else {
+        // refresh หรือเปิด URL ตรงๆ → แสดงทางเลือก
+        $('validCertNo').textContent = d.certNo || '-';
+        $('validExpiry').textContent = formatShortDate(d.expiryDate);
+        showScreen('screen-has-valid-cert');
+      }
       break;
       
     case 'expired':

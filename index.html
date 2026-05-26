@@ -164,7 +164,6 @@
   <div class="header">
     <div class="header-brand">PTT • TSO SAFETY TRAINING</div>
     <div class="header-title">ตรวจสอบสถานะการอบรม</div>
-    <div class="header-sub">ผู้รับเหมา ปฏิบัติงานในแนวท่อก๊าซธรรมชาติ</div>
   </div>
 
   <div class="content">
@@ -216,8 +215,10 @@
         <div class="cert-no" id="validCertNo">-</div>
         <a class="cert-link" id="validCertLink" href="#" target="_blank">📄 เปิดดูใบวุฒิบัตร</a>
       </div>
-      <button class="btn btn-ghost" onclick="resetForm()">ตรวจสอบเลขบัตรอื่น</button>
-      <button class="btn btn-primary" style="margin-top:10px;" onclick="goToExam()">🔄 สอบใหม่เพื่อต่ออายุ →</button>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <button class="btn btn-primary" style="min-width:220px;" onclick="goToExam()">🔄 สอบใหม่เพื่อต่ออายุ →</button>
+        <button class="btn btn-ghost" style="min-width:220px;" onclick="resetForm()">ตรวจสอบเลขบัตรอื่น</button>
+      </div>
     </div>
 
     <!-- STATE 3: Expired (cert หมดอายุ — สอบใหม่ได้) -->

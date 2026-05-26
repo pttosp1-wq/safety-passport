@@ -242,7 +242,9 @@
         กรุณาติดต่อบริษัทต้นสังกัด<br>
         เพื่อ<strong>ส่งคำขออบรม</strong>กับ ปตท. ก่อนล่วงหน้า
       </div>
-      <button class="btn btn-ghost btn-full" onclick="goHome()">กลับหน้าหลัก</button>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <button class="btn btn-ghost" style="min-width:160px;" onclick="goHome()">กลับหน้าหลัก</button>
+      </div>
     </div>
 
     <!-- WRONG DATE -->
@@ -254,7 +256,9 @@
         วันอบรมของท่านคือ<br>
         <strong id="wrongDateText" style="font-size: 18px; color: var(--amber); font-family: 'Outfit', sans-serif;">-</strong>
       </div>
-      <button class="btn btn-ghost btn-full" onclick="goHome()">กลับหน้าหลัก</button>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <button class="btn btn-ghost" style="min-width:160px;" onclick="goHome()">กลับหน้าหลัก</button>
+      </div>
     </div>
 
     <!-- HAS VALID CERT (already passed - shouldn't re-take) -->
@@ -269,8 +273,10 @@
       <div class="warning-card">
         <strong>ต้องการสอบใหม่เพื่อต่ออายุ?</strong> สามารถทำได้ — กดปุ่มด้านล่างเพื่อเริ่มทดสอบใหม่
       </div>
-      <button class="btn btn-primary btn-full" onclick="proceedToIntro()">สอบใหม่เพื่อต่ออายุ →</button>
-      <button class="btn btn-ghost btn-full" style="margin-top:10px;" onclick="goHome()">กลับหน้าหลัก</button>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <button class="btn btn-primary" style="min-width:200px;" onclick="proceedToIntro()">สอบใหม่เพื่อต่ออายุ →</button>
+        <button class="btn btn-ghost" style="min-width:160px;" onclick="goHome()">กลับหน้าหลัก</button>
+      </div>
     </div>
 
     <!-- EXPIRED NOTICE (warning, can proceed) -->
@@ -282,7 +288,9 @@
         <strong>ใบเก่า:</strong> <span id="expCertNo">-</span><br>
         <strong>หมดอายุ:</strong> <span id="expExpiry">-</span>
       </div>
-      <button class="btn btn-primary btn-full" onclick="proceedToIntro()">เริ่มทดสอบใหม่ →</button>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <button class="btn btn-primary" style="min-width:200px;" onclick="proceedToIntro()">เริ่มทดสอบใหม่ →</button>
+      </div>
     </div>
 
     <!-- INTRO -->
@@ -296,7 +304,9 @@
         <li>ใบวุฒิบัตรมีอายุ <strong>6 เดือน</strong> นับจากวันที่สอบ</li>
         <li>ผ่านแล้วจะได้รับใบวุฒิบัตร PDF ทันที</li>
       </ol>
-      <button class="btn btn-primary btn-full" onclick="startExam()">เริ่มทำแบบทดสอบ →</button>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <button class="btn btn-primary" style="min-width:200px;" onclick="startExam()">เริ่มทำแบบทดสอบ →</button>
+      </div>
     </div>
 
     <!-- EXAM -->
@@ -353,8 +363,10 @@
         เกณฑ์ผ่าน: <strong>8 ข้อขึ้นไป</strong><br>
         กรุณาทำแบบทดสอบใหม่อีกครั้ง
       </div>
-      <button class="btn btn-primary btn-full" onclick="retryExam()">ลองใหม่</button>
-      <button class="btn btn-ghost btn-full" style="margin-top:10px;" onclick="goHome()">กลับหน้าหลัก</button>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <button class="btn btn-primary" style="min-width:160px;" onclick="retryExam()">ลองใหม่</button>
+        <button class="btn btn-ghost" style="min-width:160px;" onclick="goHome()">กลับหน้าหลัก</button>
+      </div>
     </div>
 
     <!-- ERROR -->
@@ -362,8 +374,10 @@
       <div class="icon-circle red">!</div>
       <div class="screen-title">เกิดข้อผิดพลาด</div>
       <div class="screen-sub" id="errMsg">ระบบไม่สามารถดำเนินการได้ในขณะนี้</div>
-      <button class="btn btn-primary btn-full" onclick="window.location.reload()">🔄 ลองอีกครั้ง</button>
-      <button class="btn btn-ghost btn-full" style="margin-top:10px;" onclick="goHome()">กลับหน้าหลัก</button>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <button class="btn btn-primary" style="min-width:160px;" onclick="window.location.reload()">🔄 ลองอีกครั้ง</button>
+        <button class="btn btn-ghost" style="min-width:160px;" onclick="goHome()">กลับหน้าหลัก</button>
+      </div>
     </div>
 
   </div>
@@ -576,12 +590,10 @@ function handleValidation(response) {
       break;
       
     case 'valid':
-      // อัพเดท state จาก Flow 1
+      // ข้าม screen-has-valid-cert → ไป intro โดยตรง (user ตั้งใจสอบใหม่อยู่แล้ว)
       if (d.fullName) state.fullName = d.fullName;
       if (d.company) state.company = d.company;
-      $('validCertNo').textContent = d.certNo || '-';
-      $('validExpiry').textContent = formatShortDate(d.expiryDate);
-      showScreen('screen-has-valid-cert');
+      showScreen('screen-intro');
       break;
       
     case 'expired':

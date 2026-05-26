@@ -263,10 +263,6 @@
         <input type="text" id="project" placeholder="เช่น งานเชื่อมท่อ Pipeline Section A">
       </div>
       <div class="field">
-        <label>รายละเอียดงาน<span class="req">*</span></label>
-        <textarea id="workDetail" placeholder="อธิบายงานที่จะทำโดยย่อ"></textarea>
-      </div>
-      <div class="field">
         <label>สถานที่ปฏิบัติงาน<span class="req">*</span></label>
         <input type="text" id="workingArea" placeholder="เช่น CHANAMR Station">
       </div>
@@ -604,7 +600,6 @@ addTrainee(); // เริ่มต้น 1 คน
 async function submitForm() {
   // Validate
   const project = document.getElementById('project').value.trim();
-  const workDetail = document.getElementById('workDetail').value.trim();
   const workingArea = document.getElementById('workingArea').value.trim();
   const workStart = document.getElementById('workStart').value;
   const workEnd = document.getElementById('workEnd').value;
@@ -613,7 +608,7 @@ async function submitForm() {
   const contactPhone = document.getElementById('contactPhone').value.trim();
   const contactEmail = document.getElementById('contactEmail').value.trim();
   
-  if (!project || !workDetail || !workingArea || !workStart || !workEnd || !company || !contactName || !contactPhone || !contactEmail) {
+  if (!project || !workingArea || !workStart || !workEnd || !company || !contactName || !contactPhone || !contactEmail) {
     alert('กรุณากรอกข้อมูลให้ครบทุกช่องที่มีเครื่องหมาย *');
     return;
   }
@@ -664,7 +659,6 @@ async function submitForm() {
   // Payload structure ตรงกับ Flow 3 schema (nested vendor + pttEngineer)
   const payload = {
     project: project,
-    workDetail: workDetail,
     workStart: workStart,
     workEnd: workEnd,
     preferredTrainingDate: calSelected,

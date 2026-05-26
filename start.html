@@ -57,7 +57,25 @@
     display: flex; align-items: flex-start; gap: 14px;
     background: var(--gray-50); border: 1px solid var(--gray-200);
     border-radius: 16px; padding: 16px;
+    transition: all 0.2s ease;
   }
+  .step.clickable {
+    cursor: pointer;
+    border-color: var(--sky);
+    background: linear-gradient(135deg, #F0F9FF, #FFFFFF);
+  }
+  .step.clickable:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(30,144,255,0.15);
+    border-color: var(--navy);
+  }
+  .step.clickable:active { transform: translateY(0); }
+  .step-arrow {
+    color: var(--sky); font-size: 18px; flex-shrink: 0;
+    align-self: center; opacity: 0; transition: opacity 0.2s ease;
+  }
+  .step.clickable .step-arrow { opacity: 0.6; }
+  .step.clickable:hover .step-arrow { opacity: 1; color: var(--navy); }
   .step-num {
     width: 36px; height: 36px; flex-shrink: 0;
     background: linear-gradient(135deg, var(--navy), var(--sky));
@@ -106,12 +124,13 @@
     </div>
 
     <div class="steps">
-      <div class="step">
+      <div class="step clickable" onclick="goStep(1)">
         <div class="step-num">1</div>
         <div class="step-body">
           <div class="step-title">กรอกฟอร์มขออบรม</div>
           <div class="step-desc">กรอกข้อมูลบริษัท ผู้ติดต่อ ช่วงงาน และรายชื่อผู้ที่จะอบรม</div>
         </div>
+        <div class="step-arrow">→</div>
       </div>
 
       <div class="step">
@@ -130,12 +149,13 @@
         </div>
       </div>
 
-      <div class="step">
+      <div class="step clickable" onclick="goStep(4)">
         <div class="step-num">4</div>
         <div class="step-body">
           <div class="step-title">ทำแบบทดสอบ</div>
           <div class="step-desc">ทดสอบความปลอดภัย 10 ข้อ ผ่านเกณฑ์ 7/10 คะแนน</div>
         </div>
+        <div class="step-arrow">→</div>
       </div>
 
       <div class="step">
@@ -170,6 +190,14 @@
 
   function goNext() {
     window.location.href = `request.html?division=${division}`;
+  }
+
+  function goStep(n) {
+    if (n === 1) {
+      window.location.href = `request.html?division=${division}`;
+    } else if (n === 4) {
+      window.location.href = 'index.html';
+    }
   }
 </script>
 </body>

@@ -57,7 +57,7 @@
   }
   .info-row {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 8px 0; font-size: 14px;
+    padding: 8px 0; font-size: 14px; gap: 12px;
   }
   .info-row + .info-row { border-top: 1px dashed var(--gray-200); }
   .info-label { color: var(--gray-600); }
@@ -161,8 +161,10 @@
           <span class="reqid" id="error-reqid">-</span>
         </div>
       </div>
-      <button class="btn btn-primary" onclick="retry()">🔄 ลองอีกครั้ง</button>
-      <button class="btn btn-ghost" onclick="window.close()">ปิดหน้านี้</button>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
+        <button class="btn btn-primary" id="btnRetry" style="min-width:200px;" onclick="retry()">🔄 ลองอีกครั้ง</button>
+        <button class="btn btn-ghost" style="min-width:160px;" onclick="window.close()">ปิดหน้านี้</button>
+      </div>
     </div>
 
   </div>
@@ -201,6 +203,8 @@ async function confirmTraining() {
   if (!requestId || !scheduledDate || !scheduledTime) {
     document.getElementById('error-msg').textContent = 'ลิงก์ไม่ครบ — โปรดใช้ลิงก์จากอีเมลอีกครั้ง';
     document.getElementById('error-reqid').textContent = requestId || '(ไม่มี)';
+    // ซ่อนปุ่ม retry — กดแล้วก็ "ลิงก์ไม่ครบ" เหมือนเดิม ไม่ make sense
+    document.getElementById('btnRetry').style.display = 'none';
     showState('state-error');
     return;
   }

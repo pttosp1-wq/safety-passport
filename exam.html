@@ -184,6 +184,7 @@
     background: linear-gradient(135deg, #1E3A8A, var(--navy));
     color: white; border-radius: 20px; padding: 22px;
     margin-bottom: 16px; position: relative; overflow: hidden;
+    text-align: center;
   }
   .cert-card::after {
     content: ''; position: absolute; top: -50%; right: -20%;
@@ -336,7 +337,9 @@
         <div class="info-row"><span class="info-label">วันที่สอบ</span><span class="info-value" id="passExamDate">-</span></div>
         <div class="info-row"><span class="info-label">วันหมดอายุ</span><span class="info-value" id="passExpiry">-</span></div>
       </div>
-      <button class="btn btn-ghost btn-full" onclick="goHome()">เสร็จสิ้น</button>
+      <div style="text-align:center;">
+        <button class="btn btn-ghost" style="min-width:160px;" onclick="goHome()">เสร็จสิ้น</button>
+      </div>
     </div>
 
     <!-- RESULT - FAIL -->

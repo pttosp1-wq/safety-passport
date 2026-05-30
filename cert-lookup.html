@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard — PTT TSO Admin</title>
+<title>ค้นหา Cert — PTT TSO Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ==================== PTT TSO ADMIN — SHARED CSS ==================== */
@@ -318,16 +318,133 @@ html, body {
   }
 }
 
-  /* Division badge in topbar */
-  .div-tag-lg {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 8px 14px; border-radius: 100px;
-    background: linear-gradient(135deg, var(--navy), var(--sky));
-    color: white; font-weight: 700;
-    font-family: 'Outfit', sans-serif;
-    box-shadow: 0 4px 12px rgba(0,59,122,0.2);
-  }
+  .div-tag-lg { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 100px; background: linear-gradient(135deg, var(--navy), var(--sky)); color: white; font-weight: 700; font-family: 'Outfit', sans-serif; }
   .div-tag-lg .dot { width: 8px; height: 8px; background: #4ADE80; border-radius: 50%; box-shadow: 0 0 8px #4ADE80; }
+  
+  .search-hero {
+    background: linear-gradient(135deg, var(--navy), var(--navy-dark));
+    color: white; padding: 30px 24px;
+    border-radius: 20px; margin-bottom: 24px;
+    position: relative; overflow: hidden;
+  }
+  .search-hero::after {
+    content: ''; position: absolute; top: -40%; right: -10%;
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, rgba(30,144,255,0.3), transparent 70%);
+    border-radius: 50%;
+  }
+  .search-hero h2 {
+    font-size: 20px; margin-bottom: 6px;
+    letter-spacing: -0.3px; position: relative;
+  }
+  .search-hero p { font-size: 13px; opacity: 0.7; margin-bottom: 18px; position: relative; }
+  .search-input-row {
+    display: flex; gap: 10px; position: relative; max-width: 480px;
+  }
+  .search-input-row input {
+    flex: 1; padding: 14px 18px;
+    border: none; border-radius: 12px;
+    font-family: inherit; font-size: 16px;
+    background: white; color: var(--gray-900);
+  }
+  .search-input-row input:focus {
+    outline: none; box-shadow: 0 0 0 4px rgba(30,144,255,0.3);
+  }
+  .search-input-row button {
+    padding: 14px 24px;
+    background: var(--orange); color: white;
+    border: none; border-radius: 12px;
+    font-family: inherit; font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .search-input-row button:hover { background: #EA580C; }
+  
+  .person-card {
+    background: white; border: 1px solid var(--gray-200);
+    border-radius: 16px; padding: 22px;
+    margin-bottom: 20px;
+  }
+  .person-header {
+    display: flex; align-items: center; gap: 16px;
+    padding-bottom: 16px; margin-bottom: 16px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .person-avatar {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, var(--navy), var(--sky));
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 28px;
+    flex-shrink: 0;
+  }
+  .person-info { flex: 1; }
+  .person-name { font-size: 20px; font-weight: 700; color: var(--gray-900); }
+  .person-nid { font-size: 13px; color: var(--gray-500); margin-top: 2px; font-family: 'Outfit', sans-serif; letter-spacing: 0.5px; }
+  .person-status {
+    padding: 6px 14px; border-radius: 100px;
+    font-size: 12px; font-weight: 600;
+  }
+  .person-status.active { background: #D1FAE5; color: #065F46; }
+  .person-status.expired { background: #FEE2E2; color: #991B1B; }
+  
+  .cert-history h4 {
+    font-size: 13px; color: var(--gray-500); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+  .cert-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px; background: var(--gray-50);
+    border-radius: 12px; margin-bottom: 8px;
+    border-left: 4px solid var(--green);
+  }
+  .cert-row.expired { border-left-color: var(--gray-300); opacity: 0.7; }
+  .cert-icon { font-size: 24px; }
+  .cert-meta { flex: 1; min-width: 0; }
+  .cert-no { font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 14px; color: var(--gray-900); }
+  .cert-dates { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+  .cert-action {
+    padding: 6px 12px; background: white;
+    border: 1px solid var(--gray-200); border-radius: 8px;
+    cursor: pointer; font-size: 12px; font-weight: 600; color: var(--gray-700);
+    transition: all 0.15s;
+  }
+  .cert-action:hover { background: var(--sky); color: white; border-color: var(--sky); }
+  
+  .empty-large {
+    text-align: center; padding: 60px 20px;
+    background: white; border-radius: 16px;
+    border: 1px solid var(--gray-200);
+  }
+  .empty-large .ic { font-size: 56px; margin-bottom: 14px; opacity: 0.5; }
+  .empty-large .title { font-size: 16px; font-weight: 600; color: var(--gray-700); }
+  .empty-large .sub { font-size: 13px; color: var(--gray-500); margin-top: 6px; }
+  
+  .recent-section {
+    background: white; border: 1px solid var(--gray-200);
+    border-radius: 16px; padding: 18px;
+  }
+  .recent-section h3 {
+    font-size: 14px; color: var(--gray-700); margin-bottom: 12px;
+  }
+  .recent-list { display: flex; flex-direction: column; gap: 8px; }
+  .recent-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; background: var(--gray-50);
+    border-radius: 10px; cursor: pointer;
+    transition: all 0.15s;
+  }
+  .recent-item:hover { background: var(--sky-soft); }
+  .recent-nid { 
+    font-family: 'Outfit', sans-serif; font-size: 12px;
+    color: var(--gray-500); padding: 4px 10px;
+    background: white; border-radius: 100px;
+  }
+  
+  @media (max-width: 800px) {
+    .person-header { flex-direction: column; text-align: center; }
+    .search-input-row { flex-direction: column; }
+  }
 </style>
 </head>
 <body>
@@ -341,29 +458,16 @@ html, body {
       </div>
     </div>
     <nav class="sidebar-nav">
-      <a href="index.html" class="nav-item active">
-        <span class="nav-icon">📊</span>
-        <span class="nav-label">Dashboard</span>
-      </a>
-      <a href="requests.html" class="nav-item">
-        <span class="nav-icon">📋</span>
-        <span class="nav-label">รายการคำขอ</span>
-        <span class="nav-badge" id="navBadge">3</span>
-      </a>
-      <a href="calendar.html" class="nav-item">
-        <span class="nav-icon">📅</span>
-        <span class="nav-label">ปฏิทินอบรม</span>
-      </a>
-      <a href="cert-lookup.html" class="nav-item">
-        <span class="nav-icon">🔍</span>
-        <span class="nav-label">ค้นหา Cert</span>
-      </a>
+      <a href="index.html" class="nav-item"><span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></a>
+      <a href="requests.html" class="nav-item"><span class="nav-icon">📋</span><span class="nav-label">รายการคำขอ</span></a>
+      <a href="calendar.html" class="nav-item"><span class="nav-icon">📅</span><span class="nav-label">ปฏิทินอบรม</span></a>
+      <a href="cert-lookup.html" class="nav-item active"><span class="nav-icon">🔍</span><span class="nav-label">ค้นหา Cert</span></a>
     </nav>
     <div class="sidebar-footer">
       <div class="user-info">
         <div class="user-avatar" id="avInit">P7</div>
         <div class="user-meta">
-          <div class="user-name" id="avName">Admin</div>
+          <div class="user-name">Admin</div>
           <div class="user-role" id="avRole">เขต PO7</div>
         </div>
       </div>
@@ -374,92 +478,39 @@ html, body {
   <main class="main">
     <header class="topbar">
       <div>
-        <div class="page-title">Dashboard</div>
-        <div class="page-subtitle" id="pageSub">ภาพรวมเขต PO7</div>
+        <div class="page-title">ค้นหา Cert</div>
+        <div class="page-subtitle" id="pageSub">ค้นด้วยเลขบัตรประชาชน (13 หลัก)</div>
       </div>
       <div class="topbar-right">
-        <div class="div-tag-lg">
-          <span class="dot"></span>
-          <span id="divTag">PO7</span>
-        </div>
+        <div class="div-tag-lg"><span class="dot"></span><span id="divTag">PO7</span></div>
       </div>
     </header>
 
-    <div class="stats-grid">
-      <a href="requests.html?status=pending" class="stat-card urgent">
-        <div class="stat-label">รออนุมัติ</div>
-        <div class="stat-value" id="stPending">2</div>
-        <div class="stat-trend">📌 ต้องตอบกลับ จป.</div>
-      </a>
-      <a href="calendar.html" class="stat-card">
-        <div class="stat-label">สัปดาห์นี้</div>
-        <div class="stat-value" id="stWeek">8</div>
-        <div class="stat-trend">👥 คนเข้าสอบ</div>
-      </a>
-      <a href="requests.html?status=done" class="stat-card success">
-        <div class="stat-label">เดือนนี้</div>
-        <div class="stat-value"><span id="stPassed">18</span><span class="stat-fraction">/<span id="stTotal">20</span></span></div>
-        <div class="stat-trend">✅ ผ่านการอบรม</div>
-      </a>
-      <a href="cert-lookup.html" class="stat-card neutral">
-        <div class="stat-label">Cert ทั้งหมด</div>
-        <div class="stat-value" id="stTotalCerts">87</div>
-        <div class="stat-trend">📜 ใบที่ออกสะสม</div>
-      </a>
+    <!-- Search hero -->
+    <div class="search-hero">
+      <h2>🔍 ค้นหาประวัติการอบรม</h2>
+      <p>กรอกเลขบัตรประชาชน 13 หลัก เพื่อดูประวัติและสถานะใบวุฒิบัตร</p>
+      <div class="search-input-row">
+        <input type="text" id="searchNid" inputmode="numeric" maxlength="13" placeholder="เลขบัตรประชาชน 13 หลัก" oninput="onInput()">
+        <button onclick="doSearch()">ค้นหา</button>
+      </div>
     </div>
 
-    <div class="two-col">
-      <section class="panel">
-        <div class="panel-header">
-          <h3>📌 รออนุมัติ</h3>
-          <a href="requests.html?status=pending" class="link-more">ดูทั้งหมด →</a>
-        </div>
-        <table class="data-table">
-          <thead>
-            <tr><th>บริษัท</th><th>ขอวันที่</th><th>คน</th></tr>
-          </thead>
-          <tbody id="tblPending"></tbody>
-        </table>
-      </section>
+    <!-- Result -->
+    <div id="resultArea"></div>
 
-      <section class="panel">
-        <div class="panel-header">
-          <h3>📅 สอบเร็วๆ นี้</h3>
-          <a href="calendar.html" class="link-more">ปฏิทิน →</a>
-        </div>
-        <table class="data-table">
-          <thead>
-            <tr><th>วันที่</th><th>บริษัท</th><th>คน</th><th>สถานะ</th></tr>
-          </thead>
-          <tbody id="tblUpcoming"></tbody>
-        </table>
-      </section>
-    </div>
-
-    <section class="panel">
-      <div class="panel-header"><h3>🕓 กิจกรรมล่าสุด</h3></div>
-      <ul class="activity-list" id="actList"></ul>
+    <!-- Recent searches -->
+    <section class="recent-section" id="recentSection">
+      <h3>🕓 ค้นหาล่าสุด (Mock)</h3>
+      <div class="recent-list" id="recentList"></div>
     </section>
   </main>
 
   <nav class="bottom-nav">
-    <a href="index.html" class="bnav-item active">
-      <span class="bnav-icon">📊</span>
-      <span class="bnav-label">หน้าหลัก</span>
-    </a>
-    <a href="requests.html" class="bnav-item">
-      <span class="bnav-icon">📋</span>
-      <span class="bnav-label">คำขอ</span>
-      <span class="bnav-badge" id="bBadge">3</span>
-    </a>
-    <a href="calendar.html" class="bnav-item">
-      <span class="bnav-icon">📅</span>
-      <span class="bnav-label">ปฏิทิน</span>
-    </a>
-    <a href="cert-lookup.html" class="bnav-item">
-      <span class="bnav-icon">🔍</span>
-      <span class="bnav-label">ค้นหา</span>
-    </a>
+    <a href="index.html" class="bnav-item"><span class="bnav-icon">📊</span><span class="bnav-label">หน้าหลัก</span></a>
+    <a href="requests.html" class="bnav-item"><span class="bnav-icon">📋</span><span class="bnav-label">คำขอ</span></a>
+    <a href="calendar.html" class="bnav-item"><span class="bnav-icon">📅</span><span class="bnav-label">ปฏิทิน</span></a>
+    <a href="cert-lookup.html" class="bnav-item active"><span class="bnav-icon">🔍</span><span class="bnav-label">ค้นหา</span></a>
   </nav>
 </div>
 
@@ -579,81 +630,96 @@ function showError(el, msg) {
 }
 
 
-// ===== INIT =====
 const session = guardSession();
-if (session) {
-  const DIVISION = session.division;
-  document.getElementById('divTag').textContent = DIVISION;
-  document.getElementById('pageSub').textContent = `ภาพรวมเขต ${DIVISION}`;
-  document.getElementById('avInit').textContent = DIVISION.replace('PO', 'P');
-  document.getElementById('avRole').textContent = `เขต ${DIVISION}`;
-  loadDashboard();
+const DIVISION = session.division;
+document.getElementById('divTag').textContent = DIVISION;
+document.getElementById('avInit').textContent = DIVISION.replace('PO', 'P');
+document.getElementById('avRole').textContent = `เขต ${DIVISION}`;
+
+document.getElementById('recentSection').style.display = 'none';
+
+document.getElementById('searchNid').addEventListener('keypress', (e) => {
+  if (e.key === 'Enter') doSearch();
+});
+
+function onInput() {
+  const v = document.getElementById('searchNid').value.replace(/\D/g, '');
+  document.getElementById('searchNid').value = v;
 }
 
-async function loadDashboard() {
+function quickSearch(nid) {
+  document.getElementById('searchNid').value = nid;
+  doSearch();
+}
+
+async function doSearch() {
+  const nid = document.getElementById('searchNid').value.trim();
+  const resEl = document.getElementById('resultArea');
+  
+  if (!nid) { resEl.innerHTML = ''; return; }
+  if (nid.length < 6) {
+    resEl.innerHTML = `<div class="empty-large"><div class="ic">⚠️</div><div class="title">เลขไม่ครบ</div><div class="sub">กรุณากรอกเลขบัตรหรือ passport อย่างน้อย 6 หลัก</div></div>`;
+    return;
+  }
+  
+  resEl.innerHTML = `<div class="empty-large"><div class="ic">⏳</div><div class="title">กำลังค้นหา...</div></div>`;
+  
   try {
-    const data = await callGetData('dashboard');
+    const data = await callGetData('cert-lookup', { nid });
     
-    // Stats
-    document.getElementById('stPending').textContent = data.stats?.pending ?? '-';
-    document.getElementById('stWeek').textContent = data.stats?.week ?? '-';
-    document.getElementById('stPassed').textContent = data.stats?.passed ?? '-';
-    document.getElementById('stTotal').textContent = data.stats?.total ?? '-';
-    document.getElementById('stTotalCerts').textContent = data.stats?.certs ?? '-';
-    
-    // Badges
-    const pendingCount = data.stats?.pending || 0;
-    const navBadge = document.getElementById('navBadge');
-    const bBadge = document.getElementById('bBadge');
-    if (navBadge) {
-      navBadge.textContent = pendingCount;
-      if (!pendingCount) navBadge.style.display = 'none';
-    }
-    if (bBadge) {
-      bBadge.textContent = pendingCount;
-      if (!pendingCount) bBadge.style.display = 'none';
+    if (!data.found || !data.certs || data.certs.length === 0) {
+      resEl.innerHTML = `<div class="empty-large"><div class="ic">🤷</div><div class="title">ไม่พบประวัติในเขต ${DIVISION}</div><div class="sub">เลข ${formatNid(nid)} ยังไม่เคยอบรมในเขตนี้</div></div>`;
+      return;
     }
     
-    // Pending list (trainees with Status=Pending → unique by RequestID)
-    const tPending = document.getElementById('tblPending');
-    const pendingTrainees = data.pending || [];
-    const seenReqs = new Set();
-    const uniquePending = [];
-    pendingTrainees.forEach(t => {
-      if (!seenReqs.has(t.RequestID)) {
-        seenReqs.add(t.RequestID);
-        uniquePending.push(t);
-      }
+    const uniqueCerts = {};
+    data.certs.forEach(c => {
+      if (c.certNo && !uniqueCerts[c.certNo]) uniqueCerts[c.certNo] = c;
     });
+    const certs = Object.values(uniqueCerts);
     
-    if (uniquePending.length === 0) {
-      tPending.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#94A3B8;">— ไม่มีคำขอรออนุมัติ —</td></tr>';
-    } else {
-      tPending.innerHTML = uniquePending.slice(0, 5).map(t => {
-        const peopleCount = pendingTrainees.filter(x => x.RequestID === t.RequestID).length;
-        return `<tr onclick="goReq('${t.RequestID}')">
-          <td>${t.RequestID}</td>
-          <td>${t.FullName || '-'}</td>
-          <td>${peopleCount} คน</td>
-        </tr>`;
-      }).join('');
-    }
+    const today = new Date();
+    certs.forEach(c => {
+      const isPassed = (c.isPassed === 'yes' || c.isPassed === 'TRUE' || c.isPassed === 'true' || c.isPassed === true);
+      const exp = c.expiryDate ? new Date(c.expiryDate) : null;
+      c.statusType = (isPassed && exp && exp > today) ? 'active' : 'expired';
+    });
+    const hasActive = certs.some(c => c.statusType === 'active');
     
-    // Upcoming — derive from getRequests later or leave empty
-    const tUp = document.getElementById('tblUpcoming');
-    tUp.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:#94A3B8;">— ดู Calendar สำหรับนัดที่กำลังจะมาถึง —</td></tr>';
+    const name = certs[0]?.fullName || '-';
+    const statusCls = hasActive ? 'active' : 'expired';
+    const statusLabel = hasActive ? '✅ Cert ใช้งานได้' : '⚠️ หมดอายุทั้งหมด';
+    const initial = name.replace(/^นาย|^น\.ส\.|^นาง/, '').charAt(0);
     
-    // Activities (stub for now)
-    const actEl = document.getElementById('actList');
-    actEl.innerHTML = '<li style="justify-content:center; color:#94A3B8; padding:20px;">— Activity feed coming soon —</li>';
-    
+    resEl.innerHTML = `
+      <div class="person-card">
+        <div class="person-header">
+          <div class="person-avatar">${initial}</div>
+          <div class="person-info">
+            <div class="person-name">${name}</div>
+            <div class="person-nid">${formatNid(nid)}</div>
+          </div>
+          <div class="person-status ${statusCls}">${statusLabel}</div>
+        </div>
+        <div class="cert-history">
+          <h4>ประวัติใบวุฒิบัตร (${certs.length})</h4>
+          ${certs.sort((a,b) => (b.examDate || '').localeCompare(a.examDate || '')).map(c => `
+            <div class="cert-row ${c.statusType === 'expired' ? 'expired' : ''}">
+              <div class="cert-icon">${c.statusType === 'active' ? '📜' : '📃'}</div>
+              <div class="cert-meta">
+                <div class="cert-no">${c.certNo || 'ไม่ผ่าน'}</div>
+                <div class="cert-dates">${c.company || ''} • คะแนน ${c.score}/10 • ${c.examDate ? 'ออก ' + formatShortDate(c.examDate) : ''} ${c.expiryDate ? '• หมดอายุ ' + formatShortDate(c.expiryDate) : ''}</div>
+              </div>
+              ${c.certLink ? `<a href="${c.certLink}" target="_blank" class="cert-action">📥 เปิด</a>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
   } catch (err) {
-    console.error(err);
-    alert('โหลดข้อมูลไม่สำเร็จ: ' + err.message);
+    resEl.innerHTML = `<div class="empty-large"><div class="ic">❌</div><div class="title">เกิดข้อผิดพลาด</div><div class="sub">${err.message}</div></div>`;
   }
 }
-
-function goReq(id) { window.location.href = 'request-detail.html?id=' + id; }
 </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dashboard — PTT TSO Admin</title>
+<title>รายการคำขอ — PTT TSO Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
 /* ==================== PTT TSO ADMIN — SHARED CSS ==================== */
@@ -318,16 +318,71 @@ html, body {
   }
 }
 
-  /* Division badge in topbar */
+  /* Filter tabs */
+  .filter-tabs {
+    display: flex; gap: 6px; margin-bottom: 16px;
+    overflow-x: auto; padding-bottom: 4px;
+  }
+  .ftab {
+    padding: 8px 16px; border: 1px solid var(--gray-200);
+    background: white; border-radius: 100px;
+    font-family: inherit; font-size: 13px; font-weight: 500;
+    color: var(--gray-600); cursor: pointer;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .ftab:hover { border-color: var(--sky); color: var(--navy); }
+  .ftab.active {
+    background: linear-gradient(135deg, var(--navy), var(--sky));
+    color: white; border-color: var(--navy);
+    box-shadow: 0 4px 10px rgba(0,59,122,0.2);
+  }
+  .ftab .count {
+    background: rgba(255,255,255,0.25); 
+    padding: 2px 8px; border-radius: 100px;
+    margin-left: 6px; font-size: 11px; font-weight: 700;
+  }
+  .ftab:not(.active) .count { background: var(--gray-100); color: var(--gray-600); }
+  
+  .search-bar {
+    display: flex; gap: 8px; margin-bottom: 16px;
+  }
+  .search-bar input {
+    flex: 1; padding: 10px 14px;
+    border: 1px solid var(--gray-200); border-radius: 10px;
+    font-family: inherit; font-size: 14px;
+    background: white;
+  }
+  .search-bar input:focus {
+    outline: none; border-color: var(--sky);
+    box-shadow: 0 0 0 3px rgba(30,144,255,0.1);
+  }
+  
   .div-tag-lg {
     display: inline-flex; align-items: center; gap: 8px;
     padding: 8px 14px; border-radius: 100px;
     background: linear-gradient(135deg, var(--navy), var(--sky));
     color: white; font-weight: 700;
     font-family: 'Outfit', sans-serif;
-    box-shadow: 0 4px 12px rgba(0,59,122,0.2);
   }
   .div-tag-lg .dot { width: 8px; height: 8px; background: #4ADE80; border-radius: 50%; box-shadow: 0 0 8px #4ADE80; }
+  
+  .full-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .full-table thead th {
+    text-align: left; padding: 10px 12px;
+    background: var(--gray-50); color: var(--gray-500);
+    font-weight: 600; font-size: 11px;
+    letter-spacing: 0.5px; text-transform: uppercase;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .full-table tbody tr { cursor: pointer; transition: background 0.1s; }
+  .full-table tbody tr:hover { background: var(--gray-50); }
+  .full-table tbody td {
+    padding: 14px 12px; border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-700);
+  }
+  .full-table tbody tr:last-child td { border-bottom: none; }
+  .company-cell { font-weight: 600; color: var(--gray-900); }
+  .company-cell .sub { font-weight: 400; color: var(--gray-500); font-size: 12px; margin-top: 2px; }
 </style>
 </head>
 <body>
@@ -341,29 +396,16 @@ html, body {
       </div>
     </div>
     <nav class="sidebar-nav">
-      <a href="index.html" class="nav-item active">
-        <span class="nav-icon">📊</span>
-        <span class="nav-label">Dashboard</span>
-      </a>
-      <a href="requests.html" class="nav-item">
-        <span class="nav-icon">📋</span>
-        <span class="nav-label">รายการคำขอ</span>
-        <span class="nav-badge" id="navBadge">3</span>
-      </a>
-      <a href="calendar.html" class="nav-item">
-        <span class="nav-icon">📅</span>
-        <span class="nav-label">ปฏิทินอบรม</span>
-      </a>
-      <a href="cert-lookup.html" class="nav-item">
-        <span class="nav-icon">🔍</span>
-        <span class="nav-label">ค้นหา Cert</span>
-      </a>
+      <a href="index.html" class="nav-item"><span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></a>
+      <a href="requests.html" class="nav-item active"><span class="nav-icon">📋</span><span class="nav-label">รายการคำขอ</span><span class="nav-badge" id="navBadge">2</span></a>
+      <a href="calendar.html" class="nav-item"><span class="nav-icon">📅</span><span class="nav-label">ปฏิทินอบรม</span></a>
+      <a href="cert-lookup.html" class="nav-item"><span class="nav-icon">🔍</span><span class="nav-label">ค้นหา Cert</span></a>
     </nav>
     <div class="sidebar-footer">
       <div class="user-info">
         <div class="user-avatar" id="avInit">P7</div>
         <div class="user-meta">
-          <div class="user-name" id="avName">Admin</div>
+          <div class="user-name">Admin</div>
           <div class="user-role" id="avRole">เขต PO7</div>
         </div>
       </div>
@@ -374,92 +416,51 @@ html, body {
   <main class="main">
     <header class="topbar">
       <div>
-        <div class="page-title">Dashboard</div>
-        <div class="page-subtitle" id="pageSub">ภาพรวมเขต PO7</div>
+        <div class="page-title">รายการคำขอ</div>
+        <div class="page-subtitle" id="pageSub">ทั้งหมดในเขต PO7</div>
       </div>
       <div class="topbar-right">
-        <div class="div-tag-lg">
-          <span class="dot"></span>
-          <span id="divTag">PO7</span>
-        </div>
+        <div class="div-tag-lg"><span class="dot"></span><span id="divTag">PO7</span></div>
       </div>
     </header>
 
-    <div class="stats-grid">
-      <a href="requests.html?status=pending" class="stat-card urgent">
-        <div class="stat-label">รออนุมัติ</div>
-        <div class="stat-value" id="stPending">2</div>
-        <div class="stat-trend">📌 ต้องตอบกลับ จป.</div>
-      </a>
-      <a href="calendar.html" class="stat-card">
-        <div class="stat-label">สัปดาห์นี้</div>
-        <div class="stat-value" id="stWeek">8</div>
-        <div class="stat-trend">👥 คนเข้าสอบ</div>
-      </a>
-      <a href="requests.html?status=done" class="stat-card success">
-        <div class="stat-label">เดือนนี้</div>
-        <div class="stat-value"><span id="stPassed">18</span><span class="stat-fraction">/<span id="stTotal">20</span></span></div>
-        <div class="stat-trend">✅ ผ่านการอบรม</div>
-      </a>
-      <a href="cert-lookup.html" class="stat-card neutral">
-        <div class="stat-label">Cert ทั้งหมด</div>
-        <div class="stat-value" id="stTotalCerts">87</div>
-        <div class="stat-trend">📜 ใบที่ออกสะสม</div>
-      </a>
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="🔍 ค้นหา (บริษัท / ผู้ติดต่อ / Request ID)" oninput="renderTable()">
     </div>
 
-    <div class="two-col">
-      <section class="panel">
-        <div class="panel-header">
-          <h3>📌 รออนุมัติ</h3>
-          <a href="requests.html?status=pending" class="link-more">ดูทั้งหมด →</a>
-        </div>
-        <table class="data-table">
-          <thead>
-            <tr><th>บริษัท</th><th>ขอวันที่</th><th>คน</th></tr>
-          </thead>
-          <tbody id="tblPending"></tbody>
-        </table>
-      </section>
-
-      <section class="panel">
-        <div class="panel-header">
-          <h3>📅 สอบเร็วๆ นี้</h3>
-          <a href="calendar.html" class="link-more">ปฏิทิน →</a>
-        </div>
-        <table class="data-table">
-          <thead>
-            <tr><th>วันที่</th><th>บริษัท</th><th>คน</th><th>สถานะ</th></tr>
-          </thead>
-          <tbody id="tblUpcoming"></tbody>
-        </table>
-      </section>
+    <div class="filter-tabs" id="filterTabs">
+      <button class="ftab active" data-filter="all" onclick="setFilter('all')">ทั้งหมด <span class="count" id="cntAll">0</span></button>
+      <button class="ftab" data-filter="pending" onclick="setFilter('pending')">รออนุมัติ <span class="count" id="cntPending">0</span></button>
+      <button class="ftab" data-filter="approved" onclick="setFilter('approved')">นัดแล้ว <span class="count" id="cntApproved">0</span></button>
+      <button class="ftab" data-filter="done" onclick="setFilter('done')">เสร็จสิ้น <span class="count" id="cntDone">0</span></button>
+      <button class="ftab" data-filter="cancelled" onclick="setFilter('cancelled')">ยกเลิก <span class="count" id="cntCancelled">0</span></button>
     </div>
 
-    <section class="panel">
-      <div class="panel-header"><h3>🕓 กิจกรรมล่าสุด</h3></div>
-      <ul class="activity-list" id="actList"></ul>
+    <section class="panel" style="padding: 0; overflow: hidden;">
+      <table class="full-table">
+        <thead>
+          <tr>
+            <th>บริษัท / ผู้ติดต่อ</th>
+            <th>วันที่ขอ</th>
+            <th>วันอบรม</th>
+            <th>คน</th>
+            <th>สถานะ</th>
+          </tr>
+        </thead>
+        <tbody id="tblBody"></tbody>
+      </table>
+      <div id="emptyState" class="empty" style="display:none;">
+        <div class="empty-icon">📭</div>
+        <div class="empty-text">ไม่พบรายการที่ค้นหา</div>
+      </div>
     </section>
   </main>
 
   <nav class="bottom-nav">
-    <a href="index.html" class="bnav-item active">
-      <span class="bnav-icon">📊</span>
-      <span class="bnav-label">หน้าหลัก</span>
-    </a>
-    <a href="requests.html" class="bnav-item">
-      <span class="bnav-icon">📋</span>
-      <span class="bnav-label">คำขอ</span>
-      <span class="bnav-badge" id="bBadge">3</span>
-    </a>
-    <a href="calendar.html" class="bnav-item">
-      <span class="bnav-icon">📅</span>
-      <span class="bnav-label">ปฏิทิน</span>
-    </a>
-    <a href="cert-lookup.html" class="bnav-item">
-      <span class="bnav-icon">🔍</span>
-      <span class="bnav-label">ค้นหา</span>
-    </a>
+    <a href="index.html" class="bnav-item"><span class="bnav-icon">📊</span><span class="bnav-label">หน้าหลัก</span></a>
+    <a href="requests.html" class="bnav-item active"><span class="bnav-icon">📋</span><span class="bnav-label">คำขอ</span><span class="bnav-badge" id="bBadge">2</span></a>
+    <a href="calendar.html" class="bnav-item"><span class="bnav-icon">📅</span><span class="bnav-label">ปฏิทิน</span></a>
+    <a href="cert-lookup.html" class="bnav-item"><span class="bnav-icon">🔍</span><span class="bnav-label">ค้นหา</span></a>
   </nav>
 </div>
 
@@ -579,77 +580,104 @@ function showError(el, msg) {
 }
 
 
-// ===== INIT =====
-const session = guardSession();
-if (session) {
-  const DIVISION = session.division;
-  document.getElementById('divTag').textContent = DIVISION;
-  document.getElementById('pageSub').textContent = `ภาพรวมเขต ${DIVISION}`;
-  document.getElementById('avInit').textContent = DIVISION.replace('PO', 'P');
-  document.getElementById('avRole').textContent = `เขต ${DIVISION}`;
-  loadDashboard();
+const STATUS_MAP = {
+  pending: { label: 'รออนุมัติ', cls: 'badge-amber' },
+  approved: { label: 'นัดแล้ว', cls: 'badge-blue' },
+  done: { label: 'เสร็จสิ้น', cls: 'badge-green' },
+  cancelled: { label: 'ยกเลิก', cls: 'badge-red' }
+};
+
+function normStatus(s) {
+  if (!s) return 'pending';
+  return s.toLowerCase();
 }
 
-async function loadDashboard() {
+const session = guardSession();
+if (!session) throw new Error('no session');
+const DIVISION = session.division;
+
+document.getElementById('divTag').textContent = DIVISION;
+document.getElementById('pageSub').textContent = `ทั้งหมดในเขต ${DIVISION}`;
+document.getElementById('avInit').textContent = DIVISION.replace('PO', 'P');
+document.getElementById('avRole').textContent = `เขต ${DIVISION}`;
+
+let allReqs = [];
+let allTrainees = [];
+let currentFilter = 'all';
+
+const urlStatus = new URLSearchParams(location.search).get('status');
+if (urlStatus && STATUS_MAP[urlStatus]) currentFilter = urlStatus;
+
+loadRequests();
+
+async function loadRequests() {
   try {
-    const data = await callGetData('dashboard');
+    const data = await callGetData('requests');
+    allReqs = data.requests || [];
+    allTrainees = data.trainees || [];
     
-    // Stats
-    document.getElementById('stPending').textContent = data.stats?.pending ?? '-';
-    document.getElementById('stWeek').textContent = data.stats?.week ?? '-';
-    document.getElementById('stPassed').textContent = data.stats?.passed ?? '-';
-    document.getElementById('stTotal').textContent = data.stats?.total ?? '-';
-    document.getElementById('stTotalCerts').textContent = data.stats?.certs ?? '-';
-    
-    // Badges
-    const pendingCount = data.stats?.pending || 0;
-    const navBadge = document.getElementById('navBadge');
-    const bBadge = document.getElementById('bBadge');
-    if (navBadge) {
-      navBadge.textContent = pendingCount;
-      if (!pendingCount) navBadge.style.display = 'none';
-    }
-    if (bBadge) {
-      bBadge.textContent = pendingCount;
-      if (!pendingCount) bBadge.style.display = 'none';
-    }
-    
-    // Pending list (trainees with Status=Pending → unique by RequestID)
-    const tPending = document.getElementById('tblPending');
-    const pendingTrainees = data.pending || [];
-    const seenReqs = new Set();
-    const uniquePending = [];
-    pendingTrainees.forEach(t => {
-      if (!seenReqs.has(t.RequestID)) {
-        seenReqs.add(t.RequestID);
-        uniquePending.push(t);
-      }
+    // counts
+    const counts = { all: allReqs.length, pending: 0, approved: 0, done: 0, cancelled: 0 };
+    allReqs.forEach(r => {
+      const s = normStatus(r.status);
+      if (counts[s] !== undefined) counts[s]++;
     });
-    
-    if (uniquePending.length === 0) {
-      tPending.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#94A3B8;">— ไม่มีคำขอรออนุมัติ —</td></tr>';
-    } else {
-      tPending.innerHTML = uniquePending.slice(0, 5).map(t => {
-        const peopleCount = pendingTrainees.filter(x => x.RequestID === t.RequestID).length;
-        return `<tr onclick="goReq('${t.RequestID}')">
-          <td>${t.RequestID}</td>
-          <td>${t.FullName || '-'}</td>
-          <td>${peopleCount} คน</td>
-        </tr>`;
-      }).join('');
+    document.getElementById('cntAll').textContent = counts.all;
+    document.getElementById('cntPending').textContent = counts.pending;
+    document.getElementById('cntApproved').textContent = counts.approved;
+    document.getElementById('cntDone').textContent = counts.done;
+    document.getElementById('cntCancelled').textContent = counts.cancelled;
+    document.getElementById('navBadge').textContent = counts.pending || '';
+    document.getElementById('bBadge').textContent = counts.pending || '';
+    if (!counts.pending) {
+      document.getElementById('navBadge').style.display = 'none';
+      document.getElementById('bBadge').style.display = 'none';
     }
     
-    // Upcoming — derive from getRequests later or leave empty
-    const tUp = document.getElementById('tblUpcoming');
-    tUp.innerHTML = '<tr><td colspan="4" style="text-align:center; padding:20px; color:#94A3B8;">— ดู Calendar สำหรับนัดที่กำลังจะมาถึง —</td></tr>';
-    
-    // Activities (stub for now)
-    const actEl = document.getElementById('actList');
-    actEl.innerHTML = '<li style="justify-content:center; color:#94A3B8; padding:20px;">— Activity feed coming soon —</li>';
-    
+    setFilter(currentFilter);
   } catch (err) {
     console.error(err);
-    alert('โหลดข้อมูลไม่สำเร็จ: ' + err.message);
+    document.getElementById('tblBody').innerHTML = `<tr><td colspan="5" style="text-align:center; padding:40px; color:#DC2626;">❌ โหลดข้อมูลไม่สำเร็จ: ${err.message}</td></tr>`;
+  }
+}
+
+function setFilter(f) {
+  currentFilter = f;
+  document.querySelectorAll('.ftab').forEach(t => t.classList.toggle('active', t.dataset.filter === f));
+  renderTable();
+}
+
+function renderTable() {
+  const q = document.getElementById('searchInput').value.toLowerCase().trim();
+  let rows = allReqs;
+  if (currentFilter !== 'all') rows = rows.filter(r => normStatus(r.status) === currentFilter);
+  if (q) rows = rows.filter(r => 
+    (r.company || '').toLowerCase().includes(q) ||
+    (r.contact || '').toLowerCase().includes(q) ||
+    (r.id || '').toLowerCase().includes(q)
+  );
+
+  const tbody = document.getElementById('tblBody');
+  const emptyEl = document.getElementById('emptyState');
+  if (rows.length === 0) {
+    tbody.innerHTML = '';
+    emptyEl.style.display = 'block';
+  } else {
+    emptyEl.style.display = 'none';
+    tbody.innerHTML = rows.map(r => {
+      const s = normStatus(r.status);
+      const sInfo = STATUS_MAP[s] || { label: r.status, cls: 'badge-gray' };
+      const peopleCount = countTraineesByReq(allTrainees, r.id);
+      return `
+        <tr onclick="goReq('${r.id}')">
+          <td class="company-cell">${r.company || '-'}<div class="sub">${r.contact || ''}</div></td>
+          <td>${formatShortDate(r.preferredDate || r.scheduledDate)}</td>
+          <td>${formatShortDate(r.scheduledDate)}</td>
+          <td>${peopleCount}</td>
+          <td><span class="badge ${sInfo.cls}">${sInfo.label}</span></td>
+        </tr>
+      `;
+    }).join('');
   }
 }
 

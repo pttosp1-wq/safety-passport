@@ -73,7 +73,7 @@
   
   <div class="card search-box">
     <label>กรอกเลขบัตรประชาชน / Passport</label>
-    <input type="text" id="searchNid" placeholder="1-2345-67890-12-3 หรือ AB123456">
+    <input type="text" id="searchNid" inputmode="numeric" maxlength="13" placeholder="1-2345-67890-12-3 หรือ AB123456" oninput="limitInput(this)">
     <button class="btn" id="searchBtn" onclick="doSearch()">🔍 ค้นหาประวัติอบรม</button>
   </div>
   
@@ -92,6 +92,19 @@ const API_KEY = 'PTT-PO7-2026-SECRET';
 const DIVISIONS = ['PO5', 'PO6', 'PO7', 'PO8'];
 
 const TH_MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+
+function limitInput(el) {
+  let v = el.value;
+  // ถ้าเริ่มต้นเป็นตัวเลข → จำกัด 13 หลัก ตัวเลขเท่านั้น (เลขบัตรไทย)
+  // ถ้ามีตัวอักษร → ถือว่าเป็น Passport, ปล่อยได้สูงสุด 13 ตัวอักษร
+  if (/^\d*$/.test(v)) {
+    // ตัวเลขล้วน → จำกัด 13 หลัก
+    if (v.length > 13) el.value = v.slice(0, 13);
+  } else {
+    // ผสม → ตัวอักษร + ตัวเลข เท่านั้น, max 13
+    el.value = v.replace(/[^a-zA-Z0-9]/g, '').slice(0, 13).toUpperCase();
+  }
+}
 
 function formatShortDate(iso) {
   if (!iso) return '-';

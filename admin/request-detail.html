@@ -738,21 +738,33 @@ async function loadDetail() {
       scheduledTime: req.ScheduledTime,
       pttEngineer: req.PttEngName,
       trainees: trainees.map(t => {
-        const td = trainingData.find(x => x.NationalID === t.NationalID);
+        // Flow ส่ง field ตัวเล็ก (nid, fullName) — แต่บาง section ส่งชื่อคอลัมน์ Excel ตัวใหญ่
+        // รองรับทั้งสองแบบ กันพังเวลา Flow เปลี่ยน mapping
+        const tNid    = t.nid      ?? t.NationalID ?? '';
+        const tPrefix = t.prefix   ?? t.Prefix     ?? '';
+        const tName   = t.fullName ?? t.FullName   ?? '';
+        
+        const td = trainingData.find(x => (x.nid ?? x.NationalID) === tNid);
         let scoreLabel = 'รอสอบ';
         let cert = '-';
         let expiry = '-';
         let certLink = '';
         if (td) {
-          const isPassed = (td.IsPassed === 'yes' || td.IsPassed === 'TRUE' || td.IsPassed === 'true' || td.IsPassed === true);
-          scoreLabel = `${td.Score || 0}/10 ${isPassed ? '✅' : '❌'}`;
-          cert = td.CertNo || (isPassed ? '-' : 'ไม่ผ่าน');
-          expiry = td.ExpiryDate ? formatShortDate(td.ExpiryDate) : '-';
-          certLink = td.CertLink || '';
+          const rawPassed = td.isPassed   ?? td.IsPassed;
+          const rawScore  = td.score      ?? td.Score;
+          const rawCertNo = td.certNo     ?? td.CertNo;
+          const rawExpiry = td.expiryDate ?? td.ExpiryDate;
+          const rawLink   = td.certLink   ?? td.CertLink;
+          
+          const isPassed = (rawPassed === 'yes' || rawPassed === 'TRUE' || rawPassed === 'true' || rawPassed === true);
+          scoreLabel = `${rawScore || 0}/10 ${isPassed ? '✅' : '❌'}`;
+          cert = rawCertNo || (isPassed ? '-' : 'ไม่ผ่าน');
+          expiry = rawExpiry ? formatShortDate(rawExpiry) : '-';
+          certLink = rawLink || '';
         }
         return {
-          name: `${t.Prefix || ''}${t.FullName || ''}`.trim(),
-          nid: t.NationalID,
+          name: `${tPrefix}${tName}`.trim() || '-',
+          nid: tNid,
           score: scoreLabel,
           cert: cert,
           expiry: expiry,

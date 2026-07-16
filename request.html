@@ -653,6 +653,7 @@ async function submitForm() {
   const trainees = [];
   let traineeOk = true;
   let traineeErr = '';
+  const traineeRows = [];
   document.querySelectorAll('.trainee-row').forEach(row => {
     const fullName = row.querySelector('.t-name').value.trim();
     let id = row.querySelector('.t-id').value.trim();
@@ -668,6 +669,7 @@ async function submitForm() {
     else if (!id || (!isThaiId && !isPassport)) { traineeOk = false; traineeErr = 'เลขบัตรประชาชน 13 หลัก หรือ Passport (6-12 ตัว ต้องมีตัวอักษร)'; }
     else if (!position) { traineeOk = false; traineeErr = 'ตำแหน่ง'; }
     
+    traineeRows.push(row);
     trainees.push({
       prefix: row.querySelector('.t-prefix').value,
       name: fullName,
@@ -678,6 +680,40 @@ async function submitForm() {
   });
   if (!traineeOk) {
     alert('กรุณากรอกข้อมูลผู้เข้าอบรมให้ครบ\nช่องที่ต้องกรอก: ' + traineeErr);
+    return;
+  }
+  
+  // ===== เช็คเลขบัตร/Passport ซ้ำภายในคำขอเดียวกัน =====
+  traineeRows.forEach(row => {
+    const el = row.querySelector('.t-id');
+    el.style.borderColor = '';
+    el.style.background = '';
+  });
+  
+  const idMap = {};
+  trainees.forEach((t, i) => {
+    if (!idMap[t.nationalId]) idMap[t.nationalId] = [];
+    idMap[t.nationalId].push(i);
+  });
+  const dupes = Object.keys(idMap).filter(id => idMap[id].length > 1);
+  
+  if (dupes.length > 0) {
+    let msg = '❌ พบเลขบัตรประชาชน/Passport ซ้ำกัน\n\n';
+    dupes.forEach(id => {
+      msg += 'เลข ' + id + '\n';
+      idMap[id].forEach(i => {
+        msg += '   • คนที่ ' + (i + 1) + ': ' + trainees[i].name + '\n';
+        const el = traineeRows[i].querySelector('.t-id');
+        el.style.borderColor = '#DC2626';
+        el.style.background = '#FEF2F2';
+      });
+      msg += '\n';
+    });
+    msg += 'ผู้เข้าอบรมแต่ละคนต้องใช้เลขบัตรของตัวเอง\nกรุณาตรวจสอบและแก้ไขก่อนส่ง';
+    alert(msg);
+    const firstDupRow = traineeRows[idMap[dupes[0]][0]];
+    firstDupRow.scrollIntoView({behavior: 'smooth', block: 'center'});
+    firstDupRow.querySelector('.t-id').focus();
     return;
   }
   

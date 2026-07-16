@@ -630,10 +630,12 @@ async function loadDashboard() {
       tPending.innerHTML = '<tr><td colspan="3" style="text-align:center; padding:20px; color:#94A3B8;">— ไม่มีคำขอรออนุมัติ —</td></tr>';
     } else {
       tPending.innerHTML = uniquePending.slice(0, 5).map(t => {
-        const peopleCount = pendingTrainees.filter(x => x.RequestID === t.RequestID).length;
-        return `<tr onclick="goReq('${t.RequestID}')">
-          <td>${t.RequestID}</td>
-          <td>${t.FullName || '-'}</td>
+        const reqId = t.RequestID ?? t.requestId ?? '';
+        const nameTxt = t.FullName ?? t.fullName ?? '';
+        const peopleCount = pendingTrainees.filter(x => (x.RequestID ?? x.requestId) === reqId).length;
+        return `<tr onclick="goReq('${reqId}')">
+          <td>${reqId}</td>
+          <td>${nameTxt || '-'}</td>
           <td>${peopleCount} คน</td>
         </tr>`;
       }).join('');

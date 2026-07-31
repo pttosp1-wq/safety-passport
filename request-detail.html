@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>รายละเอียดคำขอ — PTT TSO Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ==================== PTT TSO ADMIN — SHARED CSS ==================== */
+:root {
+  --navy: #003B7A; --navy-dark: #002752; --sky: #1E90FF; --sky-soft: #DBEAFE;
+  --orange: #FF6B00; --green: #16A34A; --red: #DC2626; --amber: #D97706;
+  --gray-50: #F8FAFC; --gray-100: #F1F5F9; --gray-200: #E2E8F0;
+  --gray-300: #CBD5E1; --gray-400: #94A3B8; --gray-500: #64748B;
+  --gray-600: #475569; --gray-700: #334155; --gray-900: #0F172A;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body {
+  font-family: 'IBM Plex Sans Thai', system-ui, sans-serif;
+  background: var(--gray-50); color: var(--gray-900);
+  min-height: 100vh; line-height: 1.5; -webkit-font-smoothing: antialiased;
+}
+
+/* ==================== LAYOUT ==================== */
+.layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+
+/* ==================== SIDEBAR ==================== */
+.sidebar {
+  background: linear-gradient(180deg, var(--navy-dark), var(--navy));
+  color: white;
+  padding: 24px 18px;
+  display: flex; flex-direction: column;
+  position: sticky; top: 0;
+  height: 100vh;
+}
+.sidebar-logo {
+  display: flex; align-items: center; gap: 12px;
+  padding: 4px 8px 24px 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 18px;
+}
+.sidebar-logo-icon {
+  width: 40px; height: 40px;
+  background: linear-gradient(135deg, var(--sky), #60A5FA);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 6px 14px rgba(30,144,255,0.35);
+}
+.brand { font-family: 'Outfit', sans-serif; font-size: 12px; letter-spacing: 2px; font-weight: 700; color: white; }
+.brand-sub { font-family: 'Outfit', sans-serif; font-size: 9px; letter-spacing: 1.8px; color: rgba(255,255,255,0.55); margin-top: 2px; }
+.sidebar-nav { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.nav-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; border-radius: 11px;
+  color: rgba(255,255,255,0.7); text-decoration: none;
+  font-size: 14px; font-weight: 500;
+  transition: all 0.15s ease;
+}
+.nav-item:hover { background: rgba(255,255,255,0.08); color: white; }
+.nav-item.active {
+  background: rgba(255,255,255,0.12);
+  color: white; font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--sky);
+}
+.nav-icon { font-size: 16px; }
+.nav-label { flex: 1; }
+.nav-badge {
+  background: var(--red); color: white;
+  padding: 2px 8px; border-radius: 100px;
+  font-size: 11px; font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+}
+.sidebar-footer {
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 18px;
+}
+.user-info {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 12px;
+}
+.user-avatar {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--orange), #FB923C);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px;
+  font-family: 'Outfit', sans-serif;
+}
+.user-name { font-size: 13px; font-weight: 600; }
+.user-role { font-size: 11px; color: rgba(255,255,255,0.5); }
+.btn-logout {
+  width: 100%; padding: 10px;
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.7);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  font-family: inherit; font-size: 12px;
+  cursor: pointer; transition: all 0.15s;
+}
+.btn-logout:hover { background: rgba(220,38,38,0.2); color: white; border-color: rgba(220,38,38,0.4); }
+
+/* ==================== MAIN ==================== */
+.main {
+  padding: 28px 32px 40px 32px;
+  max-width: 1400px;
+  width: 100%;
+}
+.topbar {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 28px;
+}
+.page-title { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+.page-subtitle { font-size: 14px; color: var(--gray-500); margin-top: 2px; }
+.topbar-right { display: flex; gap: 10px; align-items: center; }
+.division-filter {
+  padding: 10px 14px; border: 1px solid var(--gray-200);
+  border-radius: 10px; background: white;
+  font-family: inherit; font-size: 13px; font-weight: 500;
+  cursor: pointer; min-width: 140px;
+}
+
+/* ==================== STAT CARDS ==================== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px; margin-bottom: 24px;
+}
+.stat-card {
+  background: white; border: 1px solid var(--gray-200);
+  border-radius: 16px; padding: 18px 20px;
+  text-decoration: none; color: inherit;
+  transition: all 0.2s ease;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(0,59,122,0.08);
+  border-color: var(--sky);
+}
+.stat-card.urgent { border-left: 4px solid var(--red); }
+.stat-card.success { border-left: 4px solid var(--green); }
+.stat-card.neutral { border-left: 4px solid var(--sky); }
+.stat-label { font-size: 13px; color: var(--gray-500); font-weight: 500; }
+.stat-value {
+  font-family: 'Outfit', sans-serif;
+  font-size: 32px; font-weight: 700; letter-spacing: -1px;
+  color: var(--gray-900);
+}
+.stat-fraction { font-size: 18px; color: var(--gray-400); font-weight: 500; }
+.stat-trend { font-size: 12px; color: var(--gray-500); }
+
+/* ==================== PANELS ==================== */
+.panel {
+  background: white; border: 1px solid var(--gray-200);
+  border-radius: 16px; padding: 20px;
+  margin-bottom: 18px;
+}
+.panel-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 14px;
+}
+.panel-header h3 { font-size: 16px; font-weight: 600; letter-spacing: -0.3px; }
+.link-more { font-size: 12px; color: var(--sky); text-decoration: none; font-weight: 600; }
+.link-more:hover { color: var(--navy); }
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+/* ==================== TABLES ==================== */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table thead th {
+  text-align: left;
+  padding: 8px 10px;
+  background: var(--gray-50);
+  color: var(--gray-500);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--gray-200);
+}
+.data-table tbody tr {
+  cursor: pointer; transition: background 0.1s;
+}
+.data-table tbody tr:hover { background: var(--gray-50); }
+.data-table tbody td {
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--gray-100);
+  color: var(--gray-700);
+}
+.data-table tbody tr:last-child td { border-bottom: none; }
+
+/* ==================== TAGS / BADGES ==================== */
+.tag {
+  padding: 2px 8px; border-radius: 6px;
+  font-size: 10px; font-weight: 700;
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: 0.5px;
+}
+.tag-PO5 { background: #FEF3C7; color: #92400E; }
+.tag-PO6 { background: #E0E7FF; color: #3730A3; }
+.tag-PO7 { background: #DBEAFE; color: var(--navy); }
+.tag-PO8 { background: #FCE7F3; color: #9D174D; }
+
+.badge {
+  padding: 3px 10px; border-radius: 100px;
+  font-size: 11px; font-weight: 600;
+}
+.badge-blue { background: var(--sky-soft); color: var(--navy); }
+.badge-green { background: #D1FAE5; color: #065F46; }
+.badge-red { background: #FEE2E2; color: #991B1B; }
+.badge-amber { background: #FEF3C7; color: #92400E; }
+.badge-gray { background: var(--gray-100); color: var(--gray-600); }
+
+/* ==================== ACTIVITY LIST ==================== */
+.activity-list { list-style: none; }
+.activity-list li {
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--gray-100);
+}
+.activity-list li:last-child { border-bottom: none; }
+.activity-dot { width: 10px; height: 10px; border-radius: 50%; margin-top: 6px; flex-shrink: 0; }
+.dot-green { background: var(--green); }
+.dot-blue { background: var(--sky); }
+.dot-orange { background: var(--orange); }
+.dot-red { background: var(--red); }
+.activity-body { flex: 1; }
+.activity-title { font-size: 13px; color: var(--gray-900); }
+.activity-meta { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+/* ==================== BOTTOM NAV (mobile) ==================== */
+.bottom-nav {
+  display: none;
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: white;
+  border-top: 1px solid var(--gray-200);
+  padding: 8px 4px 12px 4px;
+  z-index: 100;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.04);
+}
+.bnav-item {
+  flex: 1; text-align: center; padding: 6px 0;
+  text-decoration: none; color: var(--gray-500);
+  font-size: 10px; font-weight: 500;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  position: relative;
+}
+.bnav-item.active { color: var(--sky); }
+.bnav-icon { font-size: 20px; }
+.bnav-badge {
+  position: absolute; top: 0; right: 24%;
+  background: var(--red); color: white;
+  font-size: 9px; padding: 1px 5px; border-radius: 100px;
+  font-family: 'Outfit', sans-serif; font-weight: 700;
+}
+
+/* ==================== BUTTONS ==================== */
+.btn {
+  padding: 10px 18px;
+  border: none; border-radius: 10px;
+  font-family: inherit; font-size: 13px; font-weight: 600;
+  cursor: pointer; transition: all 0.15s ease;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: linear-gradient(135deg, var(--navy), var(--sky)); color: white; box-shadow: 0 4px 10px rgba(0,59,122,0.2); }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,59,122,0.3); }
+.btn-ghost { background: white; color: var(--gray-700); border: 1px solid var(--gray-200); }
+.btn-ghost:hover { background: var(--gray-50); border-color: var(--gray-300); }
+.btn-danger { background: var(--red); color: white; }
+.btn-warn { background: var(--amber); color: white; }
+.btn-success { background: var(--green); color: white; }
+
+/* ==================== EMPTY STATE ==================== */
+.empty {
+  text-align: center; padding: 40px 20px;
+  color: var(--gray-400);
+}
+.empty-icon { font-size: 40px; margin-bottom: 10px; }
+.empty-text { font-size: 13px; }
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1100px) {
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .two-col { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 800px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 20px 16px 90px 16px; }
+  .page-title { font-size: 20px; }
+  .topbar { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .topbar-right { width: 100%; }
+  .division-filter { width: 100%; }
+  .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .stat-card { padding: 14px; }
+  .stat-value { font-size: 24px; }
+  .bottom-nav { display: flex; }
+  .panel { padding: 16px; }
+  .data-table thead { display: none; }
+  .data-table tbody tr {
+    display: block;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .data-table tbody td {
+    display: inline-block;
+    border: none; padding: 4px 8px;
+    font-size: 13px;
+  }
+}
+
+  .div-tag-lg { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 100px; background: linear-gradient(135deg, var(--navy), var(--sky)); color: white; font-weight: 700; font-family: 'Outfit', sans-serif; }
+  .div-tag-lg .dot { width: 8px; height: 8px; background: #4ADE80; border-radius: 50%; box-shadow: 0 0 8px #4ADE80; }
+  
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--gray-500); text-decoration: none;
+    font-size: 13px; margin-bottom: 14px;
+  }
+  .back-link:hover { color: var(--sky); }
+  
+  .req-header {
+    background: linear-gradient(135deg, var(--navy), var(--navy-dark));
+    color: white; padding: 20px 24px;
+    border-radius: 16px; margin-bottom: 20px;
+    position: relative; overflow: hidden;
+  }
+  .req-header::after {
+    content: ''; position: absolute; top: -30%; right: -10%;
+    width: 250px; height: 250px;
+    background: radial-gradient(circle, rgba(30,144,255,0.3), transparent 70%);
+    border-radius: 50%;
+  }
+  .req-id-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; position: relative; }
+  .req-id { font-family: 'Outfit', sans-serif; font-size: 13px; opacity: 0.7; letter-spacing: 1.5px; }
+  .req-status-big {
+    padding: 6px 14px; border-radius: 100px;
+    background: rgba(255,255,255,0.2);
+    font-size: 13px; font-weight: 600;
+    backdrop-filter: blur(10px);
+  }
+  .req-company { font-size: 22px; font-weight: 700; margin-top: 8px; letter-spacing: -0.3px; position: relative; }
+  .req-contact { font-size: 14px; opacity: 0.8; margin-top: 2px; position: relative; }
+  
+  .info-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    margin-bottom: 20px;
+  }
+  .info-card {
+    background: white; border: 1px solid var(--gray-200);
+    border-radius: 14px; padding: 18px;
+  }
+  .info-card h4 {
+    font-size: 13px; color: var(--gray-500); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 10px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .info-row {
+    display: flex; justify-content: space-between; gap: 10px;
+    padding: 6px 0; font-size: 13px;
+  }
+  .info-row .key { color: var(--gray-500); }
+  .info-row .val { color: var(--gray-900); font-weight: 500; text-align: right; }
+  
+  .trainee-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .trainee-table thead th {
+    text-align: left; padding: 10px 12px;
+    background: var(--gray-50); color: var(--gray-500);
+    font-weight: 600; font-size: 11px;
+    letter-spacing: 0.5px; text-transform: uppercase;
+  }
+  .trainee-table tbody td {
+    padding: 12px; border-bottom: 1px solid var(--gray-100);
+    color: var(--gray-700);
+  }
+  .trainee-table tbody tr:last-child td { border-bottom: none; }
+  
+  .actions-bar {
+    display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+    margin-bottom: 20px; padding: 14px 18px;
+    background: white;
+    border: 1px solid var(--gray-200);
+    border-radius: 14px;
+  }
+  .actions-bar h4 {
+    margin: 0 8px 0 0; flex-shrink: 0;
+    border-bottom: none; padding-bottom: 0;
+  }
+  .actions-bar h4 { 
+    width: 100%; font-size: 12px; color: var(--gray-500);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    font-weight: 600; margin-bottom: 4px;
+  }
+  
+  .modal-backdrop {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5); z-index: 1000;
+    align-items: center; justify-content: center; padding: 20px;
+  }
+  .modal-backdrop.show { display: flex; }
+  .modal {
+    background: white; border-radius: 20px;
+    padding: 28px; max-width: 440px; width: 100%;
+  }
+  .modal h3 { font-size: 18px; margin-bottom: 6px; }
+  .modal p { font-size: 13px; color: var(--gray-600); margin-bottom: 16px; }
+  .modal .field { margin-bottom: 14px; }
+  .modal .field label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+  .modal .field input {
+    width: 100%; padding: 12px; border: 2px solid var(--gray-200);
+    border-radius: 10px; font-family: inherit; font-size: 14px;
+  }
+  .modal .field input:focus { outline: none; border-color: var(--sky); }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+  
+  @media (max-width: 800px) {
+    .info-grid { grid-template-columns: 1fr; gap: 12px; }
+    .trainee-table thead { display: none; }
+    .trainee-table tbody tr {
+      display: block;
+      padding: 12px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .trainee-table tbody td {
+      display: flex; justify-content: space-between;
+      border: none; padding: 4px 0;
+    }
+    .trainee-table tbody td::before {
+      content: attr(data-label);
+      color: var(--gray-500); font-size: 11px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-icon" style="background:white;padding:6px;"><img src="logo-ptt.png" alt="PTT" style="width:100%;height:100%;object-fit:contain;display:block;"></div>
+      <div class="sidebar-logo-text">
+        <div class="brand">PTT • TSO</div>
+        <div class="brand-sub">ADMIN PANEL</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="index.html" class="nav-item"><span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></a>
+      <a href="requests.html" class="nav-item active"><span class="nav-icon">📋</span><span class="nav-label">รายการคำขอ</span></a>
+      <a href="calendar.html" class="nav-item"><span class="nav-icon">📅</span><span class="nav-label">ปฏิทินอบรม</span></a>
+      <a href="cert-lookup.html" class="nav-item"><span class="nav-icon">🔍</span><span class="nav-label">ค้นหา Cert</span></a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="user-info">
+        <div class="user-avatar" id="avInit">P7</div>
+        <div class="user-meta">
+          <div class="user-name">Admin</div>
+          <div class="user-role" id="avRole">เขต PO7</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <a href="requests.html" class="back-link">← กลับไปรายการคำขอ</a>
+    
+    <header class="topbar">
+      <div>
+        <div class="page-title">รายละเอียดคำขอ</div>
+        <div class="page-subtitle" id="pageSub">เขต PO7</div>
+      </div>
+      <div class="topbar-right">
+        <div class="div-tag-lg"><span class="dot"></span><span id="divTag">PO7</span></div>
+      </div>
+    </header>
+
+    <!-- Request hero -->
+    <div class="req-header">
+      <div class="req-id-row">
+        <span class="req-id" id="reqId">REQ-260526-1706</span>
+        <span class="req-status-big" id="reqStatus">รออนุมัติ</span>
+      </div>
+      <div class="req-company" id="reqCompany">Sky Co., Ltd.</div>
+      <div class="req-contact" id="reqContact">ผู้ติดต่อ: นายสมหวัง ใจดี • 081-234-5678</div>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions-bar" id="actionsBar">
+      <h4>⚙️ จัดการคำขอนี้</h4>
+      <!-- Pending → Approve + Reschedule + Cancel -->
+      <button class="btn btn-success" id="btnApprove" onclick="openModal('approve')" style="display:none">✅ ยืนยันวันเดิม</button>
+      <button class="btn btn-warn" id="btnReschedule" onclick="openModal('reschedule')">📅 เสนอวันใหม่</button>
+      <button class="btn btn-danger" id="btnCancel" onclick="openModal('cancel')">🚫 ยกเลิกคำขอ</button>
+    </div>
+
+    <!-- Info cards -->
+    <div class="info-grid">
+      <div class="info-card">
+        <h4>📦 ข้อมูลงาน</h4>
+        <div class="info-row"><span class="key">โครงการ</span><span class="val" id="iProject">งานเชื่อมท่อ Section A</span></div>
+        <div class="info-row"><span class="key">สถานที่</span><span class="val" id="iArea">CHANAMR Station</span></div>
+        <div class="info-row"><span class="key">วันเริ่มงาน</span><span class="val" id="iWorkStart">10 มิ.ย. 69</span></div>
+        <div class="info-row"><span class="key">วันสิ้นสุด</span><span class="val" id="iWorkEnd">20 มิ.ย. 69</span></div>
+        <div class="info-row"><span class="key">วันที่ขออบรม</span><span class="val" id="iPrefDate">1 มิ.ย. 69</span></div>
+        <div class="info-row" id="rowScheduled"><span class="key">📅 วันนัดอบรม</span><span class="val" id="iScheduledDate" style="font-weight:700;">1 มิ.ย. 69</span></div>
+      </div>
+      
+      <div class="info-card">
+        <h4>📞 ผู้ติดต่อ</h4>
+        <div class="info-row"><span class="key">บริษัท</span><span class="val" id="iCompany">Sky Co., Ltd.</span></div>
+        <div class="info-row"><span class="key">ผู้ติดต่อ</span><span class="val" id="iContactName">นายสมหวัง ใจดี</span></div>
+        <div class="info-row"><span class="key">โทร</span><span class="val" id="iPhone">081-234-5678</span></div>
+        <div class="info-row"><span class="key">Email</span><span class="val" id="iEmail">somhwang@sky.co.th</span></div>
+        <div class="info-row"><span class="key">ผู้รับผิดชอบ ปตท.</span><span class="val" id="iEng">นายอภิสิทธิ์</span></div>
+      </div>
+    </div>
+
+    <!-- Trainees -->
+    <section class="panel" style="padding: 0; overflow: hidden;">
+      <div class="panel-header" style="padding: 16px 20px 8px 20px;">
+        <h3>👥 รายชื่อผู้เข้าอบรม (<span id="tCount">3</span>)</h3>
+      </div>
+      <table class="trainee-table">
+        <thead>
+          <tr>
+            <th>ชื่อ-นามสกุล</th>
+            <th>เลขบัตร</th>
+            <th>ผลสอบ</th>
+            <th>Cert No.</th>
+            <th>หมดอายุ</th>
+          </tr>
+        </thead>
+        <tbody id="traineeBody"></tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="index.html" class="bnav-item"><span class="bnav-icon">📊</span><span class="bnav-label">หน้าหลัก</span></a>
+    <a href="requests.html" class="bnav-item active"><span class="bnav-icon">📋</span><span class="bnav-label">คำขอ</span></a>
+    <a href="calendar.html" class="bnav-item"><span class="bnav-icon">📅</span><span class="bnav-label">ปฏิทิน</span></a>
+    <a href="cert-lookup.html" class="bnav-item"><span class="bnav-icon">🔍</span><span class="bnav-label">ค้นหา</span></a>
+  </nav>
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <h3 id="modalTitle">Title</h3>
+    <p id="modalDesc">Description</p>
+    <div id="modalBody"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">ยกเลิก</button>
+      <button class="btn btn-primary" id="modalConfirm" onclick="confirmAction()">ยืนยัน</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ==================== PTT TSO ADMIN — API CLIENT ====================
+const ADMIN_API = {
+  GET_DATA_URL: 'https://defaultf2fda5e72ea1450d9fc12af5f86300.95.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/c0356ad04b3b4659b10f8a92a5ec0357/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=E-AiSI63KsXw2UCUdpPdiDZLmV6K7bfFF1emGNbLcG0',
+  ACTION_URL: 'https://defaultf2fda5e72ea1450d9fc12af5f86300.95.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/e2cf2966b3b6430a8ad00cab524583e9/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=oli6hDBwQO1SZSZSBQaJEUHmoygs1-tGvN33WUHMUd8',
+  API_KEY: 'PTT-PO7-2026-SECRET'
+};
+
+async function callGetData(section, params) {
+  const session = getSession();
+  if (!session) { window.location.href = 'login.html'; throw new Error('No session'); }
+  const body = { division: session.division, section };
+  if (params) body.params = params;
+  
+  const resp = await fetch(ADMIN_API.GET_DATA_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-API-Key': ADMIN_API.API_KEY },
+    body: JSON.stringify(body)
+  });
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+  return await resp.json();
+}
+
+async function callAction(action, requestId, params) {
+  const session = getSession();
+  if (!session) { window.location.href = 'login.html'; throw new Error('No session'); }
+  const body = { division: session.division, action, requestId };
+  if (params) body.params = params;
+  
+  const resp = await fetch(ADMIN_API.ACTION_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-API-Key': ADMIN_API.API_KEY },
+    body: JSON.stringify(body)
+  });
+  if (!resp.ok) {
+    const errText = await resp.text();
+    throw new Error(`HTTP ${resp.status}: ${errText}`);
+  }
+  return await resp.json();
+}
+
+function getSession() {
+  const raw = localStorage.getItem('ptt_admin_session');
+  if (!raw) return null;
+  try {
+    const s = JSON.parse(raw);
+    if (s.exp && new Date(s.exp).getTime() > Date.now()) return s;
+    localStorage.removeItem('ptt_admin_session');
+    return null;
+  } catch { return null; }
+}
+
+function guardSession() {
+  const s = getSession();
+  if (!s) { window.location.href = 'login.html'; return null; }
+  return s;
+}
+
+function logout() {
+  if (confirm('ออกจากระบบ?')) {
+    localStorage.removeItem('ptt_admin_session');
+    window.location.href = 'login.html';
+  }
+}
+
+// ===== Helpers =====
+const TH_MONTHS_SHORT = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const TH_MONTHS_LONG = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+
+function formatShortDate(iso) {
+  if (!iso) return '-';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return `${d.getDate()} ${TH_MONTHS_SHORT[d.getMonth()]} ${(d.getFullYear()+543).toString().slice(-2)}`;
+}
+
+function formatThaiDate(iso) {
+  if (!iso) return '-';
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return `${d.getDate()} ${TH_MONTHS_LONG[d.getMonth()]} ${d.getFullYear()+543}`;
+}
+
+function relativeDate(iso) {
+  if (!iso) return '-';
+  const d = new Date(iso);
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  d.setHours(0,0,0,0);
+  const diff = Math.round((d - today) / (1000*60*60*24));
+  if (diff === 0) return 'วันนี้';
+  if (diff === 1) return 'พรุ่งนี้';
+  if (diff === -1) return 'เมื่อวาน';
+  if (diff > 0 && diff <= 7) return `อีก ${diff} วัน`;
+  return formatShortDate(iso);
+}
+
+function formatNid(nid) {
+  if (!nid || nid.length !== 13) return nid;
+  return `${nid[0]}-${nid.slice(1,5)}-${nid.slice(5,10)}-${nid.slice(10,12)}-${nid[12]}`;
+}
+
+function countTraineesByReq(trainees, requestId) {
+  return (trainees || []).filter(t => t.RequestID === requestId).length;
+}
+
+// Empty/loading helpers
+function showLoading(el, msg = 'กำลังโหลด...') {
+  el.innerHTML = `<div style="text-align:center; padding:40px 20px; color:#94A3B8;">⏳ ${msg}</div>`;
+}
+
+function showError(el, msg) {
+  el.innerHTML = `<div style="text-align:center; padding:40px 20px; color:#DC2626;">❌ ${msg}</div>`;
+}
+
+
+const STATUS_LABELS = { pending: 'รออนุมัติ', approved: 'นัดแล้ว', done: 'เสร็จสิ้น', cancelled: 'ยกเลิก' };
+
+function normStatus(s) { return s ? s.toLowerCase() : 'pending'; }
+
+const session = guardSession();
+const DIVISION = session.division;
+const reqId = new URLSearchParams(location.search).get('id');
+
+document.getElementById('divTag').textContent = DIVISION;
+document.getElementById('pageSub').textContent = `เขต ${DIVISION}`;
+document.getElementById('avInit').textContent = DIVISION.replace('PO', 'P');
+document.getElementById('avRole').textContent = `เขต ${DIVISION}`;
+
+let data = null;
+let currentAction = '';
+
+if (!reqId) {
+  alert('ไม่พบ Request ID');
+  window.location.href = 'requests.html';
+} else {
+  loadDetail();
+}
+
+async function loadDetail() {
+  try {
+    const result = await callGetData('request-detail', { id: reqId });
+    if (!result.request) {
+      alert('ไม่พบ Request นี้');
+      window.location.href = 'requests.html';
+      return;
+    }
+    
+    const req = result.request;
+    const trainees = result.trainees || [];
+    const trainingData = result.trainingData || [];
+    
+    const status = normStatus(req.Status);
+    data = {
+      id: req.RequestID,
+      status: status,
+      statusLabel: STATUS_LABELS[status] || req.Status,
+      company: req.Company,
+      contactName: req.ContactName,
+      phone: req.ContactPhone,
+      email: req.ContactEmail,
+      project: req.Project,
+      workingArea: req.WorkingArea,
+      workStart: req.WorkStart,
+      workEnd: req.WorkEnd,
+      prefDate: req.PreferredTrainingDate,
+      prefTime: req.PreferredTrainingTime,
+      scheduledDate: req.ScheduledDate,
+      scheduledTime: req.ScheduledTime,
+      pttEngineer: req.PttEngName,
+      trainees: trainees.map(t => {
+        // Flow ส่ง field ตัวเล็ก (nid, fullName) — แต่บาง section ส่งชื่อคอลัมน์ Excel ตัวใหญ่
+        // รองรับทั้งสองแบบ กันพังเวลา Flow เปลี่ยน mapping
+        const tNid    = t.nid      ?? t.NationalID ?? '';
+        const tPrefix = t.prefix   ?? t.Prefix     ?? '';
+        const tName   = t.fullName ?? t.FullName   ?? '';
+        
+        // เลือกแถวที่ดีที่สุด (กันเคสสอบใหม่/มีเลขบัตรซ้ำ): ผ่านมาก่อน แล้ววันสอบล่าสุดก่อน
+        const _isPass = r => { const v = r.isPassed ?? r.IsPassed; return (v==='yes'||v==='TRUE'||v==='true'||v===true) ? 1 : 0; };
+        const td = trainingData
+          .filter(x => (x.nid ?? x.NationalID) === tNid)
+          .sort((a,b) => _isPass(b) - _isPass(a) || String(b.examDate ?? b.ExamDate ?? '').localeCompare(String(a.examDate ?? a.ExamDate ?? '')))[0];
+        let scoreLabel = 'รอสอบ';
+        let cert = '-';
+        let expiry = '-';
+        let certLink = '';
+        if (td) {
+          const rawPassed = td.isPassed   ?? td.IsPassed;
+          const rawScore  = td.score      ?? td.Score;
+          const rawCertNo = td.certNo     ?? td.CertNo;
+          const rawExpiry = td.expiryDate ?? td.ExpiryDate;
+          const rawLink   = td.certLink   ?? td.CertLink;
+          
+          const isPassed = (rawPassed === 'yes' || rawPassed === 'TRUE' || rawPassed === 'true' || rawPassed === true);
+          scoreLabel = `${rawScore || 0}/10 ${isPassed ? '✅' : '❌'}`;
+          cert = rawCertNo || (isPassed ? '-' : 'ไม่ผ่าน');
+          expiry = rawExpiry ? formatShortDate(rawExpiry) : '-';
+          certLink = rawLink || '';
+        }
+        return {
+          name: `${tPrefix}${tName}`.trim() || '-',
+          nid: tNid,
+          score: scoreLabel,
+          cert: cert,
+          expiry: expiry,
+          certLink: certLink
+        };
+      })
+    };
+    
+    renderDetail();
+  } catch (err) {
+    console.error(err);
+    alert('โหลดข้อมูลไม่สำเร็จ: ' + err.message);
+  }
+}
+
+function renderDetail() {
+  document.getElementById('reqId').textContent = data.id;
+  document.getElementById('reqStatus').textContent = data.statusLabel;
+  document.getElementById('reqCompany').textContent = data.company || '-';
+  document.getElementById('reqContact').textContent = `ผู้ติดต่อ: ${data.contactName || '-'} • ${data.phone || ''}`;
+  document.getElementById('iProject').textContent = data.project || '-';
+  document.getElementById('iArea').textContent = data.workingArea || '-';
+  document.getElementById('iWorkStart').textContent = formatShortDate(data.workStart);
+  document.getElementById('iWorkEnd').textContent = formatShortDate(data.workEnd);
+  document.getElementById('iPrefDate').textContent = formatShortDate(data.prefDate);
+  
+  // วันนัดอบรม (Scheduled) + highlight ถ้าเปลี่ยน
+  const scheduledEl = document.getElementById('iScheduledDate');
+  const rowScheduled = document.getElementById('rowScheduled');
+  if (data.scheduledDate) {
+    scheduledEl.textContent = formatShortDate(data.scheduledDate) + (data.scheduledTime ? ' ' + data.scheduledTime + ' น.' : '');
+    // ถ้าวันนัด ≠ วันที่ขอ → highlight + แสดง banner
+    if (data.prefDate && data.scheduledDate && data.scheduledDate !== data.prefDate) {
+      rowScheduled.style.background = '#FEF3C7';
+      rowScheduled.style.padding = '8px 12px';
+      rowScheduled.style.borderRadius = '8px';
+      rowScheduled.style.margin = '4px -8px';
+      scheduledEl.innerHTML = `<span style="color:#D97706;font-weight:700;">📅 ${formatShortDate(data.scheduledDate)}</span> ${data.scheduledTime ? data.scheduledTime + ' น.' : ''} <div style="font-size:11px;color:#92400E;margin-top:2px;">⚠️ เปลี่ยนจากวันที่ขอ ${formatShortDate(data.prefDate)}</div>`;
+    }
+  } else {
+    rowScheduled.style.display = 'none';
+  }
+  document.getElementById('iCompany').textContent = data.company || '-';
+  document.getElementById('iContactName').textContent = data.contactName || '-';
+  document.getElementById('iPhone').textContent = data.phone || '-';
+  document.getElementById('iEmail').textContent = data.email || '-';
+  document.getElementById('iEng').textContent = data.pttEngineer || '-';
+
+  document.getElementById('tCount').textContent = data.trainees.length;
+  document.getElementById('traineeBody').innerHTML = data.trainees.map(t => `
+    <tr>
+      <td data-label="ชื่อ">${t.name}</td>
+      <td data-label="เลขบัตร">${formatNid(t.nid)}</td>
+      <td data-label="ผล">${t.score}</td>
+      <td data-label="Cert">${t.certLink ? `<a href="${t.certLink}" target="_blank" style="color:#1E90FF">${t.cert}</a>` : t.cert}</td>
+      <td data-label="หมดอายุ">${t.expiry}</td>
+    </tr>
+  `).join('');
+
+  updateActionButtons(data.status);
+}
+
+function updateActionButtons(status) {
+  const btnApprove = document.getElementById('btnApprove');
+  if (btnApprove) {
+    btnApprove.style.display = (status === 'pending') ? 'inline-flex' : 'none';
+  }
+}
+
+function openModal(action) {
+  currentAction = action;
+  const titleEl = document.getElementById('modalTitle');
+  const descEl = document.getElementById('modalDesc');
+  const bodyEl = document.getElementById('modalBody');
+  const confirmEl = document.getElementById('modalConfirm');
+  
+  if (action === 'approve') {
+    titleEl.textContent = '✅ ยืนยันวันเดิม';
+    descEl.textContent = 'ยืนยันวันที่ vendor ขอ (' + formatShortDate(data.prefDate) + ') และส่งอีเมลแจ้ง vendor';
+    bodyEl.innerHTML = '';
+    confirmEl.textContent = 'ยืนยันและส่งอีเมล';
+    confirmEl.className = 'btn btn-success';
+  } else if (action === 'reschedule') {
+    titleEl.textContent = '📅 เสนอวันใหม่';
+    descEl.textContent = 'ระบบจะส่งอีเมลแจ้ง vendor ตามวันใหม่';
+    bodyEl.innerHTML = `
+      <div class="field"><label>วันที่ใหม่</label><input type="date" id="newDate" required></div>
+      <div class="field"><label>เวลา</label><input type="time" id="newTime" value="09:00" required></div>
+    `;
+    confirmEl.textContent = 'บันทึก';
+    confirmEl.className = 'btn btn-warn';
+  } else if (action === 'cancel') {
+    titleEl.textContent = '🚫 ยกเลิกคำขอ';
+    descEl.textContent = 'การยกเลิกไม่สามารถย้อนกลับได้ — ระบบจะส่งอีเมลแจ้ง vendor';
+    bodyEl.innerHTML = '<div class="field"><label>เหตุผล (เพื่อ log)</label><input type="text" id="reason" placeholder="ระบุเหตุผล (optional)"></div>';
+    confirmEl.textContent = 'ยืนยันยกเลิก';
+    confirmEl.className = 'btn btn-danger';
+  }
+  document.getElementById('modal').classList.add('show');
+}
+
+function closeModal() { document.getElementById('modal').classList.remove('show'); }
+
+async function confirmAction() {
+  const confirmEl = document.getElementById('modalConfirm');
+  confirmEl.disabled = true;
+  const originalText = confirmEl.textContent;
+  confirmEl.textContent = 'กำลังดำเนินการ...';
+  
+  try {
+    let params = null;
+    if (currentAction === 'reschedule') {
+      const newDate = document.getElementById('newDate').value;
+      const newTime = document.getElementById('newTime').value;
+      if (!newDate || !newTime) {
+        alert('กรุณาเลือกวันและเวลา');
+        confirmEl.disabled = false;
+        confirmEl.textContent = originalText;
+        return;
+      }
+      params = { newDate, newTime };
+    }
+    
+    const result = await callAction(currentAction, data.id, params);
+    closeModal();
+    alert(`✅ ${currentAction} สำเร็จ\n${result.emailSentTo ? 'ส่ง email ไปที่: ' + result.emailSentTo : ''}`);
+    
+    // Reload data
+    if (currentAction === 'cancel') {
+      window.location.href = 'requests.html';
+    } else {
+      await loadDetail();
+    }
+  } catch (err) {
+    alert('❌ เกิดข้อผิดพลาด: ' + err.message);
+    confirmEl.disabled = false;
+    confirmEl.textContent = originalText;
+  }
+}
+</script>
+</body>
+</html>

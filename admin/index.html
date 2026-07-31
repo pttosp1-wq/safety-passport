@@ -357,7 +357,7 @@ html, body {
       <a href="requests.html" class="nav-item">
         <span class="nav-icon">📋</span>
         <span class="nav-label">รายการคำขอ</span>
-        <span class="nav-badge" id="navBadge">3</span>
+        <span class="nav-badge" id="navBadge" style="display:none"></span>
       </a>
       <a href="calendar.html" class="nav-item">
         <span class="nav-icon">📅</span>
@@ -398,22 +398,22 @@ html, body {
     <div class="stats-grid">
       <a href="requests.html?status=pending" class="stat-card urgent">
         <div class="stat-label">รออนุมัติ</div>
-        <div class="stat-value" id="stPending">2</div>
+        <div class="stat-value" id="stPending">–</div>
         <div class="stat-trend">📌 ต้องตอบกลับ จป.</div>
       </a>
       <a href="calendar.html" class="stat-card">
         <div class="stat-label">สัปดาห์นี้</div>
-        <div class="stat-value" id="stWeek">8</div>
+        <div class="stat-value" id="stWeek">–</div>
         <div class="stat-trend">👥 คนเข้าสอบ</div>
       </a>
       <a href="requests.html?status=done" class="stat-card success">
         <div class="stat-label">เดือนนี้</div>
-        <div class="stat-value"><span id="stPassed">18</span><span class="stat-fraction">/<span id="stTotal">20</span></span></div>
+        <div class="stat-value"><span id="stPassed">–</span><span class="stat-fraction">/<span id="stTotal">–</span></span></div>
         <div class="stat-trend">✅ ผ่านการอบรม</div>
       </a>
       <a href="cert-lookup.html" class="stat-card neutral">
         <div class="stat-label">Cert ทั้งหมด</div>
-        <div class="stat-value" id="stTotalCerts">87</div>
+        <div class="stat-value" id="stTotalCerts">–</div>
         <div class="stat-trend">📜 ใบที่ออกสะสม</div>
       </a>
     </div>
@@ -460,7 +460,7 @@ html, body {
     <a href="requests.html" class="bnav-item">
       <span class="bnav-icon">📋</span>
       <span class="bnav-label">คำขอ</span>
-      <span class="bnav-badge" id="bBadge">3</span>
+      <span class="bnav-badge" id="bBadge" style="display:none"></span>
     </a>
     <a href="calendar.html" class="bnav-item">
       <span class="bnav-icon">📅</span>
@@ -612,14 +612,12 @@ function renderDashboard(data) {
     const pendingCount = data.stats?.pending || 0;
     const navBadge = document.getElementById('navBadge');
     const bBadge = document.getElementById('bBadge');
-    if (navBadge) {
-      navBadge.textContent = pendingCount;
-      if (!pendingCount) navBadge.style.display = 'none';
-    }
-    if (bBadge) {
-      bBadge.textContent = pendingCount;
-      if (!pendingCount) bBadge.style.display = 'none';
-    }
+    // badge: ซ่อนไว้ตั้งแต่แรกใน markup (กันเลขปลอมกะพริบ) แล้วค่อยโชว์เมื่อมีของจริง
+    [navBadge, bBadge].forEach(el => {
+      if (!el) return;
+      el.textContent = pendingCount;
+      el.style.display = pendingCount ? '' : 'none';
+    });
     
     // Pending list (trainees with Status=Pending → unique by RequestID)
     const tPending = document.getElementById('tblPending');

@@ -397,7 +397,7 @@ html, body {
     </div>
     <nav class="sidebar-nav">
       <a href="index.html" class="nav-item"><span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></a>
-      <a href="requests.html" class="nav-item active"><span class="nav-icon">📋</span><span class="nav-label">รายการคำขอ</span><span class="nav-badge" id="navBadge">2</span></a>
+      <a href="requests.html" class="nav-item active"><span class="nav-icon">📋</span><span class="nav-label">รายการคำขอ</span><span class="nav-badge" id="navBadge" style="display:none"></span></a>
       <a href="calendar.html" class="nav-item"><span class="nav-icon">📅</span><span class="nav-label">ปฏิทินอบรม</span></a>
       <a href="cert-lookup.html" class="nav-item"><span class="nav-icon">🔍</span><span class="nav-label">ค้นหา Cert</span></a>
     </nav>
@@ -458,7 +458,7 @@ html, body {
 
   <nav class="bottom-nav">
     <a href="index.html" class="bnav-item"><span class="bnav-icon">📊</span><span class="bnav-label">หน้าหลัก</span></a>
-    <a href="requests.html" class="bnav-item active"><span class="bnav-icon">📋</span><span class="bnav-label">คำขอ</span><span class="bnav-badge" id="bBadge">2</span></a>
+    <a href="requests.html" class="bnav-item active"><span class="bnav-icon">📋</span><span class="bnav-label">คำขอ</span><span class="bnav-badge" id="bBadge" style="display:none"></span></a>
     <a href="calendar.html" class="bnav-item"><span class="bnav-icon">📅</span><span class="bnav-label">ปฏิทิน</span></a>
     <a href="cert-lookup.html" class="bnav-item"><span class="bnav-icon">🔍</span><span class="bnav-label">ค้นหา</span></a>
   </nav>
@@ -592,6 +592,28 @@ function normStatus(s) {
   return s.toLowerCase();
 }
 
+// ---- คำนวณสถานะ "เสร็จสิ้น" อัตโนมัติ ----
+// ระบบไม่เคยเขียน Status=done ลง Excel (มีแค่ approve/reschedule/cancel)
+// คำขอเลยค้างที่ "นัดแล้ว" ตลอด — จึงถือว่า: นัดแล้ว + เลยวันอบรมมาแล้ว = เสร็จสิ้น
+function dayKey(v) {
+  if (!v) return '';
+  const s = String(v);
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  const d = new Date(s);
+  if (isNaN(d)) return '';
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function effStatus(r) {
+  const s = normStatus(r.status);
+  if (s !== 'approved') return s;
+  const d = dayKey(r.scheduledDate || r.ScheduledDate);
+  return (d && d < todayKey()) ? 'done' : s;
+}
+
 const session = guardSession();
 if (!session) throw new Error('no session');
 const DIVISION = session.division;
@@ -619,7 +641,7 @@ async function loadRequests() {
     // counts
     const counts = { all: allReqs.length, pending: 0, approved: 0, done: 0, cancelled: 0 };
     allReqs.forEach(r => {
-      const s = normStatus(r.status);
+      const s = effStatus(r);
       if (counts[s] !== undefined) counts[s]++;
     });
     document.getElementById('cntAll').textContent = counts.all;
@@ -627,12 +649,13 @@ async function loadRequests() {
     document.getElementById('cntApproved').textContent = counts.approved;
     document.getElementById('cntDone').textContent = counts.done;
     document.getElementById('cntCancelled').textContent = counts.cancelled;
-    document.getElementById('navBadge').textContent = counts.pending || '';
-    document.getElementById('bBadge').textContent = counts.pending || '';
-    if (!counts.pending) {
-      document.getElementById('navBadge').style.display = 'none';
-      document.getElementById('bBadge').style.display = 'none';
-    }
+    // badge: ซ่อนไว้ตั้งแต่แรกใน markup (กันเลขปลอมกะพริบ) แล้วค่อยโชว์เมื่อมีของจริง
+    ['navBadge','bBadge'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.textContent = counts.pending || '';
+      el.style.display = counts.pending ? '' : 'none';
+    });
     
     setFilter(currentFilter);
   } catch (err) {
@@ -650,7 +673,7 @@ function setFilter(f) {
 function renderTable() {
   const q = document.getElementById('searchInput').value.toLowerCase().trim();
   let rows = allReqs;
-  if (currentFilter !== 'all') rows = rows.filter(r => normStatus(r.status) === currentFilter);
+  if (currentFilter !== 'all') rows = rows.filter(r => effStatus(r) === currentFilter);
   if (q) rows = rows.filter(r => 
     (r.company || '').toLowerCase().includes(q) ||
     (r.contact || '').toLowerCase().includes(q) ||
@@ -665,7 +688,7 @@ function renderTable() {
   } else {
     emptyEl.style.display = 'none';
     tbody.innerHTML = rows.map(r => {
-      const s = normStatus(r.status);
+      const s = effStatus(r);
       const sInfo = STATUS_MAP[s] || { label: r.status, cls: 'badge-gray' };
       const peopleCount = countTraineesByReq(allTrainees, r.id);
       return `

@@ -3,9 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>รายการคำขอ — PTT TSO Admin</title>
+<title>สรุปผลการอบรม — PTT TSO Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
+
 /* ==================== PTT TSO ADMIN — SHARED CSS ==================== */
 :root {
   --navy: #003B7A; --navy-dark: #002752; --sky: #1E90FF; --sky-soft: #DBEAFE;
@@ -383,11 +384,42 @@ html, body {
   .full-table tbody tr:last-child td { border-bottom: none; }
   .company-cell { font-weight: 600; color: var(--gray-900); }
   .company-cell .sub { font-weight: 400; color: var(--gray-500); font-size: 12px; margin-top: 2px; }
+
+/* ---- summary page ---- */
+.sum-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:18px;}
+.sum-toolbar select,.sum-toolbar input{padding:10px 12px;border:1px solid var(--gray-200);border-radius:10px;
+  font-family:inherit;font-size:13.5px;background:#fff;color:var(--gray-900);}
+.sum-note{font-size:12px;color:var(--gray-500);margin-left:auto;}
+.sum-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;}
+.sum-card{background:#fff;border:1px solid var(--gray-200);border-radius:16px;padding:18px 20px;
+  display:flex;flex-direction:column;gap:6px;cursor:pointer;transition:all .18s ease;}
+.sum-card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(0,59,122,.08);}
+.sum-card.active{border-color:var(--sky);box-shadow:0 0 0 2px var(--sky-soft);}
+.sum-card.pass{border-left:4px solid var(--green);}
+.sum-card.fail{border-left:4px solid var(--red);}
+.sum-card.absent{border-left:4px solid var(--amber);}
+.sum-card.total{border-left:4px solid var(--sky);}
+.sum-val{font-family:'Outfit',sans-serif;font-size:32px;font-weight:700;letter-spacing:-1px;}
+.sum-lab{font-size:13px;color:var(--gray-500);font-weight:500;}
+.sum-sub{font-size:12px;color:var(--gray-400);}
+.pill-pass{background:#DCFCE7;color:#166534;}
+.pill-fail{background:#FEE2E2;color:#991B1B;}
+.pill-absent{background:#FEF3C7;color:#92400E;}
+.bar{height:10px;border-radius:99px;background:var(--gray-100);overflow:hidden;display:flex;margin-bottom:20px;}
+.bar i{display:block;height:100%;}
+.bar .b-pass{background:var(--green);}
+.bar .b-fail{background:var(--red);}
+.bar .b-absent{background:var(--amber);}
+.prog-wrap{background:#fff;border:1px solid var(--gray-200);border-radius:14px;padding:14px 18px;margin-bottom:18px;}
+.prog-track{height:8px;background:var(--gray-100);border-radius:99px;overflow:hidden;}
+.prog-track i{display:block;height:100%;background:var(--sky);transition:width .2s;}
+@media(max-width:900px){.sum-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:560px){.sum-grid{grid-template-columns:1fr 1fr;gap:10px}.sum-val{font-size:24px}}
 </style>
 </head>
 <body>
 <div class="layout">
-  <aside class="sidebar">
+<aside class="sidebar">
     <div class="sidebar-logo">
       <div class="sidebar-logo-icon" style="background:white;padding:6px;"><img src="logo-ptt.png" alt="PTT" style="width:100%;height:100%;object-fit:contain;display:block;"></div>
       <div class="sidebar-logo-text">
@@ -397,11 +429,10 @@ html, body {
     </div>
     <nav class="sidebar-nav">
       <a href="index.html" class="nav-item"><span class="nav-icon">📊</span><span class="nav-label">Dashboard</span></a>
-      <a href="requests.html" class="nav-item active"><span class="nav-icon">📋</span><span class="nav-label">รายการคำขอ</span><span class="nav-badge" id="navBadge" style="display:none"></span></a>
+      <a href="requests.html" class="nav-item"><span class="nav-icon">📋</span><span class="nav-label">รายการคำขอ</span><span class="nav-badge" id="navBadge" style="display:none"></span></a>
       <a href="calendar.html" class="nav-item"><span class="nav-icon">📅</span><span class="nav-label">ปฏิทินอบรม</span></a>
       <a href="cert-lookup.html" class="nav-item"><span class="nav-icon">🔍</span><span class="nav-label">ค้นหา Cert</span></a>
-    
-        <a href="summary.html" class="nav-item"><span class="nav-icon">📊</span><span class="nav-label">สรุปผล</span></a>
+    <a href="summary.html" class="nav-item active"><span class="nav-icon">📊</span><span class="nav-label">สรุปผล</span></a>
       </nav>
     <div class="sidebar-footer">
       <div class="user-info">
@@ -414,60 +445,87 @@ html, body {
       <button class="btn-logout" onclick="logout()">ออกจากระบบ</button>
     </div>
   </aside>
-
   <main class="main">
-    <header class="topbar">
+    <div class="topbar">
       <div>
-        <div class="page-title">รายการคำขอ</div>
-        <div class="page-subtitle" id="pageSub">ทั้งหมดในเขต PO7</div>
+        <div class="page-title">สรุปผลการอบรม</div>
+        <div class="page-subtitle" id="pageSub">เขต PO7</div>
       </div>
       <div class="topbar-right">
-        <div class="div-tag-lg"><span class="dot"></span><span id="divTag">PO7</span></div>
+        <span class="division-badge" id="divTag">PO7</span>
       </div>
-    </header>
-
-    <div class="search-bar">
-      <input type="text" id="searchInput" placeholder="🔍 ค้นหา (บริษัท / ผู้ติดต่อ / Request ID)" oninput="renderTable()">
     </div>
 
-    <div class="filter-tabs" id="filterTabs">
-      <button class="ftab active" data-filter="all" onclick="setFilter('all')">ทั้งหมด <span class="count" id="cntAll">0</span></button>
-      <button class="ftab" data-filter="pending" onclick="setFilter('pending')">รออนุมัติ <span class="count" id="cntPending">0</span></button>
-      <button class="ftab" data-filter="approved" onclick="setFilter('approved')">นัดแล้ว <span class="count" id="cntApproved">0</span></button>
-      <button class="ftab" data-filter="done" onclick="setFilter('done')">เสร็จสิ้น <span class="count" id="cntDone">0</span></button>
-      <button class="ftab" data-filter="cancelled" onclick="setFilter('cancelled')">ยกเลิก <span class="count" id="cntCancelled">0</span></button>
+    <div class="sum-toolbar">
+      <select id="fRange">
+        <option value="all">ทุกช่วงเวลา</option>
+        <option value="30">30 วันล่าสุด</option>
+        <option value="90">90 วันล่าสุด</option>
+        <option value="month">เดือนนี้</option>
+        <option value="custom">กำหนดเอง…</option>
+      </select>
+      <input id="fFrom" type="date" style="display:none">
+      <input id="fTo" type="date" style="display:none">
+      <button class="btn-export" id="btnCsv" style="padding:10px 14px;border:1px solid var(--gray-200);border-radius:10px;background:#fff;font-family:inherit;font-size:13.5px;cursor:pointer;">⬇ ดาวน์โหลด CSV</button>
+      <span class="sum-note" id="note"></span>
     </div>
 
-    <section class="panel" style="padding: 0; overflow: hidden;">
-      <table class="full-table">
-        <thead>
-          <tr>
-            <th>บริษัท / ผู้ติดต่อ</th>
-            <th>วันที่ขอ</th>
-            <th>วันอบรม</th>
-            <th>คน</th>
-            <th>สถานะ</th>
-          </tr>
-        </thead>
-        <tbody id="tblBody"></tbody>
+    <div class="prog-wrap" id="progWrap">
+      <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;">
+        <span id="progText">กำลังโหลด…</span><span id="progPct" style="color:var(--gray-500)"></span>
+      </div>
+      <div class="prog-track"><i id="progBar" style="width:0%"></i></div>
+    </div>
+
+    <div class="sum-grid">
+      <div class="sum-card total active" data-f="all">
+        <div class="sum-lab">ทั้งหมด</div><div class="sum-val" id="vAll">–</div>
+        <div class="sum-sub">👥 คนที่ลงทะเบียน</div>
+      </div>
+      <div class="sum-card pass" data-f="pass">
+        <div class="sum-lab">ผ่าน</div><div class="sum-val" id="vPass" style="color:var(--green)">–</div>
+        <div class="sum-sub" id="sPass">✅ ได้ใบวุฒิบัตร</div>
+      </div>
+      <div class="sum-card fail" data-f="fail">
+        <div class="sum-lab">ไม่ผ่าน</div><div class="sum-val" id="vFail" style="color:var(--red)">–</div>
+        <div class="sum-sub" id="sFail">❌ สอบแล้วคะแนนไม่ถึง</div>
+      </div>
+      <div class="sum-card absent" data-f="absent">
+        <div class="sum-lab">ไม่มาอบรม</div><div class="sum-val" id="vAbsent" style="color:var(--amber)">–</div>
+        <div class="sum-sub" id="sAbsent">⚠️ ลงชื่อแต่ไม่ได้สอบ</div>
+      </div>
+    </div>
+
+    <div class="bar" id="bar" style="display:none">
+      <i class="b-pass" id="barPass"></i><i class="b-fail" id="barFail"></i><i class="b-absent" id="barAbsent"></i>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <h3 id="listTitle">รายชื่อทั้งหมด</h3>
+        <input id="q" placeholder="🔍 ค้นหาชื่อ / เลขบัตร / บริษัท"
+          style="padding:8px 12px;border:1px solid var(--gray-200);border-radius:9px;font-family:inherit;font-size:13px;min-width:240px;">
+      </div>
+      <div style="overflow-x:auto">
+      <table class="data-table">
+        <thead><tr>
+          <th>ชื่อ-นามสกุล</th><th>เลขบัตร</th><th>บริษัท</th>
+          <th>วันอบรม</th><th>คะแนน</th><th>สถานะ</th><th>เลขที่ Cert</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
       </table>
-      <div id="emptyState" class="empty" style="display:none;">
-        <div class="empty-icon">📭</div>
-        <div class="empty-text">ไม่พบรายการที่ค้นหา</div>
       </div>
-    </section>
+      <div id="empty" style="text-align:center;padding:40px 20px;color:var(--gray-400);display:none;">— ไม่มีข้อมูล —</div>
+    </div>
   </main>
-
-  <nav class="bottom-nav">
+<nav class="bottom-nav">
     <a href="index.html" class="bnav-item"><span class="bnav-icon">📊</span><span class="bnav-label">หน้าหลัก</span></a>
-    <a href="requests.html" class="bnav-item active"><span class="bnav-icon">📋</span><span class="bnav-label">คำขอ</span><span class="bnav-badge" id="bBadge" style="display:none"></span></a>
+    <a href="requests.html" class="bnav-item"><span class="bnav-icon">📋</span><span class="bnav-label">คำขอ</span><span class="bnav-badge" id="bBadge" style="display:none"></span></a>
     <a href="calendar.html" class="bnav-item"><span class="bnav-icon">📅</span><span class="bnav-label">ปฏิทิน</span></a>
     <a href="cert-lookup.html" class="bnav-item"><span class="bnav-icon">🔍</span><span class="bnav-label">ค้นหา</span></a>
   </nav>
 </div>
-
 <script>
-// ==================== PTT TSO ADMIN — API CLIENT ====================
 const ADMIN_API = {
   GET_DATA_URL: 'https://defaultf2fda5e72ea1450d9fc12af5f86300.95.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/c0356ad04b3b4659b10f8a92a5ec0357/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=E-AiSI63KsXw2UCUdpPdiDZLmV6K7bfFF1emGNbLcG0',
   ACTION_URL: 'https://defaultf2fda5e72ea1450d9fc12af5f86300.95.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/e2cf2966b3b6430a8ad00cab524583e9/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=oli6hDBwQO1SZSZSBQaJEUHmoygs1-tGvN33WUHMUd8',
@@ -582,131 +640,199 @@ function showError(el, msg) {
 }
 
 
-const STATUS_MAP = {
-  pending: { label: 'รออนุมัติ', cls: 'badge-amber' },
-  approved: { label: 'นัดแล้ว', cls: 'badge-blue' },
-  done: { label: 'เสร็จสิ้น', cls: 'badge-green' },
-  cancelled: { label: 'ยกเลิก', cls: 'badge-red' }
-};
 
-function normStatus(s) {
-  if (!s) return 'pending';
-  return s.toLowerCase();
-}
 
-// ---- คำนวณสถานะ "เสร็จสิ้น" อัตโนมัติ ----
-// ระบบไม่เคยเขียน Status=done ลง Excel (มีแค่ approve/reschedule/cancel)
-// คำขอเลยค้างที่ "นัดแล้ว" ตลอด — จึงถือว่า: นัดแล้ว + เลยวันอบรมมาแล้ว = เสร็จสิ้น
-function dayKey(v) {
-  if (!v) return '';
-  const s = String(v);
-  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
-  const d = new Date(s);
-  if (isNaN(d)) return '';
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-function todayKey() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-function effStatus(r) {
-  const s = normStatus(r.status);
-  if (s !== 'approved') return s;
-  const d = dayKey(r.scheduledDate || r.ScheduledDate);
-  return (d && d < todayKey()) ? 'done' : s;
-}
-
+// ==================== SUMMARY LOGIC ====================
+const PASS_SCORE = 8;
 const session = guardSession();
 if (!session) throw new Error('no session');
 const DIVISION = session.division;
-
 document.getElementById('divTag').textContent = DIVISION;
-document.getElementById('pageSub').textContent = `ทั้งหมดในเขต ${DIVISION}`;
-document.getElementById('avInit').textContent = DIVISION.replace('PO', 'P');
-document.getElementById('avRole').textContent = `เขต ${DIVISION}`;
+document.getElementById('pageSub').textContent = `เขต ${DIVISION}`;
+const avI = document.getElementById('avInit'); if (avI) avI.textContent = DIVISION.replace('PO','P');
+const avR = document.getElementById('avRole'); if (avR) avR.textContent = `เขต ${DIVISION}`;
 
-let allReqs = [];
-let allTrainees = [];
-let currentFilter = 'all';
+let ALL = [];            // ทุกคน (รวมทุกคำขอ)
+let filter = 'all';
 
-const urlStatus = new URLSearchParams(location.search).get('status');
-if (urlStatus && STATUS_MAP[urlStatus]) currentFilter = urlStatus;
+const $ = id => document.getElementById(id);
+const isPassVal = v => (v === 'yes' || v === 'TRUE' || v === 'true' || v === true);
 
-loadRequests();
+function dayKey(v){
+  if (!v) return '';
+  const s = String(v);
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0,10);
+  const d = new Date(s); if (isNaN(d)) return '';
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
 
-async function loadRequests() {
+// ---- โหลด: ดึงรายการคำขอ แล้วดึงรายละเอียดทีละใบมารวมผล ----
+async function loadAll(){
+  const base = await callGetData('requests');
+  const reqs = base.requests || [];
+  const rows = [];
+  let done = 0;
+  const setProg = () => {
+    const pct = reqs.length ? Math.round(done/reqs.length*100) : 100;
+    $('progText').textContent = `กำลังรวบรวมข้อมูล ${done}/${reqs.length} คำขอ`;
+    $('progPct').textContent = pct + '%';
+    $('progBar').style.width = pct + '%';
+  };
+  setProg();
+
+  // ยิงทีละ 3 ใบพร้อมกัน กันยิงถี่เกินจน flow ตัน
+  const queue = reqs.slice();
+  async function worker(){
+    while (queue.length){
+      const r = queue.shift();
+      try {
+        const d = await callGetData('request-detail', { id: r.id });
+        const trainees = d.trainees || [];
+        const td = d.trainingData || [];
+        const reqDate = dayKey(r.scheduledDate || r.ScheduledDate || (d.request && d.request.ScheduledDate));
+        trainees.forEach(t => {
+          const nid  = t.nid ?? t.NationalID ?? '';
+          const name = t.fullName ?? t.FullName ?? '';
+          // เลือกแถวผลสอบที่ดีที่สุด: ผ่านก่อน แล้ววันสอบล่าสุด (กันเคสสอบซ้ำ)
+          const mine = td.filter(x => (x.nid ?? x.NationalID) === nid)
+            .sort((a,b) => (isPassVal(b.isPassed ?? b.IsPassed)?1:0) - (isPassVal(a.isPassed ?? a.IsPassed)?1:0)
+                        || String(b.examDate ?? b.ExamDate ?? '').localeCompare(String(a.examDate ?? a.ExamDate ?? '')));
+          const best = mine[0];
+          let outcome = 'absent', score = null, certNo = '', examDate = reqDate;
+          if (best){
+            score    = best.score ?? best.Score ?? null;
+            certNo   = best.certNo ?? best.CertNo ?? '';
+            examDate = dayKey(best.examDate ?? best.ExamDate) || reqDate;
+            outcome  = isPassVal(best.isPassed ?? best.IsPassed) ? 'pass' : 'fail';
+          }
+          rows.push({ nid, name, company: r.company || (d.request && d.request.Company) || '',
+                      reqId: r.id, date: examDate, score, certNo, outcome });
+        });
+      } catch(e){ console.error('req', r.id, e); }
+      done++; setProg();
+    }
+  }
+  await Promise.all([worker(), worker(), worker()]);
+  return rows;
+}
+
+// ---- ตัวกรองช่วงเวลา ----
+function inRange(dateKey){
+  const mode = $('fRange').value;
+  if (mode === 'all' || !dateKey) return mode === 'all';
+  const d = new Date(dateKey + 'T00:00:00'); if (isNaN(d)) return false;
+  const now = new Date();
+  if (mode === '30' || mode === '90'){
+    const days = +mode;
+    const from = new Date(now); from.setDate(from.getDate() - days);
+    return d >= from && d <= now;
+  }
+  if (mode === 'month') return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+  if (mode === 'custom'){
+    const f = $('fFrom').value, t = $('fTo').value;
+    if (f && dateKey < f) return false;
+    if (t && dateKey > t) return false;
+    return true;
+  }
+  return true;
+}
+
+function visibleRows(){
+  const q = $('q').value.trim().toLowerCase();
+  return ALL.filter(r => inRange(r.date))
+            .filter(r => filter === 'all' ? true : r.outcome === filter)
+            .filter(r => !q || (r.name||'').toLowerCase().includes(q)
+                            || (r.nid||'').toLowerCase().includes(q)
+                            || (r.company||'').toLowerCase().includes(q));
+}
+
+function render(){
+  const scoped = ALL.filter(r => inRange(r.date));
+  const c = { pass:0, fail:0, absent:0 };
+  scoped.forEach(r => c[r.outcome]++);
+  const total = scoped.length;
+  $('vAll').textContent = total;
+  $('vPass').textContent = c.pass;
+  $('vFail').textContent = c.fail;
+  $('vAbsent').textContent = c.absent;
+  const pct = n => total ? Math.round(n/total*100) : 0;
+  $('sPass').textContent   = `✅ ได้ใบวุฒิบัตร (${pct(c.pass)}%)`;
+  $('sFail').textContent   = `❌ สอบแล้วคะแนนไม่ถึง (${pct(c.fail)}%)`;
+  $('sAbsent').textContent = `⚠️ ลงชื่อแต่ไม่ได้สอบ (${pct(c.absent)}%)`;
+  if (total){
+    $('bar').style.display = 'flex';
+    $('barPass').style.width   = pct(c.pass)+'%';
+    $('barFail').style.width   = pct(c.fail)+'%';
+    $('barAbsent').style.width = pct(c.absent)+'%';
+  } else $('bar').style.display = 'none';
+
+  const LBL = { all:'รายชื่อทั้งหมด', pass:'รายชื่อคนที่ผ่าน', fail:'รายชื่อคนที่ไม่ผ่าน', absent:'รายชื่อคนที่ไม่มาอบรม' };
+  $('listTitle').textContent = LBL[filter];
+
+  const rows = visibleRows();
+  const tb = $('tbody');
+  if (!rows.length){ tb.innerHTML=''; $('empty').style.display='block'; return; }
+  $('empty').style.display='none';
+  const BADGE = { pass:['pill-pass','ผ่าน'], fail:['pill-fail','ไม่ผ่าน'], absent:['pill-absent','ไม่มาอบรม'] };
+  tb.innerHTML = rows.map(r => {
+    const [cls,lab] = BADGE[r.outcome];
+    return `<tr>
+      <td>${r.name || '-'}</td>
+      <td>${formatNid(r.nid)}</td>
+      <td>${r.company || '-'}</td>
+      <td>${r.date ? formatShortDate(r.date) : '-'}</td>
+      <td>${r.score !== null && r.score !== undefined ? r.score + '/10' : '-'}</td>
+      <td><span class="badge ${cls}">${lab}</span></td>
+      <td>${r.certNo || '-'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ---- CSV ----
+$('btnCsv').addEventListener('click', () => {
+  const rows = visibleRows();
+  if (!rows.length){ alert('ไม่มีข้อมูลให้ดาวน์โหลด'); return; }
+  const LBL = { pass:'ผ่าน', fail:'ไม่ผ่าน', absent:'ไม่มาอบรม' };
+  const head = ['ชื่อ-นามสกุล','เลขบัตร','บริษัท','คำขอ','วันอบรม','คะแนน','สถานะ','เลขที่ Cert'];
+  const esc = v => `"${String(v ?? '').replace(/"/g,'""')}"`;
+  const csv = [head.map(esc).join(',')].concat(
+    rows.map(r => [r.name, r.nid, r.company, r.reqId, r.date,
+                   (r.score ?? ''), LBL[r.outcome], r.certNo].map(esc).join(','))
+  ).join('\r\n');
+  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8;'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `สรุปผลอบรม-${DIVISION}-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); URL.revokeObjectURL(a.href);
+});
+
+// ---- events ----
+document.querySelectorAll('.sum-card').forEach(el => el.addEventListener('click', () => {
+  filter = el.dataset.f;
+  document.querySelectorAll('.sum-card').forEach(x => x.classList.toggle('active', x===el));
+  render();
+}));
+$('fRange').addEventListener('change', () => {
+  const cus = $('fRange').value === 'custom';
+  $('fFrom').style.display = cus ? '' : 'none';
+  $('fTo').style.display   = cus ? '' : 'none';
+  render();
+});
+['fFrom','fTo','q'].forEach(id => $(id).addEventListener('input', render));
+
+// ---- go ----
+(async () => {
   try {
-    const data = await callGetData('requests');
-    allReqs = data.requests || [];
-    allTrainees = data.trainees || [];
-    
-    // counts
-    const counts = { all: allReqs.length, pending: 0, approved: 0, done: 0, cancelled: 0 };
-    allReqs.forEach(r => {
-      const s = effStatus(r);
-      if (counts[s] !== undefined) counts[s]++;
-    });
-    document.getElementById('cntAll').textContent = counts.all;
-    document.getElementById('cntPending').textContent = counts.pending;
-    document.getElementById('cntApproved').textContent = counts.approved;
-    document.getElementById('cntDone').textContent = counts.done;
-    document.getElementById('cntCancelled').textContent = counts.cancelled;
-    // badge: ซ่อนไว้ตั้งแต่แรกใน markup (กันเลขปลอมกะพริบ) แล้วค่อยโชว์เมื่อมีของจริง
-    ['navBadge','bBadge'].forEach(id => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.textContent = counts.pending || '';
-      el.style.display = counts.pending ? '' : 'none';
-    });
-    
-    setFilter(currentFilter);
+    ALL = await loadAll();
+    $('progWrap').style.display = 'none';
+    $('note').textContent = `รวม ${ALL.length} คน จากทุกคำขอ · ข้อมูล ณ ${new Date().toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})} น.`;
+    render();
   } catch (err) {
     console.error(err);
-    document.getElementById('tblBody').innerHTML = `<tr><td colspan="5" style="text-align:center; padding:40px; color:#DC2626;">❌ โหลดข้อมูลไม่สำเร็จ: ${err.message}</td></tr>`;
+    $('progText').textContent = 'โหลดข้อมูลไม่สำเร็จ — ' + (err.message || '');
+    $('progText').style.color = 'var(--red)';
   }
-}
-
-function setFilter(f) {
-  currentFilter = f;
-  document.querySelectorAll('.ftab').forEach(t => t.classList.toggle('active', t.dataset.filter === f));
-  renderTable();
-}
-
-function renderTable() {
-  const q = document.getElementById('searchInput').value.toLowerCase().trim();
-  let rows = allReqs;
-  if (currentFilter !== 'all') rows = rows.filter(r => effStatus(r) === currentFilter);
-  if (q) rows = rows.filter(r => 
-    (r.company || '').toLowerCase().includes(q) ||
-    (r.contact || '').toLowerCase().includes(q) ||
-    (r.id || '').toLowerCase().includes(q)
-  );
-
-  const tbody = document.getElementById('tblBody');
-  const emptyEl = document.getElementById('emptyState');
-  if (rows.length === 0) {
-    tbody.innerHTML = '';
-    emptyEl.style.display = 'block';
-  } else {
-    emptyEl.style.display = 'none';
-    tbody.innerHTML = rows.map(r => {
-      const s = effStatus(r);
-      const sInfo = STATUS_MAP[s] || { label: r.status, cls: 'badge-gray' };
-      const peopleCount = countTraineesByReq(allTrainees, r.id);
-      return `
-        <tr onclick="goReq('${r.id}')">
-          <td class="company-cell">${r.company || '-'}<div class="sub">${r.contact || ''}</div></td>
-          <td>${formatShortDate(r.preferredDate || r.scheduledDate)}</td>
-          <td>${formatShortDate(r.scheduledDate)}</td>
-          <td>${peopleCount}</td>
-          <td><span class="badge ${sInfo.cls}">${sInfo.label}</span></td>
-        </tr>
-      `;
-    }).join('');
-  }
-}
-
-function goReq(id) { window.location.href = 'request-detail.html?id=' + id; }
+})();
 </script>
 </body>
 </html>

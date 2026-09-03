@@ -318,7 +318,7 @@ const THAI_MONTHS_SHORT = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.',
                            'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
 const THAI_DAYS = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
 
-let state = { nationalId: '', division: 'PO7', fullName: '', company: '' };
+let state = { nationalId: '', division: 'PO7', fullName: '', company: '', prefix: '' };
 
 // pre-fill division from localStorage (ถ้าผู้ใช้เคยเลือก PO ไหน)
 const savedDivision = localStorage.getItem('ptt_division');
@@ -402,7 +402,7 @@ function handleResponse(response) {
   
   switch (response.status) {
     case 'valid':
-      $('validName').textContent = d.fullName || '-';
+      $('validName').textContent = ((d.prefix || '') + (d.fullName || '')) || '-';
       $('validCompany').textContent = d.company || '-';
       $('validExam').textContent = formatShortDate(d.examDate);
       $('validExpiry').textContent = formatShortDate(d.expiryDate);
@@ -410,16 +410,18 @@ function handleResponse(response) {
       if (d.certLink) $('validCertLink').href = d.certLink;
       else $('validCertLink').style.display = 'none';
       state.fullName = d.fullName || '';
+      state.prefix = d.prefix || '';
       state.company = d.company || '';
       showState('state-valid');
       break;
       
     case 'expired':
-      $('expName').textContent = d.fullName || '-';
+      $('expName').textContent = ((d.prefix || '') + (d.fullName || '')) || '-';
       $('expExam').textContent = formatShortDate(d.examDate);
       $('expCertNo').textContent = d.certNo || '-';
       $('expExpiry').textContent = formatShortDate(d.expiryDate);
       state.fullName = d.fullName || '';
+      state.prefix = d.prefix || '';
       state.company = d.company || '';
       showState('state-expired');
       break;
@@ -448,6 +450,7 @@ function handleResponse(response) {
 function goToExam() {
   // ส่งข้อมูลผ่าน URL params + localStorage (exam.html v2 อ่านทั้ง 2 ที่)
   if (state.fullName) localStorage.setItem('ptt_fullName', state.fullName);
+  localStorage.setItem('ptt_prefix', state.prefix || '');
   if (state.company) localStorage.setItem('ptt_company', state.company);
   localStorage.setItem('ptt_nationalId', state.nationalId);
   localStorage.setItem('ptt_division', state.division);
@@ -460,6 +463,7 @@ function goToExam() {
     division: state.division
   });
   if (state.fullName) params.set('fullName', state.fullName);
+  if (state.prefix) params.set('prefix', state.prefix);
   if (state.company) params.set('company', state.company);
   
   window.location.href = `exam.html?${params}`;
@@ -468,7 +472,7 @@ function goToExam() {
 function resetForm() {
   natIdEl.value = '';
   btnCheck.disabled = true;
-  state = { nationalId: '', division: state.division, fullName: '', company: '' };
+  state = { nationalId: '', division: state.division, fullName: '', company: '', prefix: '' };
   hideError();
   showState('state-input');
 }

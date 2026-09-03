@@ -537,6 +537,7 @@ html, body {
           <tr>
             <th>ชื่อ-นามสกุล</th>
             <th>เลขบัตร</th>
+            <th>ใบเซอร์ตามกฎหมาย</th>
             <th>ผลสอบ</th>
             <th>Cert No.</th>
             <th>หมดอายุ</th>
@@ -787,6 +788,8 @@ async function loadDetail() {
         return {
           name: `${tPrefix}${tName}`.trim() || '-',
           nid: tNid,
+          // คอลัมน์ LegalCerts (เพิ่ม ก.ย. 2569) — คำขอเก่าจะว่าง
+          legalCerts: (t.legalCerts ?? t.LegalCerts ?? '').toString().trim(),
           score: scoreLabel,
           cert: cert,
           expiry: expiry,
@@ -840,6 +843,7 @@ function renderDetail() {
     <tr>
       <td data-label="ชื่อ">${t.name}</td>
       <td data-label="เลขบัตร">${formatNid(t.nid)}</td>
+      <td data-label="ใบเซอร์กฎหมาย" style="font-size:12px;color:var(--gray-600)">${t.legalCerts || '-'}</td>
       <td data-label="ผล">${t.score}</td>
       <td data-label="Cert">${t.certLink ? `<a href="${t.certLink}" target="_blank" style="color:#1E90FF">${t.cert}</a>` : t.cert}</td>
       <td data-label="หมดอายุ">${t.expiry}</td>

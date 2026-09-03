@@ -502,10 +502,10 @@ const CERT_CONFIG = {
   fields: {
     // ชื่อ-นามสกุล (มีคำนำหน้า): center
     fullName:   { x: 620,  y: 826,  size: 56, color: '#000000', align: 'center', bold: true },
-    // "เมื่อวันที่" + วันที่สอบ — label ชิดขวาที่ labelX, ค่าเริ่มที่ valueX
-    examDate:   { label: 'เมื่อวันที่',    labelX: 515, valueX: 530, y: 1224, size: 33, color: '#000000', bold: false },
-    // "หมดอายุวันที่" + วันหมดอายุ (สีแดง) — ซ่อนได้ต่อเขตด้วย hideExpiryFor
-    expiryDate: { label: 'หมดอายุวันที่', labelX: 515, valueX: 530, y: 1277, size: 33, color: '#DC2626', bold: false },
+    // "เมื่อวันที่ <วันที่สอบ>" — ทั้งบรรทัดจัดกึ่งกลาง
+    examDate:   { label: 'เมื่อวันที่',    x: 620, y: 1224, size: 33, color: '#000000', align: 'center', bold: false },
+    // "หมดอายุวันที่ <วันหมดอายุ>" (สีแดง) — ซ่อนได้ต่อเขตด้วย hideExpiryFor
+    expiryDate: { label: 'หมดอายุวันที่', x: 620, y: 1277, size: 33, color: '#DC2626', align: 'center', bold: false },
     // CertNo: มุมขวาล่าง
     certNo:     { x: 1232, y: 1746, size: 29, color: '#121212', align: 'right',  bold: false },
     // ลายเซ็น (image) — center, ทับเส้นใต้
@@ -610,10 +610,7 @@ async function generateCertPdf(data) {
     ctx.fillText(text, x, y);
   };
   const drawField = (text, cfg) => drawText(text, cfg.x, cfg.y, cfg.size, cfg.bold, cfg.color, cfg.align);
-  const drawLabeled = (value, cfg) => {
-    drawText(cfg.label, cfg.labelX, cfg.y, cfg.size, cfg.bold, cfg.color, 'right');
-    drawText(value,     cfg.valueX, cfg.y, cfg.size, cfg.bold, cfg.color, 'left');
-  };
+  const drawLabeled = (value, cfg) => drawField(`${cfg.label} ${value}`, cfg);
 
   // บรรทัดคงที่
   CERT_CONFIG.lines.forEach(l => drawText(l.text, CERT_CONFIG.width / 2, l.y, l.size, l.bold, l.color, 'center'));

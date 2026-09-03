@@ -202,6 +202,14 @@
     width: 18px; height: 18px; margin: 1px 0 0; flex-shrink: 0; accent-color: var(--navy); cursor: pointer;
   }
   @media (max-width: 420px) { .legal-certs-grid { grid-template-columns: 1fr; } }
+  .legal-certs .t-cert-other-wrap { grid-column: 1 / -1; display: none; }
+  .legal-certs .t-cert-other-wrap.show { display: block; }
+  .legal-certs .t-cert-other {
+    width: 100%; padding: 10px 14px; box-sizing: border-box;
+    border: 1.5px solid var(--gray-200); border-radius: 10px;
+    font-family: inherit; font-size: 14px; color: var(--gray-900); background: white;
+  }
+  .legal-certs .t-cert-other:focus { outline: none; border-color: var(--sky); box-shadow: 0 0 0 3px rgba(30,144,255,0.1); }
   /* เจ้าหน้าที่ ปตท. "อื่นๆ" */
   .ptt-other { display: none; }
   .ptt-other.show { display: block; }
@@ -696,11 +704,21 @@ function addTrainee() {
     <input type="text" class="t-id" placeholder="เลขบัตร 13 หลัก หรือ Passport (เช่น AB123456)" maxlength="13">
     <input type="text" class="t-position" placeholder="ตำแหน่ง เช่น ช่างเชื่อม, วิศวกร">
     <div class="legal-certs">
-      <div class="legal-certs-title">ใบรับรอง/ใบอนุญาตตามกฎหมายที่มี (ติ๊กได้หลายข้อ ถ้าไม่มีให้เว้นว่าง)</div>
-      <div class="legal-certs-grid">${certBoxes}</div>
+      <div class="legal-certs-title">ใบรับรอง/ใบอนุญาตตามกฎหมายที่มี (เลือกได้หลายข้อ ถ้าไม่มีให้เว้นว่าง)</div>
+      <div class="legal-certs-grid">
+        ${certBoxes}
+        <label><input type="checkbox" class="t-cert t-cert-other-cb" value="อื่นๆ" onchange="toggleCertOther(this)"><span>อื่นๆ (ระบุ)</span></label>
+        <div class="t-cert-other-wrap"><input type="text" class="t-cert-other" placeholder="ระบุชื่อใบรับรอง/ใบอนุญาต เช่น ผู้ควบคุมหม้อไอน้ำ"></div>
+      </div>
     </div>
   `;
   document.getElementById('trainees').appendChild(row);
+}
+
+function toggleCertOther(cb) {
+  const wrap = cb.closest('.legal-certs').querySelector('.t-cert-other-wrap');
+  wrap.classList.toggle('show', cb.checked);
+  if (cb.checked) wrap.querySelector('.t-cert-other').focus();
 }
 
 function renumberTrainees() {
@@ -774,7 +792,9 @@ async function submitForm() {
     else if (!position) { traineeOk = false; traineeErr = 'ตำแหน่ง'; }
     
     traineeRows.push(row);
-    const legalCerts = Array.from(row.querySelectorAll('.t-cert:checked')).map(cb => cb.value);
+    const otherText = (row.querySelector('.t-cert-other')?.value || '').trim();
+    const legalCerts = Array.from(row.querySelectorAll('.t-cert:checked'))
+      .map(cb => cb.classList.contains('t-cert-other-cb') ? (otherText ? `อื่นๆ: ${otherText}` : 'อื่นๆ') : cb.value);
     trainees.push({
       prefix: row.querySelector('.t-prefix').value,
       name: fullName,

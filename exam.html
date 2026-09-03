@@ -424,7 +424,7 @@ const state = {
   division: params.get('division') || localStorage.getItem('ptt_division') || 'PO7',
   fullName: params.get('fullName') || localStorage.getItem('ptt_fullName') || '',
   prefix: params.get('prefix') || localStorage.getItem('ptt_prefix') || '',
-  company: params.get('company') || localStorage.getItem('ptt_company') || '',
+  company: params.get('company') || '',   // ไม่ใช้ localStorage — เคยทำให้บริษัทค้างจากการทดสอบ
   shuffledQuestions: [],
   currentIdx: 0,
   answers: [],
@@ -735,7 +735,7 @@ function handleValidation(response) {
       // อัพเดท state จาก Flow 1
       if (d.fullName) state.fullName = d.fullName;
       if (d.prefix) state.prefix = d.prefix;
-      if (d.company) state.company = d.company;
+      state.company = d.company || '';
       
       // เช็คว่าตั้งใจมาสอบใหม่จาก index.html ไหม
       if (sessionStorage.getItem('ptt_intentRenew') === '1') {
@@ -753,7 +753,7 @@ function handleValidation(response) {
     case 'expired':
       if (d.fullName) state.fullName = d.fullName;
       if (d.prefix) state.prefix = d.prefix;
-      if (d.company) state.company = d.company;
+      state.company = d.company || '';
       $('expCertNo').textContent = d.certNo || '-';
       $('expExpiry').textContent = formatShortDate(d.expiryDate);
       showScreen('screen-expired-notice');
@@ -763,7 +763,7 @@ function handleValidation(response) {
       // อัพเดทข้อมูลจาก Trainees ถ้า Flow 1 ส่งมา
       if (d.fullName) state.fullName = d.fullName;
       if (d.prefix) state.prefix = d.prefix;
-      if (d.company) state.company = d.company;
+      state.company = d.company || '';
       if (!state.fullName) { showNameMissing(); break; }
       showScreen('screen-intro');
       break;

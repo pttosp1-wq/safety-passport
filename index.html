@@ -451,7 +451,7 @@ function goToExam() {
   // ส่งข้อมูลผ่าน URL params + localStorage (exam.html v2 อ่านทั้ง 2 ที่)
   if (state.fullName) localStorage.setItem('ptt_fullName', state.fullName);
   localStorage.setItem('ptt_prefix', state.prefix || '');
-  if (state.company) localStorage.setItem('ptt_company', state.company);
+  localStorage.setItem('ptt_company', state.company || '');   // เขียนทับเสมอ กันค่าค้าง
   localStorage.setItem('ptt_nationalId', state.nationalId);
   localStorage.setItem('ptt_division', state.division);
   

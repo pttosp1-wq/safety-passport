@@ -167,7 +167,7 @@
         ผู้รับเหมาจะได้รับอีเมลยืนยันวันอบรม<br>
         ท่านสามารถปิดหน้านี้ได้
       </div>
-      <button class="btn btn-ghost" onclick="window.close()">ปิดหน้านี้</button>
+      <button class="btn btn-ghost" onclick="closePage()">← ไปหน้าจัดการคำขอ (Admin)</button>
     </div>
 
     <div class="state" id="state-error">
@@ -182,7 +182,7 @@
       </div>
       <div style="display:flex; flex-direction:column; align-items:center; gap:10px;">
         <button class="btn btn-primary" id="btnRetry" style="min-width:200px;" onclick="retry()">🔄 ลองอีกครั้ง</button>
-        <button class="btn btn-ghost" style="min-width:160px;" onclick="window.close()">ปิดหน้านี้</button>
+        <button class="btn btn-ghost" style="min-width:160px;" onclick="closePage()">← ไปหน้าจัดการคำขอ (Admin)</button>
       </div>
     </div>
 
@@ -195,6 +195,13 @@
 </div>
 
 <script>
+function closePage() {
+  // window.close() ใช้ได้เฉพาะแท็บที่เปิดด้วยสคริปต์ — ถ้าเปิดจากลิงก์ในอีเมลจะปิดไม่ได้
+  // จึงลองปิดก่อน แล้วถ้ายังอยู่ให้พาไปหน้าจัดการคำขอของแอดมินแทน
+  try { window.close(); } catch (e) {}
+  setTimeout(() => { window.location.href = 'admin/requests.html'; }, 300);
+}
+
 const FLOW4_URL = 'https://defaultf2fda5e72ea1450d9fc12af5f86300.95.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/b3e62e8e8cb64f3fa98209f828a25a06/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=AylRyg_cTCZvEENOOR4evJhA60cCJu2rDL-9A1L3RXQ';
 
 const params = new URLSearchParams(window.location.search);

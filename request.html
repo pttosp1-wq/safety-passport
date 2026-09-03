@@ -188,6 +188,37 @@
   }
   .trainee-grid { display: grid; grid-template-columns: 110px 1fr; gap: 10px; margin-bottom: 10px; }
   .trainee-row .t-id { margin-bottom: 10px !important; }
+  /* ใบเซอร์ตามกฎหมาย (checkbox ต่อคน) */
+  .legal-certs { margin-top: 12px; }
+  .legal-certs-title {
+    font-size: 12px; font-weight: 600; color: var(--gray-600); margin-bottom: 8px;
+  }
+  .legal-certs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; }
+  .legal-certs label {
+    display: flex; align-items: flex-start; gap: 8px;
+    font-size: 13px; color: var(--gray-900); cursor: pointer; line-height: 1.35;
+  }
+  .legal-certs input[type="checkbox"] {
+    width: 18px; height: 18px; margin: 1px 0 0; flex-shrink: 0; accent-color: var(--navy); cursor: pointer;
+  }
+  @media (max-width: 420px) { .legal-certs-grid { grid-template-columns: 1fr; } }
+  /* เจ้าหน้าที่ ปตท. "อื่นๆ" */
+  .ptt-other { display: none; }
+  .ptt-other.show { display: block; }
+  /* PDPA / Privacy Notice */
+  .pdpa-box {
+    background: #F0F7FF; border: 1.5px solid #BFDBFE; border-radius: 12px;
+    padding: 14px 16px; margin: 4px 0 18px;
+  }
+  .pdpa-box .pdpa-title { font-weight: 700; font-size: 14px; color: var(--navy); margin-bottom: 6px; }
+  .pdpa-box .pdpa-text { font-size: 13px; color: var(--gray-600); line-height: 1.55; margin-bottom: 10px; }
+  .pdpa-box .pdpa-text a { color: var(--sky); font-weight: 600; word-break: break-all; }
+  .pdpa-box .pdpa-consent {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13.5px; color: var(--gray-900); font-weight: 500; cursor: pointer; line-height: 1.45;
+  }
+  .pdpa-box .pdpa-consent input { width: 20px; height: 20px; margin: 1px 0 0; flex-shrink: 0; accent-color: var(--navy); cursor: pointer; }
+  .pdpa-box.error { border-color: var(--red); background: #FEF2F2; }
   .add-trainee {
     background: white; border: 2px dashed var(--gray-200);
     color: var(--gray-600); border-radius: 12px;
@@ -330,7 +361,17 @@
       <div class="section-title"><span class="section-num">3</span>เจ้าหน้าที่ ปตท. ที่ติดต่อ</div>
       <div class="field">
         <label>ชื่อ-นามสกุล<span class="req">*</span></label>
-        <select id="pttName"></select>
+        <select id="pttName" onchange="togglePttOther()"></select>
+      </div>
+      <div class="ptt-other" id="pttOther">
+        <div class="field">
+          <label>ชื่อ-นามสกุลเจ้าหน้าที่ ปตท.<span class="req">*</span></label>
+          <input type="text" id="pttOtherName" placeholder="เช่น สมชาย ใจดี">
+        </div>
+        <div class="field">
+          <label>อีเมลเจ้าหน้าที่ ปตท. (@pttplc.com)<span class="req">*</span></label>
+          <input type="email" id="pttOtherEmail" placeholder="somchai.j@pttplc.com">
+        </div>
       </div>
     </div>
 
@@ -360,6 +401,23 @@
       <div class="section-title"><span class="section-num">5</span>รายชื่อผู้เข้าอบรม</div>
       <div class="trainees" id="trainees"></div>
       <button type="button" class="add-trainee" onclick="addTrainee()">+ เพิ่มรายชื่อผู้เข้าอบรม</button>
+    </div>
+
+    <div class="section">
+      <div class="section-title"><span class="section-num">6</span>การคุ้มครองข้อมูลส่วนบุคคล (PDPA)</div>
+      <div class="pdpa-box" id="pdpaBox">
+        <div class="pdpa-title">แบบแจ้งเกี่ยวกับข้อมูลส่วนบุคคล (Privacy Notice)</div>
+        <div class="pdpa-text">
+          ข้อมูลที่กรอกในแบบฟอร์มนี้ (ชื่อ-นามสกุล เลขบัตรประชาชน/หนังสือเดินทาง ตำแหน่ง และข้อมูลติดต่อ)
+          จะถูกใช้เพื่อการลงทะเบียนอบรมความปลอดภัย ออกใบวุฒิบัตร และควบคุมการเข้าพื้นที่ปฏิบัติงานของ ปตท. เท่านั้น
+          ตามแบบแจ้งเกี่ยวกับข้อมูลส่วนบุคคลสำหรับผู้มาติดต่อ ผู้ขอเข้าอาคาร สถานที่ปฏิบัติงาน หรือพื้นที่เฉพาะของ ปตท.<br>
+          อ่านฉบับเต็มได้ที่ <a href="https://pttpdpa.pttplc.com/Privacy" target="_blank" rel="noopener">https://pttpdpa.pttplc.com/Privacy</a>
+        </div>
+        <label class="pdpa-consent">
+          <input type="checkbox" id="pdpaConsent" onchange="document.getElementById('pdpaBox').classList.remove('error')">
+          <span>ข้าพเจ้าได้อ่านและรับทราบแบบแจ้งเกี่ยวกับข้อมูลส่วนบุคคลข้างต้น และได้แจ้งให้ผู้เข้าอบรมทุกคนในรายชื่อรับทราบแล้ว<span class="req">*</span></span>
+        </label>
+      </div>
     </div>
 
     <button type="button" class="btn-submit" id="btnSubmit" onclick="submitForm()">ส่งคำขอเข้าอบรม →</button>
@@ -497,6 +555,19 @@ const pttSelect = document.getElementById('pttName');
   opt.textContent = e.name;
   pttSelect.appendChild(opt);
 });
+// ตัวเลือก "อื่นๆ" — กรณีเจ้าหน้าที่ที่ติดต่อไม่อยู่ในรายชื่อ ให้พิมพ์ชื่อ+อีเมลเอง
+const PTT_OTHER = 'other';
+(() => {
+  const opt = document.createElement('option');
+  opt.value = PTT_OTHER;
+  opt.textContent = 'อื่นๆ (ระบุชื่อและอีเมลเอง)';
+  pttSelect.appendChild(opt);
+})();
+function togglePttOther() {
+  const isOther = pttSelect.value === PTT_OTHER;
+  document.getElementById('pttOther').classList.toggle('show', isOther);
+  if (isOther) document.getElementById('pttOtherName').focus();
+}
 
 // ==================== CALENDAR ====================
 const HOLIDAYS = {
@@ -593,11 +664,24 @@ document.getElementById('calNext').addEventListener('click', () => {
 renderCalendar();
 
 // ==================== TRAINEES ====================
+// ใบรับรอง/ใบอนุญาตตามกฎหมายที่ผู้เข้าอบรมมี (เก็บลงคอลัมน์ LegalCerts ในชีต Trainees)
+const LEGAL_CERTS = [
+  'ปั้นจั่นอยู่กับที่',
+  'ปั้นจั่นเคลื่อนที่',
+  'ผู้ตรวจสอบนั่งร้าน',
+  'งานไฟฟ้า',
+  'ผู้ปฏิบัติงานรังสี',
+  'เจ้าหน้าที่ความปลอดภัยงานรังสี',
+  'ผู้ปฏิบัติงานที่สูง'
+];
 let traineeCount = 0;
 function addTrainee() {
   traineeCount++;
   const row = document.createElement('div');
   row.className = 'trainee-row';
+  const certBoxes = LEGAL_CERTS.map(c =>
+    `<label><input type="checkbox" class="t-cert" value="${c}"><span>${c}</span></label>`
+  ).join('');
   row.innerHTML = `
     <div class="trainee-header">
       <span class="trainee-num">คนที่ ${traineeCount}</span>
@@ -611,6 +695,10 @@ function addTrainee() {
     </div>
     <input type="text" class="t-id" placeholder="เลขบัตร 13 หลัก หรือ Passport (เช่น AB123456)" maxlength="13">
     <input type="text" class="t-position" placeholder="ตำแหน่ง เช่น ช่างเชื่อม, วิศวกร">
+    <div class="legal-certs">
+      <div class="legal-certs-title">ใบรับรอง/ใบอนุญาตตามกฎหมายที่มี (ติ๊กได้หลายข้อ ถ้าไม่มีให้เว้นว่าง)</div>
+      <div class="legal-certs-grid">${certBoxes}</div>
+    </div>
   `;
   document.getElementById('trainees').appendChild(row);
 }
@@ -644,6 +732,22 @@ async function submitForm() {
     alert('รูปแบบ Email ไม่ถูกต้อง');
     return;
   }
+  // เจ้าหน้าที่ ปตท. — ถ้าเลือก "อื่นๆ" ต้องกรอกชื่อ + อีเมล
+  const pttIsOther = pttSelect.value === PTT_OTHER;
+  const pttOtherName = document.getElementById('pttOtherName').value.trim();
+  const pttOtherEmail = document.getElementById('pttOtherEmail').value.trim().toLowerCase();
+  if (pttIsOther) {
+    if (!pttOtherName || !pttOtherEmail) {
+      alert('กรุณากรอกชื่อและอีเมลของเจ้าหน้าที่ ปตท. ที่ติดต่อ');
+      document.getElementById('pttOtherName').focus();
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(pttOtherEmail)) {
+      alert('รูปแบบอีเมลเจ้าหน้าที่ ปตท. ไม่ถูกต้อง');
+      document.getElementById('pttOtherEmail').focus();
+      return;
+    }
+  }
   if (!calSelected) {
     alert('กรุณาเลือกวันที่ต้องการอบรมจากแคลเลนเดอร์');
     document.getElementById('calGrid').scrollIntoView({behavior:'smooth', block:'center'});
@@ -670,12 +774,15 @@ async function submitForm() {
     else if (!position) { traineeOk = false; traineeErr = 'ตำแหน่ง'; }
     
     traineeRows.push(row);
+    const legalCerts = Array.from(row.querySelectorAll('.t-cert:checked')).map(cb => cb.value);
     trainees.push({
       prefix: row.querySelector('.t-prefix').value,
       name: fullName,
       nationalId: id,
       idType: isThaiId ? 'ThaiID' : 'Passport',
-      position: position
+      position: position,
+      // ส่งเป็น string คั่นด้วย ", " เพื่อลงคอลัมน์ LegalCerts ใน Excel ได้ตรง ๆ
+      legalCerts: legalCerts.join(', ')
     });
   });
   if (!traineeOk) {
@@ -717,10 +824,23 @@ async function submitForm() {
     return;
   }
   
-  const pttIdx = parseInt(document.getElementById('pttName').value);
-  const pttEng = (PTT_ENGINEERS[DIVISION] || [])[pttIdx] || {};
-  
+  // PDPA — ต้องติ๊กรับทราบก่อนส่ง
+  if (!document.getElementById('pdpaConsent').checked) {
+    const box = document.getElementById('pdpaBox');
+    box.classList.add('error');
+    box.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    alert('กรุณาติ๊กรับทราบแบบแจ้งเกี่ยวกับข้อมูลส่วนบุคคล (PDPA) ก่อนส่งคำขอ');
+    return;
+  }
+
+  // เจ้าหน้าที่ ปตท. ที่ติดต่อ — จากรายชื่อ หรือ "อื่นๆ" ที่พิมพ์เอง
+  const pttEng = pttIsOther
+    ? { name: pttOtherName, unit: 'อื่นๆ (ระบุเอง)', email: pttOtherEmail }
+    : ((PTT_ENGINEERS[DIVISION] || [])[parseInt(pttSelect.value)] || {});
+
   // Payload structure ตรงกับ Flow 3 schema (nested vendor + pttEngineer)
+  // Flow 3 map vendor.company → คอลัมน์ Company และ vendor.contactName → ContactName แยกกันแล้ว
+  // (vendor.name คงไว้เผื่อ schema เก่า)
   const payload = {
     project: project,
     workStart: workStart,
@@ -730,10 +850,8 @@ async function submitForm() {
     division: DIVISION,
     workingArea: workingArea,
     vendor: {
-      // Flow 3 Excel mapping ใช้ vendor.name ทั้ง Company column และ ContactName column
-      // → combine เป็น "บริษัท - ชื่อคน" เพื่อเก็บข้อมูลครบ
-      name: `${company} - ${contactName}`,
-      company: company,     // extra field — เผื่อ Flow 3 อัพเดทในอนาคต ก็มีค่าครบ
+      name: company,
+      company: company,
       contactName: contactName,
       phone: contactPhone,
       email: contactEmail
@@ -744,6 +862,8 @@ async function submitForm() {
       email: pttEng.email || ''
     },
     trainees: trainees,
+    pdpaConsent: true,
+    pdpaConsentAt: new Date().toISOString(),
     submittedAt: new Date().toISOString()
   };
   

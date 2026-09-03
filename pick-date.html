@@ -226,7 +226,7 @@
     </div>
 
     <button class="btn-primary" id="confirmBtn" onclick="confirmDate()" disabled>✅ ยืนยันวันใหม่</button>
-    <button class="btn-ghost" onclick="window.close()">ปิดหน้านี้</button>
+    <button class="btn-ghost" onclick="closePage()">← ไปหน้าจัดการคำขอ (Admin)</button>
   </div>
 
   <div class="footer">
@@ -236,6 +236,13 @@
 </div>
 
 <script>
+function closePage() {
+  // window.close() ใช้ได้เฉพาะแท็บที่เปิดด้วยสคริปต์ — ถ้าเปิดจากลิงก์ในอีเมลจะปิดไม่ได้
+  // จึงลองปิดก่อน แล้วถ้ายังอยู่ให้พาไปหน้าจัดการคำขอของแอดมินแทน
+  try { window.close(); } catch (e) {}
+  setTimeout(() => { window.location.href = 'admin/requests.html'; }, 300);
+}
+
 const params = new URLSearchParams(window.location.search);
 const requestId = params.get('req') || '';
 document.getElementById('reqIdTag').textContent = requestId || 'REQ-XXX';
